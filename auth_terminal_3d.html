@@ -1103,7 +1103,7 @@
 
             // 3. Fejléc és Mód Tabok a 3D kijelzőn
             ctx.fillStyle = '#00ffcc';
-            ctx.font = 'bold 24px "Share Tech Mono", monospace';
+            ctx.font = 'bold 22px "Orbitron", "Segoe UI", sans-serif';
             ctx.fillText(currentMode === 'INFO' ? (L.guideTitle || 'eBookPirates // HASZNÁLATI ÚTMUTATÓ') : L.title, 45, 65);
 
             // Kattintható Módválasztó gombok
@@ -1160,7 +1160,7 @@
                 ctx.strokeRect(45, 110, w - 90, 235);
 
                 ctx.fillStyle = '#00ffcc';
-                ctx.font = 'bold 16px "Share Tech Mono", monospace';
+                ctx.font = 'bold 16px "Consolas", "Roboto Mono", "Segoe UI", monospace';
                 ctx.fillText('> ' + (L.guideLine1 || '1. 3D GÉPELÉS: Kattints a monitorra a gépeléshez!'), 65, 148);
                 ctx.fillText('> ' + (L.guideLine2 || '2. MEZŐVÁLTÁS: [TAB] billentyűvel válthatsz mezőt.'), 65, 190);
                 ctx.fillText('> ' + (L.guideLine3 || '3. BEKÜLDÉS: Nyomj [ENTER]-t vagy kattints a Küldés gombra.'), 65, 232);
@@ -1178,7 +1178,7 @@
             ctx.strokeRect(45, h - 75, w - 90, 42);
 
             ctx.fillStyle = isStatusError ? '#ff6666' : '#00ffcc';
-            ctx.font = 'bold 18px "Share Tech Mono", monospace';
+            ctx.font = 'bold 17px "Orbitron", "Consolas", sans-serif';
             ctx.fillText('> ' + terminalStatusText, 60, h - 48);
 
             // Frissítés értesítése Three.js felé
@@ -1193,7 +1193,7 @@
             context.strokeRect(x, y, w, h);
 
             context.fillStyle = isActive ? '#ffffff' : '#88c0b0';
-            context.font = 'bold 12px "Share Tech Mono", monospace';
+            context.font = 'bold 13px "Orbitron", "Segoe UI", sans-serif';
             context.textAlign = 'center';
             context.fillText(text, x + w / 2, y + 21);
             context.textAlign = 'left';
@@ -1201,7 +1201,7 @@
 
         function drawField(context, x, y, label, value, isActive, cursor, boxHeight = 44) {
             context.fillStyle = isActive ? '#00ffcc' : 'rgba(0, 255, 204, 0.6)';
-            context.font = '16px "Share Tech Mono", monospace';
+            context.font = 'bold 16px "Orbitron", "Segoe UI", sans-serif';
             context.fillText(label, x, y);
 
             // Mező doboz
@@ -1213,7 +1213,7 @@
 
             // Érték kiírása
             context.fillStyle = '#ffffff';
-            context.font = 'bold 22px "Share Tech Mono", monospace';
+            context.font = 'bold 22px "Consolas", "Roboto Mono", "Courier New", monospace';
             const displayText = (value || '') + (isActive ? cursor : '');
             context.fillText(displayText, x + 14, y + 6 + (boxHeight * 0.68));
         }
@@ -1226,7 +1226,7 @@
             context.strokeRect(x, y, w, h);
 
             context.fillStyle = '#ffffff';
-            context.font = 'bold 20px "Share Tech Mono", monospace';
+            context.font = 'bold 19px "Orbitron", "Segoe UI", sans-serif';
             context.textAlign = 'center';
             context.fillText(text, x + w / 2, y + h / 2 + 7);
             context.textAlign = 'left';

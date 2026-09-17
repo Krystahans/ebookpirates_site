@@ -1615,7 +1615,7 @@ button:disabled {
     z-index: 999;
     background-color: #020408;
     overflow: hidden;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Orbitron', 'Consolas', 'Segoe UI', sans-serif;
     color: #00ffcc;
 }
 
@@ -1866,7 +1866,7 @@ button:disabled {
     border-radius: 6px;
     padding: 9px 12px;
     color: #ffffff !important;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Consolas', 'Orbitron', monospace;
     font-size: 14px;
     outline: none;
     transition: all 0.2s ease;

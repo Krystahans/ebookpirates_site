@@ -1111,7 +1111,7 @@ function updateScreenDisplay() {
 
     // 3. Fejléc és Mód Tabok a 3D kijelzőn
     ctx.fillStyle = '#00ffcc';
-    ctx.font = 'bold 24px "Share Tech Mono", monospace';
+    ctx.font = 'bold 22px "Orbitron", "Segoe UI", sans-serif';
     ctx.fillText(currentMode === 'INFO' ? (L.guideTitle || 'eBookPirates // HASZNÁLATI ÚTMUTATÓ') : L.title, 45, 65);
 
     drawTerminalTab(ctx, 620, 36, 115, 34, L.loginTab, currentMode === 'LOGIN');
@@ -1166,7 +1166,7 @@ function updateScreenDisplay() {
         ctx.strokeRect(45, 110, w - 90, 235);
 
         ctx.fillStyle = '#00ffcc';
-        ctx.font = 'bold 16px "Share Tech Mono", monospace';
+        ctx.font = 'bold 16px "Consolas", "Roboto Mono", "Segoe UI", monospace';
         ctx.fillText('> ' + (L.guideLine1 || '1. 3D GÉPELÉS: Kattints a monitorra a gépeléshez!'), 65, 148);
         ctx.fillText('> ' + (L.guideLine2 || '2. MEZŐVÁLTÁS: [TAB] billentyűvel válthatsz mezőt.'), 65, 190);
         ctx.fillText('> ' + (L.guideLine3 || '3. BEKÜLDÉS: Nyomj [ENTER]-t vagy kattints a Küldés gombra.'), 65, 232);
@@ -1184,7 +1184,7 @@ function updateScreenDisplay() {
     ctx.strokeRect(45, h - 75, w - 90, 42);
 
     ctx.fillStyle = isStatusError ? '#ff6666' : '#00ffcc';
-    ctx.font = 'bold 18px "Share Tech Mono", monospace';
+    ctx.font = 'bold 17px "Orbitron", "Consolas", sans-serif';
     ctx.fillText('> ' + terminalStatusText, 60, h - 48);
 
     if (screenTexture) screenTexture.needsUpdate = true;
@@ -1198,7 +1198,7 @@ function drawTerminalTab(context, x, y, w, h, text, isActive) {
     context.strokeRect(x, y, w, h);
 
     context.fillStyle = isActive ? '#ffffff' : '#88c0b0';
-    context.font = 'bold 12px "Share Tech Mono", monospace';
+    context.font = 'bold 13px "Orbitron", "Segoe UI", sans-serif';
     context.textAlign = 'center';
     context.fillText(text, x + w / 2, y + 21);
     context.textAlign = 'left';
@@ -1206,7 +1206,7 @@ function drawTerminalTab(context, x, y, w, h, text, isActive) {
 
 function drawField(context, x, y, label, value, isActive, cursor, boxHeight = 44) {
     context.fillStyle = isActive ? '#00ffcc' : 'rgba(0, 255, 204, 0.6)';
-    context.font = '16px "Share Tech Mono", monospace';
+    context.font = 'bold 16px "Orbitron", "Segoe UI", sans-serif';
     context.fillText(label, x, y);
 
     context.fillStyle = isActive ? 'rgba(0, 50, 60, 0.85)' : 'rgba(0, 30, 40, 0.5)';
@@ -1216,7 +1216,7 @@ function drawField(context, x, y, label, value, isActive, cursor, boxHeight = 44
     context.strokeRect(x, y + 6, 934, boxHeight);
 
     context.fillStyle = '#ffffff';
-    context.font = 'bold 22px "Share Tech Mono", monospace';
+    context.font = 'bold 22px "Consolas", "Roboto Mono", "Courier New", monospace';
     const displayText = (value || '') + (isActive ? cursor : '');
     context.fillText(displayText, x + 14, y + 6 + (boxHeight * 0.68));
 }
@@ -1229,7 +1229,7 @@ function drawActionButton(context, x, y, w, h, text, isDanger = false) {
     context.strokeRect(x, y, w, h);
 
     context.fillStyle = '#ffffff';
-    context.font = 'bold 20px "Share Tech Mono", monospace';
+    context.font = 'bold 19px "Orbitron", "Segoe UI", sans-serif';
     context.textAlign = 'center';
     context.fillText(text, x + w / 2, y + h / 2 + 7);
     context.textAlign = 'left';

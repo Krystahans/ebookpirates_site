@@ -13,12 +13,11 @@
 
     <div class="page-container">
         <div class="page-section" style="text-align: center;">
-            <h1 id="active-ship-name" style="color: var(--color-accent); font-family: var(--font-serif); text-transform: uppercase;">Rakodás alatt...</h1>
+            <h1 id="active-ship-name" style="color: var(--color-accent); font-family: var(--font-serif); margin-bottom: 15px;">Rakodás alatt...</h1>
 
-            <!-- HAJÓ VÁLASZTÓ (Csak akkor látszik, ha több hajó van) -->
+            <!-- HAJÓ VÁLASZTÓ -->
             <div id="ship-selector-container" style="display: none; margin-bottom: 20px;">
-                <p>Melyik hajódra mész?</p>
-                <select id="ship-selector" class="input-field" onchange="selectShip(this.value)" style="padding: 10px; font-size: 1.1em;"></select>
+                <select id="ship-selector" class="input-field" onchange="selectShip(this.value)" style="padding: 10px; font-size: 1.1em; max-width: 350px; margin: 0 auto;"></select>
             </div>
 
             
@@ -97,10 +96,8 @@
         <div class="page-section" style="text-align: center; background-color: #fff;">
             <h3 data-lang="deck_nav_title">Navigáció</h3>
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-                <button class="btn btn-secondary" onclick="loadPage('tutorial_oldal')" data-lang="deck_nav_tutorial">Tudnivalók</button>
-                <button class="btn btn-secondary" onclick="loadPage('kikoto_oldal')" data-lang="deck_nav_island">Sziget</button>
-                <button class="btn btn-secondary" onclick="checkRankAndOpenLogModal()" data-lang="deck_nav_logbook">Hajónapló</button>
-                <button class="btn btn-danger" onclick="logout()" data-lang="deck_nav_logout">Kijelentkezés</button>
+                <button class="btn btn-secondary" onclick="loadPage('tutorial_oldal')" data-lang="deck_nav_tutorial"><i class="fas fa-book-open"></i> Tudnivalók</button>
+                <button class="btn btn-secondary" style="background: var(--color-gold); color: #1b263b; font-weight: bold;" onclick="checkRankAndOpenLogModal()" data-lang="deck_nav_logbook"><i class="fas fa-feather-alt"></i> Hajónapló</button>
             </div>
         </div>
     </div>

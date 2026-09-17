@@ -1,8 +1,14 @@
 /* ========================================= */
 /* === 1. ALAPBEÁLLÍTÁSOK (Layout) === */
 /* ========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 :root {
-    --bg-main: #f4f4f4;
+    --bg-main: #0d1b2a;
     --bg-paper: #fdf5e6;
     /* Pergamen */
     --color-main: #333;
@@ -24,8 +30,9 @@ html {
     margin: 0;
     padding: 0;
     font-family: var(--font-main);
+    width: 100%;
     height: 100%;
-    background-color: var(--bg-main);
+    background-color: #0d1b2a;
     overflow: hidden;
     /* Görgősáv csak a tartalmon legyen */
 }
@@ -35,12 +42,13 @@ html {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    width: 100%;
-    max-width: 100%;
+    width: 100vw;
+    max-width: 100vw;
     overflow: hidden;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    background-color: #0d1b2a;
 }
 
 #app-view {
@@ -51,12 +59,15 @@ html {
     max-width: 100%;
     overflow: hidden;
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    background-color: #0d1b2a;
 }
 
 @font-face {
     font-family: 'BriskB';
     src: url('https://storage.googleapis.com/kalozsziget-assets/tutorial/assets/fonts/Briskb.otf') format('opentype'),
-         url('assets/fonts/Briskb.otf') format('opentype');
+         url('https://storage.googleapis.com/kalozsziget-assets/assets/fonts/Briskb.otf') format('opentype');
     font-weight: bold;
     font-style: normal;
 }
@@ -346,9 +357,12 @@ html {
     flex: 1 1 auto;
     /* Kitölti a maradék helyet */
     overflow-y: auto;
-    /* Csak ez görgethető */
-    padding: 20px;
+    padding: 0;
     position: relative;
+    width: 100%;
+    height: calc(100vh - 66px);
+    box-sizing: border-box;
+    background-color: #0d1b2a;
 }
 
 #login-view {
@@ -1422,12 +1436,6 @@ textarea:focus {
     transform: none !important;
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-    margin: 20px;
-    background-color: #f4f5f7;
-    color: #172b4d;
-}
 
 .form-container {
     max-width: 650px;
@@ -1970,4 +1978,159 @@ button:disabled {
 
 #mobile-keyboard-bar {
     display: none !important;
+}
+
+/* ==========================================================
+   === 3D KIKÖTŐ & FEDÉLZET (Three.js Látkép & Interakciók) ===
+   ========================================================== */
+
+#webgl-canvas-container {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+/* 3D Kikötő Betöltő Képernyő */
+#kikoto_oldal-content #loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #1b263b 0%, #0d1b2a 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 0.6s ease;
+}
+
+.loader-title {
+    font-family: 'Pirata One', cursive;
+    font-size: 2.8rem;
+    color: #d4af37;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.4);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.loader-bar-bg {
+    width: 320px;
+    height: 16px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #8b5a2b;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.8), 0 0 10px rgba(212, 175, 55, 0.3);
+    position: relative;
+}
+
+.loader-bar-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #8b5a2b 0%, #d4af37 50%, #fff2a3 100%);
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+    transition: width 0.15s ease-out;
+}
+
+.loader-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    color: #00ffcc;
+    margin-top: 14px;
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.6);
+}
+
+/* Interaktív Épület / Célpont Lebegő Szövegbuborék */
+.interactive-tooltip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 90;
+    background: rgba(13, 27, 42, 0.94);
+    border: 1.5px solid #d4af37;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: 'Orbitron', 'Segoe UI', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #00ffcc;
+    letter-spacing: 1.2px;
+    text-shadow: 0 0 8px rgba(0, 255, 204, 0.7);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.85), 0 0 14px rgba(212, 175, 55, 0.45);
+    transform: translate(-50%, -140%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.1s ease-out, visibility 0.2s;
+    white-space: nowrap;
+    backdrop-filter: blur(6px);
+}
+
+.interactive-tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.interactive-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0;
+    border-style: solid;
+    border-color: #d4af37 transparent transparent;
+    display: block;
+    width: 0;
+}
+
+/* Jelenet Átmenet / Elsötétülő Fekete Réteg */
+#scene-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000000;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: opacity 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#scene-transition-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+#fedelzet-portrait-panel {
+    height: 80vh;
+    background-color: transparent;
+    overflow: hidden;
+    transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.6s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 0;
+}
+
+#fedelzet-portrait-image {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(5px 5px 15px rgba(0, 0, 0, 0.5));
+}
+
+@media (max-width: 800px) {
+    #fedelzet-portrait-panel {
+        display: none !important;
+    }
 }

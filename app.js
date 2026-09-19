@@ -12044,8 +12044,15 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                 return;
             }
 
-            mousePointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mousePointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            // 1. Pontos Normalizált Eszközkoordináta (NDC) a WebGL vászon tényleges mérete és elhelyezkedése alapján
+            const rect = (renderer && renderer.domElement) ? renderer.domElement.getBoundingClientRect() : null;
+            if (rect && rect.width > 0 && rect.height > 0) {
+                mousePointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                mousePointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            } else {
+                mousePointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mousePointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            }
 
             const tooltipEl = document.getElementById('interactive-tooltip');
             if (tooltipEl) {
@@ -12056,16 +12063,25 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             if (!camera || !scene) return;
 
             raycaster.setFromCamera(mousePointer, camera);
-            let hovered = null;
+            
+            // 2. Valódi 3D Mélységi Keresés: a kamerához legközelebb lévő legelső felület (minimum distance) kiválasztása
+            let closestHit = null;
+            let closestLoc = null;
+
             for (let i = 0; i < interactiveLocations.length; i++) {
                 const loc = interactiveLocations[i];
                 if (!loc.meshes || loc.meshes.length === 0) continue;
                 const intersects = raycaster.intersectObjects(loc.meshes, true);
                 if (intersects.length > 0) {
-                    hovered = loc;
-                    break;
+                    const firstHit = intersects[0];
+                    if (!closestHit || firstHit.distance < closestHit.distance) {
+                        closestHit = firstHit;
+                        closestLoc = loc;
+                    }
                 }
             }
+
+            let hovered = closestLoc;
 
             if (hovered !== currentHoveredLocation) {
                 if (currentHoveredLocation) {

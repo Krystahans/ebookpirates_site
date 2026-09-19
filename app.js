@@ -4061,52 +4061,68 @@ var searchTypeSelect = null;
 /**
  * A konyvszentely_oldal.html logikája (Inicializálás)
  */
-function initializeKonyvszentely() {
-    // Ellenőrzés
-    // (A Router már tudja az emailt, de a UI miatt maradhat a kliens oldali check)
-    // if (typeof currentUserEmail === 'undefined' || !currentUserEmail) ... 
+function initializeKonyvszentely(retryCount) {
+    retryCount = retryCount || 0;
 
     // Elemek keresése
     searchBtn = document.getElementById('ksz-search-btn');
     upgradeBtn = document.getElementById('ksz-upgrade-btn');
     searchTypeSelect = document.getElementById('ksz-search-type');
 
-    // Ha valami hiányzik, kilépünk
+    // Ha valami hiányzik, várunk egy picit, hátha a DOM renderelés folyamatban van
     if (!searchBtn || !searchTypeSelect || !upgradeBtn) {
-        console.error("Könyvszentély elemek nem találhatóak!");
+        if (retryCount < 4) {
+            setTimeout(function () {
+                initializeKonyvszentely(retryCount + 1);
+            }, 100);
+            return;
+        }
+        console.warn("Könyvszentély elemek nem találhatóak (többszöri ellenőrzés után sem)!");
         return;
     }
 
     // Eseménykezelők
-    searchBtn.onclick = searchCopies;
+    searchBtn.onclick = function () { searchCopies(0); };
     searchTypeSelect.onchange = toggleSearchTerm;
     upgradeBtn.onclick = processUpgrade;
 
-    // 1. Vagyon betöltése és eladás gomb
-    loadWalletStats();
-
-    // 2. Indító keresés
-    searchCopies();
+    // Szekvenciális lekérdezések a GAS rate-limit elkerülésére
+    setTimeout(function () {
+        loadWalletStats(0);
+        setTimeout(function () {
+            searchCopies(0);
+        }, 150);
+    }, 100);
 }
 
 /**
  * Vagyon lekérdezése (Kristály, Tálentum)
  */
-function loadWalletStats() {
-    // ÚJ HÍVÁS (callBackend)
+function loadWalletStats(retryCount) {
+    retryCount = retryCount || 0;
     callBackend('getKonyvszentelyStats', [],
         function (data) {
             var crystalEl = document.getElementById('ksz-crystal-count');
             var talentEl = document.getElementById('ksz-talent-count');
 
-            if (crystalEl) crystalEl.textContent = data.letkristaly;
-            if (talentEl) talentEl.textContent = data.talentum;
+            if (crystalEl) crystalEl.textContent = (data && typeof data.letkristaly !== 'undefined') ? data.letkristaly : 0;
+            if (talentEl) talentEl.textContent = (data && typeof data.talentum !== 'undefined') ? data.talentum : 0;
 
             // Gomb megjelenítése
             renderSellButton();
         },
         function (err) {
-            console.error("Vagyon hiba:", err);
+            console.warn("Vagyon lekérdezési figyelmeztetés:", err.message || err);
+            if (retryCount < 2) {
+                setTimeout(function () {
+                    loadWalletStats(retryCount + 1);
+                }, 800);
+            } else {
+                var crystalEl = document.getElementById('ksz-crystal-count');
+                var talentEl = document.getElementById('ksz-talent-count');
+                if (crystalEl && crystalEl.textContent === '...') crystalEl.textContent = '-';
+                if (talentEl && talentEl.textContent === '...') talentEl.textContent = '-';
+            }
         }
     );
 }
@@ -4180,7 +4196,8 @@ function toggleSearchTerm() {
     }
 }
 
-function searchCopies() {
+function searchCopies(retryCount) {
+    retryCount = retryCount || 0;
     setLoadingState(true, 'search');
     var searchTermInput = document.getElementById('ksz-search-term');
     var searchTerm = searchTermInput ? searchTermInput.value : '';
@@ -4193,8 +4210,15 @@ function searchCopies() {
         },
         function (err) {
             setLoadingState(false, 'search');
-            var list = document.getElementById('ksz-results-list');
-            if (list) list.innerHTML = '<p style="color:red; text-align:center;">' + t('ksz_search_error_prefix') + err.message + '</p>';
+            console.warn("Keresési figyelmeztetés (getUserCopies):", err.message || err);
+            if (retryCount < 2) {
+                setTimeout(function () {
+                    searchCopies(retryCount + 1);
+                }, 1000);
+            } else {
+                var list = document.getElementById('ksz-results-list');
+                if (list) list.innerHTML = '<p style="color:red; text-align:center;">' + t('ksz_search_error_prefix') + (err.message || 'Hálózati hiba') + '</p>';
+            }
         }
     );
 }

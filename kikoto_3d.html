@@ -593,10 +593,23 @@
         }
 
         /**
+         * Dinamikus Modál Állapot Vizsgálat (Garantálja, hogy nyitott felugró ablak esetén ne kattintsunk a színtérre)
+         */
+        function isAnyModalOpen() {
+            if (isModalOpen) return true;
+            const modalIds = ['universal-npc-modal', 'toborzo-modal', 'fedelzet-modal', 'info-modal', 'monk-pin-modal', 'system-message-modal', 'log-entry-modal'];
+            for (let i = 0; i < modalIds.length; i++) {
+                const m = document.getElementById(modalIds[i]);
+                if (m && m.style.display && m.style.display !== 'none') return true;
+            }
+            return false;
+        }
+
+        /**
          * Kurzor mozgatás & Épület Raycast Hover Eseménykezelő
          */
         function onPointerMove(e) {
-            if (isModalOpen || isCinematicTransitioning) {
+            if (isCinematicTransitioning || isAnyModalOpen()) {
                 if (currentHoveredLocation) {
                     removeHighlight(currentHoveredLocation.meshes);
                     currentHoveredLocation = null;
@@ -669,7 +682,7 @@
          * Kattintás indítás (Kamera drag vs kattintás megkülönböztetéshez)
          */
         function onPointerDown(e) {
-            if (isModalOpen || isCinematicTransitioning) return;
+            if (isCinematicTransitioning || isAnyModalOpen()) return;
             pointerDownPos = { x: e.clientX, y: e.clientY };
             pointerDownTime = performance.now();
         }
@@ -678,7 +691,7 @@
          * Kattintás befejezés & Épületre fókuszáló átmenet elindítása
          */
         function onPointerUp(e) {
-            if (isModalOpen || isCinematicTransitioning) return;
+            if (isCinematicTransitioning || isAnyModalOpen()) return;
             const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
             const timeDiff = performance.now() - pointerDownTime;
 
@@ -818,19 +831,21 @@
             }
             var modal = document.getElementById('universal-npc-modal');
             if (modal) modal.style.display = 'none';
-            if (defaultCameraPos && defaultTargetPos) {
+            if (defaultCameraPos && defaultTargetPos && camera && defaultCameraPos.length() > 0) {
                 camera.position.copy(defaultCameraPos);
                 if (controls) {
                     controls.target.copy(defaultTargetPos);
                     controls.update();
                     controls.enabled = true;
                 }
+            } else if (controls) {
+                controls.enabled = true;
+                controls.update();
             }
             pointerDownTime = 0;
             currentHoveredLocation = null;
-            setTimeout(() => {
-                isModalOpen = false;
-            }, 350);
+            isModalOpen = false;
+            isCinematicTransitioning = false;
         };
 
         window.closeToborzoModal = function(e) {
@@ -840,19 +855,21 @@
             }
             var modal = document.getElementById('toborzo-modal');
             if (modal) modal.style.display = 'none';
-            if (defaultCameraPos && defaultTargetPos) {
+            if (defaultCameraPos && defaultTargetPos && camera && defaultCameraPos.length() > 0) {
                 camera.position.copy(defaultCameraPos);
                 if (controls) {
                     controls.target.copy(defaultTargetPos);
                     controls.update();
                     controls.enabled = true;
                 }
+            } else if (controls) {
+                controls.enabled = true;
+                controls.update();
             }
             pointerDownTime = 0;
             currentHoveredLocation = null;
-            setTimeout(() => {
-                isModalOpen = false;
-            }, 350);
+            isModalOpen = false;
+            isCinematicTransitioning = false;
         };
 
         window.openUniversalNPC = function(npcId, config) {
@@ -1470,19 +1487,21 @@
             }
             var modal = document.getElementById('fedelzet-modal');
             if (modal) modal.style.display = 'none';
-            if (defaultCameraPos && defaultTargetPos) {
+            if (defaultCameraPos && defaultTargetPos && camera && defaultCameraPos.length() > 0) {
                 camera.position.copy(defaultCameraPos);
                 if (controls) {
                     controls.target.copy(defaultTargetPos);
                     controls.update();
                     controls.enabled = true;
                 }
+            } else if (controls) {
+                controls.enabled = true;
+                controls.update();
             }
             pointerDownTime = 0;
             currentHoveredLocation = null;
-            setTimeout(() => {
-                isModalOpen = false;
-            }, 350);
+            isModalOpen = false;
+            isCinematicTransitioning = false;
         };
 
         window.fedelzetInit = function() {

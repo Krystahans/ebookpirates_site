@@ -609,6 +609,7 @@ function initializeApp(user) {
     ensureCreditDisplayIsPresent();
 
     // 3D Terminál, Mobil Dokk és 2D Login elrejtése
+    document.documentElement.classList.add('ebp-authenticated');
     var auth3d = document.getElementById('auth-3d-container');
     if (auth3d) auth3d.style.display = 'none';
     var mobDock = document.getElementById('mobile-input-dock');
@@ -663,6 +664,7 @@ function checkSession() {
     const token = localStorage.getItem('ebookPiratesToken') || sessionStorage.getItem('ebookPiratesToken');
 
     function show3DAuthTerminal() {
+        document.documentElement.classList.remove('ebp-authenticated');
         var appView = document.getElementById('app-view');
         if (appView) appView.style.display = 'none';
         var auth3d = document.getElementById('auth-3d-container');
@@ -676,6 +678,12 @@ function checkSession() {
     }
 
     if (token) {
+        document.documentElement.classList.add('ebp-authenticated');
+        var auth3dEarly = document.getElementById('auth-3d-container');
+        if (auth3dEarly) auth3dEarly.style.display = 'none';
+        var appViewEarly = document.getElementById('app-view');
+        if (appViewEarly) appViewEarly.style.display = 'flex';
+
         var cachedUserStr = sessionStorage.getItem('cached_user_data');
         if (cachedUserStr) {
             try {
@@ -731,6 +739,7 @@ function checkSession() {
 // ==========================================
 
 function logout() {
+    document.documentElement.classList.remove('ebp-authenticated');
     sessionStorage.removeItem('ebookPiratesToken');
     localStorage.removeItem('ebookPiratesToken');
     localStorage.removeItem('ebook_pirates_username');
@@ -1031,8 +1040,17 @@ function loadPage(pageName) {
         if (kikotoContainer) {
             kikotoContainer.style.display = 'block';
         }
+        var kContent = document.getElementById('kikoto_oldal-content');
+        if (kContent) kContent.style.display = 'block';
+        var kSplash = document.getElementById('kikoto_oldal-splash');
+        if (kSplash) kSplash.style.display = 'none';
 
         function afterKikotoMount() {
+            var kContentEl = document.getElementById('kikoto_oldal-content');
+            if (kContentEl) kContentEl.style.display = 'block';
+            var kSplashEl = document.getElementById('kikoto_oldal-splash');
+            if (kSplashEl) kSplashEl.style.display = 'none';
+
             if (typeof updateLanguageUI === 'function') updateLanguageUI();
             if (typeof bindLanguageButtons === 'function') bindLanguageButtons();
             
@@ -1067,11 +1085,19 @@ function loadPage(pageName) {
                 window._kikotoResizeHandler();
             }
 
-            // Biztonsági sötétítő réteg takarítás a DOM-ban is
+            // Biztonsági sötétítő rétegek takarítása a DOM-ban is
             var sceneOverlay = document.getElementById('scene-transition-overlay');
             if (sceneOverlay) {
                 sceneOverlay.classList.remove('active');
                 sceneOverlay.style.opacity = '0';
+                sceneOverlay.style.pointerEvents = 'none';
+                sceneOverlay.style.display = 'none';
+            }
+            var kikoto3DOverlay = document.getElementById('kikoto-3d-loading-overlay');
+            if (kikoto3DOverlay) {
+                kikoto3DOverlay.style.opacity = '0';
+                kikoto3DOverlay.style.pointerEvents = 'none';
+                kikoto3DOverlay.style.display = 'none';
             }
 
             window.dispatchEvent(new Event('resize'));
@@ -1278,6 +1304,13 @@ function toggleAccordionPanel() {
  * Ha nem -> Splash (Infó) képernyő megjelenítése.
  */
 function initializePage(pageName) {
+    if (pageName === 'kikoto_oldal') {
+        const kSplash = document.getElementById('kikoto_oldal-splash');
+        const kContent = document.getElementById('kikoto_oldal-content');
+        if (kSplash) kSplash.style.display = 'none';
+        if (kContent) kContent.style.display = 'block';
+        return;
+    }
     const splash = document.getElementById(pageName + '-splash');
     const content = document.getElementById(pageName + '-content');
 
@@ -11829,6 +11862,10 @@ function initializeKikotoOldal() {
     var canvasContainer = document.getElementById('webgl-canvas-container');
     var container2D = document.getElementById('kikoto-2d-container');
     var loadingOverlay = document.getElementById('loading-overlay');
+    var kContent = document.getElementById('kikoto_oldal-content');
+    if (kContent) kContent.style.display = 'block';
+    var kSplash = document.getElementById('kikoto_oldal-splash');
+    if (kSplash) kSplash.style.display = 'none';
 
     if (!isWebGLAvailable()) {
         console.warn("⚠️ WebGL nem támogatott a böngészőben! 2D Fallback Kikötő felület aktiválva.");
@@ -12030,10 +12067,30 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
         }
 
         /**
+         * Dinamikus Modál Állapot Vizsgálat (Garantálja, hogy nyitott felugró ablak esetén ne kattintsunk a színtérre)
+         */
+        function isAnyModalOpen() {
+            const modalEls = document.querySelectorAll('#universal-npc-modal, #toborzo-modal, #fedelzet-modal, #info-modal, #monk-pin-modal, #system-message-modal, #log-entry-modal, .gamemode-modal');
+            let openFound = false;
+            for (let i = 0; i < modalEls.length; i++) {
+                const m = modalEls[i];
+                if (m && m.style.display && m.style.display !== 'none') {
+                    openFound = true;
+                    break;
+                }
+            }
+            if (!openFound) {
+                isModalOpen = false;
+                return false;
+            }
+            return true;
+        }
+
+        /**
          * Kurzor mozgatás & Épület Raycast Hover Eseménykezelő
          */
         function onPointerMove(e) {
-            if (isModalOpen || isCinematicTransitioning) {
+            if (isCinematicTransitioning || isAnyModalOpen()) {
                 if (currentHoveredLocation) {
                     removeHighlight(currentHoveredLocation.meshes);
                     currentHoveredLocation = null;
@@ -12106,7 +12163,7 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
          * Kattintás indítás (Kamera drag vs kattintás megkülönböztetéshez)
          */
         function onPointerDown(e) {
-            if (isModalOpen || isCinematicTransitioning) return;
+            if (isCinematicTransitioning || isAnyModalOpen()) return;
             pointerDownPos = { x: e.clientX, y: e.clientY };
             pointerDownTime = performance.now();
         }
@@ -12115,7 +12172,7 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
          * Kattintás befejezés & Épületre fókuszáló átmenet elindítása
          */
         function onPointerUp(e) {
-            if (isModalOpen || isCinematicTransitioning) return;
+            if (isCinematicTransitioning || isAnyModalOpen()) return;
             const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
             const timeDiff = performance.now() - pointerDownTime;
 
@@ -12269,21 +12326,38 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                 if (e.stopPropagation) e.stopPropagation();
                 if (e.preventDefault) e.preventDefault();
             }
-            var modal = document.getElementById('universal-npc-modal');
-            if (modal) modal.style.display = 'none';
-            if (defaultCameraPos && defaultTargetPos) {
+            document.querySelectorAll('#universal-npc-modal').forEach(function(m) {
+                m.style.display = 'none';
+            });
+            const overlay = document.getElementById('scene-transition-overlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+                overlay.style.display = 'none';
+                overlay.style.opacity = '0';
+            }
+            if (defaultCameraPos && defaultTargetPos && camera && defaultCameraPos.length() > 0) {
                 camera.position.copy(defaultCameraPos);
                 if (controls) {
                     controls.target.copy(defaultTargetPos);
                     controls.update();
                     controls.enabled = true;
                 }
+            } else if (controls) {
+                controls.enabled = true;
+                controls.update();
             }
+            const tooltipEl = document.getElementById('interactive-tooltip');
+            if (tooltipEl) tooltipEl.classList.remove('visible');
+            if (interactiveLocations) {
+                interactiveLocations.forEach(function(loc) {
+                    removeHighlight(loc.meshes);
+                });
+            }
+            document.body.style.cursor = 'default';
             pointerDownTime = 0;
             currentHoveredLocation = null;
-            setTimeout(() => {
-                isModalOpen = false;
-            }, 350);
+            isModalOpen = false;
+            isCinematicTransitioning = false;
         };
 
         window.closeToborzoModal = function(e) {
@@ -12291,21 +12365,38 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                 if (e.stopPropagation) e.stopPropagation();
                 if (e.preventDefault) e.preventDefault();
             }
-            var modal = document.getElementById('toborzo-modal');
-            if (modal) modal.style.display = 'none';
-            if (defaultCameraPos && defaultTargetPos) {
+            document.querySelectorAll('#toborzo-modal').forEach(function(m) {
+                m.style.display = 'none';
+            });
+            const overlay = document.getElementById('scene-transition-overlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+                overlay.style.display = 'none';
+                overlay.style.opacity = '0';
+            }
+            if (defaultCameraPos && defaultTargetPos && camera && defaultCameraPos.length() > 0) {
                 camera.position.copy(defaultCameraPos);
                 if (controls) {
                     controls.target.copy(defaultTargetPos);
                     controls.update();
                     controls.enabled = true;
                 }
+            } else if (controls) {
+                controls.enabled = true;
+                controls.update();
             }
+            const tooltipEl = document.getElementById('interactive-tooltip');
+            if (tooltipEl) tooltipEl.classList.remove('visible');
+            if (interactiveLocations) {
+                interactiveLocations.forEach(function(loc) {
+                    removeHighlight(loc.meshes);
+                });
+            }
+            document.body.style.cursor = 'default';
             pointerDownTime = 0;
             currentHoveredLocation = null;
-            setTimeout(() => {
-                isModalOpen = false;
-            }, 350);
+            isModalOpen = false;
+            isCinematicTransitioning = false;
         };
 
         window.openUniversalNPC = function(npcId, config) {
@@ -12921,21 +13012,38 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                 if (e.stopPropagation) e.stopPropagation();
                 if (e.preventDefault) e.preventDefault();
             }
-            var modal = document.getElementById('fedelzet-modal');
-            if (modal) modal.style.display = 'none';
-            if (defaultCameraPos && defaultTargetPos) {
+            document.querySelectorAll('#fedelzet-modal').forEach(function(m) {
+                m.style.display = 'none';
+            });
+            const overlay = document.getElementById('scene-transition-overlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+                overlay.style.display = 'none';
+                overlay.style.opacity = '0';
+            }
+            if (defaultCameraPos && defaultTargetPos && camera && defaultCameraPos.length() > 0) {
                 camera.position.copy(defaultCameraPos);
                 if (controls) {
                     controls.target.copy(defaultTargetPos);
                     controls.update();
                     controls.enabled = true;
                 }
+            } else if (controls) {
+                controls.enabled = true;
+                controls.update();
             }
+            const tooltipEl = document.getElementById('interactive-tooltip');
+            if (tooltipEl) tooltipEl.classList.remove('visible');
+            if (interactiveLocations) {
+                interactiveLocations.forEach(function(loc) {
+                    removeHighlight(loc.meshes);
+                });
+            }
+            document.body.style.cursor = 'default';
             pointerDownTime = 0;
             currentHoveredLocation = null;
-            setTimeout(() => {
-                isModalOpen = false;
-            }, 350);
+            isModalOpen = false;
+            isCinematicTransitioning = false;
         };
 
         window.fedelzetInit = function() {
@@ -13837,7 +13945,7 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
 
             const loaderFill = document.getElementById('loader-fill');
             const loaderStatus = document.getElementById('loader-status');
-            const overlay = document.getElementById('loading-overlay');
+            const overlay = document.getElementById('kikoto-3d-loading-overlay') || document.getElementById('loading-overlay');
             const statsText = document.getElementById('model-stats-text');
 
             loader.load(
@@ -15277,11 +15385,26 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                     setupCameraToModel(harborModel);
 
                     // Betöltő képernyő eltüntetése
-                    loaderFill.style.width = '100%';
-                    loaderStatus.textContent = 'KIKÖTŐ BETÖLTVE!';
+                    if (loaderFill) loaderFill.style.width = '100%';
+                    if (loaderStatus) loaderStatus.textContent = 'KIKÖTŐ BETÖLTVE!';
                     setTimeout(() => {
-                        overlay.style.opacity = '0';
-                        setTimeout(() => overlay.style.display = 'none', 600);
+                        if (overlay) {
+                            overlay.style.opacity = '0';
+                            overlay.style.pointerEvents = 'none';
+                            setTimeout(() => { overlay.style.display = 'none'; }, 600);
+                        }
+                        const kikoto3DOverlay = document.getElementById('kikoto-3d-loading-overlay');
+                        if (kikoto3DOverlay && kikoto3DOverlay !== overlay) {
+                            kikoto3DOverlay.style.opacity = '0';
+                            kikoto3DOverlay.style.pointerEvents = 'none';
+                            setTimeout(() => { kikoto3DOverlay.style.display = 'none'; }, 600);
+                        }
+                        const transOverlay = document.getElementById('scene-transition-overlay');
+                        if (transOverlay) {
+                            transOverlay.classList.remove('active');
+                            transOverlay.style.opacity = '0';
+                            transOverlay.style.pointerEvents = 'none';
+                        }
                     }, 300);
 
                     // Modell információk kiírása (ha van statsText elem)
@@ -15616,11 +15739,25 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
         isModalOpen = false;
         pointerDownTime = 0;
 
-        // 1. Fekete sötétítő réteg azonnali feloldása
+        // 1. Fekete sötétítő rétegek azonnali feloldása
         const overlay = document.getElementById('scene-transition-overlay');
         if (overlay) {
             overlay.classList.remove('active');
             overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+            overlay.style.display = 'none';
+        }
+        const kikoto3DOverlay = document.getElementById('kikoto-3d-loading-overlay');
+        if (kikoto3DOverlay) {
+            kikoto3DOverlay.style.opacity = '0';
+            kikoto3DOverlay.style.pointerEvents = 'none';
+            kikoto3DOverlay.style.display = 'none';
+        }
+        const generalLoadingOverlay = document.getElementById('loading-overlay');
+        if (generalLoadingOverlay) {
+            generalLoadingOverlay.style.opacity = '0';
+            generalLoadingOverlay.style.pointerEvents = 'none';
+            generalLoadingOverlay.style.display = 'none';
         }
 
         // 2. Kijelölések, hover derengések és buborékszövegek alaphelyzetbe állítása

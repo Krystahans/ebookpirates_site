@@ -10,8 +10,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Pirata+One&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=20260917_03">
+    <link rel="stylesheet" href="styles.css?v=20260919_12">
     <link rel="icon" href="data:,">
+
+    <script>
+    (function() {
+        try {
+            var token = localStorage.getItem('ebookPiratesToken') || sessionStorage.getItem('ebookPiratesToken') || localStorage.getItem('ebook_pirates_username');
+            if (token) {
+                document.documentElement.classList.add('ebp-authenticated');
+            }
+        } catch(e) {}
+    })();
+    </script>
 
     <!-- Three.js és Kiegészítők Importmap -->
     <script type="importmap">
@@ -390,7 +401,7 @@
         </div> 
     </div>
 
-    <div id="universal-npc-modal" class="gamemode-modal" style="display: none; align-items: center; justify-content: center;">
+    <div id="universal-npc-modal" class="gamemode-modal" style="display: none; align-items: center; justify-content: center;" onclick="if(event.target===this) closeUniversalNPCModal(event)">
           <div id="npc-portrait-panel" class="npc-portrait-closed">
             <img id="npc-portrait-image" src="" alt="NPC">
           </div>
@@ -403,7 +414,7 @@
                     <small id="npc-role" style="color: #b0bec5;">Piacfőnök</small>
                 </div>
             </div>
-            <button onclick="document.getElementById('universal-npc-modal').style.display='none'" style="background: transparent; border: none; color: white; font-size: 1.5em; cursor: pointer;">&times;</button>
+            <button onclick="closeUniversalNPCModal(event)" style="background: transparent; border: none; color: white; font-size: 1.5em; cursor: pointer;">&times;</button>
         </div>
 
         <div id="universal-chat-area" style="flex: 1; padding: 15px; overflow-y: auto; background-color: #eceff1; display: flex; flex-direction: column; gap: 10px;">
@@ -594,6 +605,6 @@
 </div>
 
     <script src="web_fordito.js"></script>
-    <script src="app.js?v=20260919_08"></script>
+    <script src="app.js?v=20260919_12"></script>
 </body>
 </html>

@@ -1,18 +1,37 @@
-# Ignore server-side and sensitive files
+# ============================================================================
+# 🚫 SZIGORÚ PROJECT-WIDE GITIGNORE SZABÁLYZAT
+# ============================================================================
+
+# --- 1. Szigorú Általános Assets és Média Tiltás (Minden a GCS Bucketben él!) ---
+assets/
+**/assets/**
+*assets*
+models/
+**/models/**
+*models*
+demojatek/assets/
+demojatek/models/
+toborzoiroda_rajz*
+*toborzoiroda_rajz*
+
+# --- 2. 3D Modellek, Hangok, Videók és Binárisok ---
+*.blend
+*.blend1
+*.glb
+*.gltf
+*.mp4
+*.webm
+*.mp3
+*.wav
+*.otf
+*.ttf
+
+# --- 3. Backend, Szerveroldali és Érzékeny Fájlok ---
 *.gs
 appsscript.json
 .clasp*
 credentials*
 .env
-
-# Node / build
-node_modules/
-.DS_Store
-
-# Ignore compiled or temporary files
-*.log
-
-# Prevent accidental upload of server-side or transpiled files
 parancsnoki_hid*
 *.gs.js
 global_dev_context.txt
@@ -22,23 +41,11 @@ Archy_Master.code-workspace
 auth_terminal_3d.js
 *auth_terminal_3d.js*
 
-# 3D models and media assets (Cloud GCS bucket used for heavy assets)
-*.blend
-*.blend1
-*.glb
-*.gltf
-*.mp4
-*.webm
-*.mp3
-*.wav
-assets/models/
-assets/videos/
-assets/pirates_assets/
-models/
-demojatek/assets/
-demojatek/models/
-
-# Local Dev & Tuning Tools (Never push to GitHub)
+# --- 4. Helyi Mentések, Fejlesztői Eszközök és Temp Fájlok ---
+*.bak*
+*.log
+node_modules/
+.DS_Store
 Toolbox/
 *toolbox*
 *debug_panel*

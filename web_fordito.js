@@ -18,6 +18,30 @@ var currentLang = localStorage.getItem('siteLang') || 'hu';
 // IDE KELL MAJD BEÍRNOD A TÖBBI SZÖVEGET IS!
 const translations = {
     'hu': {
+        // --- 3D Kozmosz Beléptető Terminál (HU) ---
+        'terminal_title': 'eBookPirates // NEURÁLIS TERMINÁL v4.2',
+        'terminal_loginTab': 'BELÉPÉS',
+        'terminal_regTab': 'REGISZTRÁCIÓ',
+        'terminal_delTab': 'LELÉPÉS',
+        'terminal_infoTab': 'INFÓ ℹ️',
+        'terminal_userLabel': '1. KALÓZNÉV (Kattints a gépeléshez):',
+        'terminal_passLabel': '2. JELSZÓ (Kattints a gépeléshez):',
+        'terminal_emailLabel': '1. KALÓZ E-MAIL CÍM:',
+        'terminal_newNickLabel': '2. VÁLASZTOTT KALÓZNÉV:',
+        'terminal_delNickLabel': '1. KALÓZNÉV:',
+        'terminal_delEmailLabel': '2. REGISZTRÁLT E-MAIL:',
+        'terminal_delReasonLabel': '3. KILÉPÉS OKA:',
+        'terminal_loginBtn': '🚀 BESZÁLLÁS A KIKÖTŐBE [ENTER]',
+        'terminal_regBtn': '⚓ JELENTKEZÉS A BANDÁBA [ENTER]',
+        'terminal_delBtn': '☠️ LELÉPTETÉSI KÉRELEM KÜLDÉSE [ENTER]',
+        'terminal_readyStatus': 'RENDSZER KÉSZ // KATTINTS A KIJELZŐRE',
+        'terminal_guideTitle': 'eBookPirates // HASZNÁLATI ÚTMUTATÓ',
+        'terminal_guideLine1': '1. 3D GÉPELÉS: Kattints a monitorra a gépeléshez!',
+        'terminal_guideLine2': '2. MEZŐVÁLTÁS: [TAB] billentyűvel válthatsz mezőt.',
+        'terminal_guideLine3': '3. BEKÜLDÉS: Nyomj [ENTER]-t vagy kattints a Küldés gombra.',
+        'terminal_guideLine4': '4. KAMERA: Bal egérgomb forgat, görgő nagyít.',
+        'terminal_guideLine5': '5. INFÓ GOMB: A 3D gomb megnyomásával bármikor visszahívható.',
+        'terminal_guideCloseBtn': '✖ VISSZA A TERMINÁLHOZ [ENTER]',
         // --- 3D Kozmosz Keszulek & Info Panel (HU) ---
         'auth_info_btn_title': 'Információ & Beállítások',
         'auth_loading_text': 'KOZMOSZ TERMINÁL INICIALIZÁLÁSA...',
@@ -1248,6 +1272,30 @@ const translations = {
 
     },
     'en': {
+        // --- 3D Kozmosz Beléptető Terminál (EN) ---
+        'terminal_title': 'eBookPirates // NEURAL TERMINAL v4.2',
+        'terminal_loginTab': 'LOGIN',
+        'terminal_regTab': 'REGISTER',
+        'terminal_delTab': 'DISCHARGE',
+        'terminal_infoTab': 'INFO ℹ️',
+        'terminal_userLabel': '1. PIRATE CALLSIGN (Click to type):',
+        'terminal_passLabel': '2. SECURITY KEY (Click to type):',
+        'terminal_emailLabel': '1. PIRATE EMAIL ADDRESS:',
+        'terminal_newNickLabel': '2. CHOSEN PIRATE CALLSIGN:',
+        'terminal_delNickLabel': '1. PIRATE CALLSIGN:',
+        'terminal_delEmailLabel': '2. REGISTERED EMAIL:',
+        'terminal_delReasonLabel': '3. DISCHARGE REASON:',
+        'terminal_loginBtn': '🚀 BOARD THE HARBOR [ENTER]',
+        'terminal_regBtn': '⚓ JOIN THE CREW [ENTER]',
+        'terminal_delBtn': '☠️ SUBMIT DISCHARGE REQUEST [ENTER]',
+        'terminal_readyStatus': 'SYSTEM READY // CLICK SCREEN TO TYPE',
+        'terminal_guideTitle': 'eBookPirates // USER MANUAL',
+        'terminal_guideLine1': '1. 3D TYPING: Click on screen to type on keyboard!',
+        'terminal_guideLine2': '2. SWITCH FIELD: Press [TAB] to navigate fields.',
+        'terminal_guideLine3': '3. SUBMIT: Press [ENTER] or click the action button.',
+        'terminal_guideLine4': '4. CAMERA: Left mouse orbits, scroll wheel zooms.',
+        'terminal_guideLine5': '5. INFO BUTTON: Press the 3D button anytime to reopen.',
+        'terminal_guideCloseBtn': '✖ RETURN TO TERMINAL [ENTER]',
         // --- 3D Kozmosz Keszulek & Info Panel (EN) ---
         'auth_info_btn_title': 'Information & Settings',
         'auth_loading_text': 'INITIALIZING COSMOS TERMINAL...',
@@ -2479,6 +2527,30 @@ const translations = {
 
     },
     'de': {
+        // --- 3D Kozmosz Beléptető Terminál (DE) ---
+        'terminal_title': 'eBookPirates // NEURALES TERMINAL v4.2',
+        'terminal_loginTab': 'LOGIN',
+        'terminal_regTab': 'REGISTRIEREN',
+        'terminal_delTab': 'ABMELDEN',
+        'terminal_infoTab': 'INFO ℹ️',
+        'terminal_userLabel': '1. PIRATENNAME (Klicken zum Tippen):',
+        'terminal_passLabel': '2. PASSWORT (Klicken zum Tippen):',
+        'terminal_emailLabel': '1. PIRATEN E-MAIL:',
+        'terminal_newNickLabel': '2. PIRATENNAME:',
+        'terminal_delNickLabel': '1. PIRATENNAME:',
+        'terminal_delEmailLabel': '2. E-MAIL-ADRESSE:',
+        'terminal_delReasonLabel': '3. GRUND DES AUSTRITTS:',
+        'terminal_loginBtn': '🚀 INS HAFENBECKEN EINSTEIGEN [ENTER]',
+        'terminal_regBtn': '⚓ DER CREW BEITRETEN [ENTER]',
+        'terminal_delBtn': '☠️ ABMELDUNG EINREICHEN [ENTER]',
+        'terminal_readyStatus': 'SYSTEM BEREIT // AUF BILDSCHIRM TIPPEN',
+        'terminal_guideTitle': 'eBookPirates // BEDIENUNGSANLEITUNG',
+        'terminal_guideLine1': '1. 3D-TIPPEN: Klicke auf den Bildschirm zum Tippen!',
+        'terminal_guideLine2': '2. FELDWECHSEL: Mit [TAB] zwischen Feldern springen.',
+        'terminal_guideLine3': '3. ABSENDEN: [ENTER] drücken oder Button klicken.',
+        'terminal_guideLine4': '4. KAMERA: Linksklick dreht, Mausrad zoomt heran.',
+        'terminal_guideLine5': '5. INFO-TASTE: Jederzeit über 3D-Taste aufrufbar.',
+        'terminal_guideCloseBtn': '✖ ZURÜCK ZUM TERMINAL [ENTER]',
         // --- 3D Kozmosz Keszulek & Info Panel (DE) ---
         'auth_info_btn_title': 'Informationen & Einstellungen',
         'auth_loading_text': 'KOSMOS-TERMINAL WIRD INITIALISIERT...',
@@ -3695,6 +3767,30 @@ const translations = {
 
     },
     'fr': {
+        // --- 3D Kozmosz Beléptető Terminál (FR) ---
+        'terminal_title': 'eBookPirates // TERMINAL NEURAL v4.2',
+        'terminal_loginTab': 'CONNEXION',
+        'terminal_regTab': 'INSCRIPTION',
+        'terminal_delTab': 'DEPART',
+        'terminal_infoTab': 'INFO ℹ️',
+        'terminal_userLabel': '1. NOM DE PIRATE (Cliquez pour taper):',
+        'terminal_passLabel': '2. MOT DE PASSE (Cliquez pour taper):',
+        'terminal_emailLabel': '1. EMAIL DU PIRATE:',
+        'terminal_newNickLabel': '2. NOM DE PIRATE CHOISI:',
+        'terminal_delNickLabel': '1. NOM DE PIRATE:',
+        'terminal_delEmailLabel': '2. EMAIL ENREGISTRE:',
+        'terminal_delReasonLabel': '3. RAISON DU DEPART:',
+        'terminal_loginBtn': '🚀 EMBARQUER DANS LE PORT [ENTER]',
+        'terminal_regBtn': '⚓ REJOINDRE L\'EQUIPAGE [ENTER]',
+        'terminal_delBtn': '☠️ ENVOYER LA DEMANDE DE SORTIE [ENTER]',
+        'terminal_readyStatus': 'SYSTEME PRET // CLIQUEZ POUR SAISIR',
+        'terminal_guideTitle': 'eBookPirates // GUIDE D\'UTILISATION',
+        'terminal_guideLine1': '1. SAISIE 3D : Cliquez sur l\'écran pour taper !',
+        'terminal_guideLine2': '2. CHANGER DE CHAMP : Utilisez [TAB] pour naviguer.',
+        'terminal_guideLine3': '3. ENVOYER : Appuyez sur [ENTER] ou cliquez le bouton.',
+        'terminal_guideLine4': '4. CAMÉRA : Clic gauche pivote, molette zoome.',
+        'terminal_guideLine5': '5. BOUTON INFO : Disponible à tout moment sur le boîtier.',
+        'terminal_guideCloseBtn': '✖ RETOUR AU TERMINAL [ENTER]',
         // --- 3D Kozmosz Keszulek & Info Panel (FR) ---
         'auth_info_btn_title': 'Informations & Paramètres',
         'auth_loading_text': 'INITIALISATION DU TERMINAL COSMOS...',
@@ -4919,6 +5015,30 @@ const translations = {
 
     },
     'es': {
+        // --- 3D Kozmosz Beléptető Terminál (ES) ---
+        'terminal_title': 'eBookPirates // TERMINAL NEURONAL v4.2',
+        'terminal_loginTab': 'ENTRAR',
+        'terminal_regTab': 'REGISTRO',
+        'terminal_delTab': 'BAJA',
+        'terminal_infoTab': 'INFO ℹ️',
+        'terminal_userLabel': '1. NOMBRE PIRATA (Clic para escribir):',
+        'terminal_passLabel': '2. CLAVE SECRETA (Clic para escribir):',
+        'terminal_emailLabel': '1. CORREO DEL PIRATA:',
+        'terminal_newNickLabel': '2. NOMBRE PIRATA ELEGIDO:',
+        'terminal_delNickLabel': '1. NOMBRE PIRATA:',
+        'terminal_delEmailLabel': '2. CORREO REGISTRADO:',
+        'terminal_delReasonLabel': '3. MOTIVO DE SALIDA:',
+        'terminal_loginBtn': '🚀 SUBIR A BORDO [ENTER]',
+        'terminal_regBtn': '⚓ UNIRSE A LA TRIPULACION [ENTER]',
+        'terminal_delBtn': '☠️ ENVIAR SOLICITUD DE BAJA [ENTER]',
+        'terminal_readyStatus': 'SISTEMA LISTO // CLIC EN PANTALLA',
+        'terminal_guideTitle': 'eBookPirates // GUÍA DE USO',
+        'terminal_guideLine1': '1. ESCRITURA 3D: ¡Haz clic en pantalla para escribir!',
+        'terminal_guideLine2': '2. CAMBIAR CAMPO: Presiona [TAB] para alternar.',
+        'terminal_guideLine3': '3. ENVIAR: Pulsa [ENTER] o haz clic en el botón.',
+        'terminal_guideLine4': '4. CÁMARA: Clic izquierdo gira, rueda hace zoom.',
+        'terminal_guideLine5': '5. BOTÓN INFO: Actívalo desde el botón del dispositivo.',
+        'terminal_guideCloseBtn': '✖ VOLVER AL TERMINAL [ENTER]',
         // --- 3D Kozmosz Keszulek & Info Panel (ES) ---
         'auth_info_btn_title': 'Información y Ajustes',
         'auth_loading_text': 'INICIALIZANDO TERMINAL COSMOS...',
@@ -6134,6 +6254,30 @@ const translations = {
 
     },
     'pl': {
+        // --- 3D Kozmosz Beléptető Terminál (PL) ---
+        'terminal_title': 'eBookPirates // TERMINAL NEURONOWY v4.2',
+        'terminal_loginTab': 'LOGOWANIE',
+        'terminal_regTab': 'REJESTRACJA',
+        'terminal_delTab': 'WYPISANIE',
+        'terminal_infoTab': 'INFO ℹ️',
+        'terminal_userLabel': '1. IMIE PIRATA (Kliknij aby pisac):',
+        'terminal_passLabel': '2. HASLO (Kliknij aby pisac):',
+        'terminal_emailLabel': '1. ADRES EMAIL PIRATA:',
+        'terminal_newNickLabel': '2. WYBRANE IMIE PIRATA:',
+        'terminal_delNickLabel': '1. IMIE PIRATA:',
+        'terminal_delEmailLabel': '2. ZAREJESTROWANY EMAIL:',
+        'terminal_delReasonLabel': '3. POWOD REZYGNACJI:',
+        'terminal_loginBtn': '🚀 WEJDZ DO PORTU [ENTER]',
+        'terminal_regBtn': '⚓ DOLACZ DO ZALOGI [ENTER]',
+        'terminal_delBtn': '☠️ WYSLIJ PROSBE O WYPISANIE [ENTER]',
+        'terminal_readyStatus': 'SYSTEM GOTOWY // KLIKNIJ EKRAN',
+        'terminal_guideTitle': 'eBookPirates // INSTRUKCJA OBSŁUGI',
+        'terminal_guideLine1': '1. PISANIE 3D: Kliknij ekran, aby pisać na klawiaturze!',
+        'terminal_guideLine2': '2. ZMIANA POLA: Naciśnij [TAB], aby przełączać pola.',
+        'terminal_guideLine3': '3. WYSYŁANIE: Naciśnij [ENTER] lub kliknij przycisk.',
+        'terminal_guideLine4': '4. KAMERA: Lewy przycisk obraca, kółko przybliża.',
+        'terminal_guideLine5': '5. PRZYCISK INFO: Dostępny w każdej chwili na obudowie.',
+        'terminal_guideCloseBtn': '✖ POWRÓT DO TERMINALA [ENTER]',
         // --- 3D Kozmosz Keszulek & Info Panel (PL) ---
         'auth_info_btn_title': 'Informacje i Ustawienia',
         'auth_loading_text': 'INICJALIZACJA TERMINALA KOSMICZNEGO...',
@@ -7349,6 +7493,30 @@ const translations = {
 
     },
     'ru': {
+        // --- 3D Kozmosz Beléptető Terminál (RU) ---
+        'terminal_title': 'eBookPirates // НЕЙРОТЕРМИНАЛ v4.2',
+        'terminal_loginTab': 'ВХОД',
+        'terminal_regTab': 'РЕГИСТРАЦИЯ',
+        'terminal_delTab': 'ВЫХОД',
+        'terminal_infoTab': 'ИНФО ℹ️',
+        'terminal_userLabel': '1. ИМЯ ПИРАТА (Клик для ввода):',
+        'terminal_passLabel': '2. ПАРОЛЬ (Клик для ввода):',
+        'terminal_emailLabel': '1. ЭЛ. ПОЧТА ПИРАТА:',
+        'terminal_newNickLabel': '2. ВЫБРАННОЕ ИМЯ ПИРАТА:',
+        'terminal_delNickLabel': '1. ИМЯ ПИРАТА:',
+        'terminal_delEmailLabel': '2. ЗАРЕГИСТРИРОВАННАЯ ПОЧТА:',
+        'terminal_delReasonLabel': '3. ПРИЧИНA ВЫХОДА:',
+        'terminal_loginBtn': '🚀 ВОЙТИ В ПОРТ [ENTER]',
+        'terminal_regBtn': '⚓ ВСТУПИТЬ В КОМАНДУ [ENTER]',
+        'terminal_delBtn': '☠️ ПОДАТЬ ЗАЯВКУ НА ВЫХОД [ENTER]',
+        'terminal_readyStatus': 'СИСТЕМА ГОТОВА // НАЖМИТЕ НА ЭКРАН',
+        'terminal_guideTitle': 'eBookPirates // РУКОВОДСТВО ПОЛЬЗОВАТЕЛЯ',
+        'terminal_guideLine1': '1. 3D-ВВОД: Нажмите на экран для ввода с клавиатуры!',
+        'terminal_guideLine2': '2. СМЕНА ПОЛЯ: Нажмите [TAB] для перехода между полями.',
+        'terminal_guideLine3': '3. ОТПРАВКА: Нажмите [ENTER] или кнопку действия.',
+        'terminal_guideLine4': '4. КАМЕРА: ЛКМ вращает обзор, колесико приближает.',
+        'terminal_guideLine5': '5. КНОПКА ИНФО: Доступна на корпусе устройства.',
+        'terminal_guideCloseBtn': '✖ ВЕРНУТЬСЯ К ТЕРМИНАЛУ [ENTER]',
         // --- 3D Kozmosz Keszulek & Info Panel (RU) ---
         'auth_info_btn_title': 'Информация и Настройки',
         'auth_loading_text': 'ИНИЦИАЛИЗАЦИЯ ТЕРМИНАЛА КОСМОСА...',
@@ -9023,6 +9191,9 @@ function switchLanguage(lang) {
         if (typeof reloadCurrentPageForLanguage === 'function') {
             reloadCurrentPageForLanguage();
         }
+        if (typeof window.handleLangSwitch === 'function') {
+            try { window.handleLangSwitch(lang); } catch(e) {}
+        }
     } else {
         console.error('Ismeretlen nyelv:', lang);
     }
@@ -9036,3 +9207,32 @@ document.addEventListener('DOMContentLoaded', function() {
     updateLanguageUI();
     bindLanguageButtons();
 });
+
+
+// ----------------------------------------------------------------
+// 3D KOZMOSZ TERMINÁL SZÓTÁR KINYERŐ SEGÉDFÜGGVÉNY
+// ----------------------------------------------------------------
+function getTerminalLabels(lang) {
+    var l = lang || currentLang || 'hu';
+    if (typeof translations === 'undefined' || !translations[l]) l = 'hu';
+    var t = (typeof translations !== 'undefined' && translations[l]) ? translations[l] : {};
+    var fallback = (typeof translations !== 'undefined' && translations['hu']) ? translations['hu'] : {};
+    
+    var keys = [
+        'title', 'loginTab', 'regTab', 'delTab', 'infoTab',
+        'userLabel', 'passLabel', 'emailLabel', 'newNickLabel',
+        'delNickLabel', 'delEmailLabel', 'delReasonLabel',
+        'loginBtn', 'regBtn', 'delBtn', 'readyStatus',
+        'guideTitle', 'guideLine1', 'guideLine2', 'guideLine3', 'guideLine4', 'guideLine5',
+        'guideCloseBtn'
+    ];
+    
+    var res = {};
+    for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        var fullKey = 'terminal_' + k;
+        res[k] = t[fullKey] || fallback[fullKey] || '';
+    }
+    return res;
+}
+window.getTerminalLabels = getTerminalLabels;

@@ -89,6 +89,19 @@ function warmup3DHarborAssets() {
     critical3DUrls.forEach(function(url) {
         fetch(url, { mode: 'cors' }).catch(function() {});
     });
+
+    // 3. Perzisztens konténer előkészítése és háttérbeli inicializálása
+    var kikotoContainer = document.getElementById('persistent-kikoto-container');
+    if (kikotoContainer && kikotoContainer.children.length === 0 && !window._kikoto3DInitialized) {
+        preloadPageTemplate('kikoto_oldal').then(function(htmlText) {
+            if (htmlText && kikotoContainer && kikotoContainer.children.length === 0 && !window._kikoto3DInitialized) {
+                kikotoContainer.innerHTML = htmlText;
+                if (typeof initializeKikotoOldal === 'function') {
+                    initializeKikotoOldal();
+                }
+            }
+        });
+    }
 }
 window.warmup3DHarborAssets = warmup3DHarborAssets;
 
@@ -946,9 +959,6 @@ function ensureCreditDisplayIsPresent() {
  * JAVÍTVA: Nem küldjük az emailt, csak az oldal nevét!
  */
 function loadPage(pageName) {
-    if (typeof window.cleanupKikotoOldal === 'function') {
-        try { window.cleanupKikotoOldal(); } catch(e) { console.warn('Kikoto cleanup warning:', e); }
-    }
     var closeIcon = document.querySelector('.header-close-icon');
 
     // === 0. TUTORIAL JOGOSULTSÁG KAPUŐRZŐ ===
@@ -994,8 +1004,6 @@ function loadPage(pageName) {
     if (pageName && pageName !== 'login' && pageName !== 'index') {
         try { localStorage.setItem('ebook_last_active_page', pageName); } catch(e) {}
     }
-    document.getElementById('content').style.display = 'block';
-    // document.getElementById('marketing-view').style.display = 'none'; // Ha van ilyen div
 
     var isFullScreenGameplay = (pageName === 'tutorial_oldal' || pageName === 'game_oldal');
 
@@ -1009,21 +1017,114 @@ function loadPage(pageName) {
     }
 
     const contentDiv = document.getElementById('content');
+    const kikotoContainer = document.getElementById('persistent-kikoto-container');
     const loadingOverlay = document.getElementById('loading-overlay');
 
-    if (pageName === 'tutorial_oldal' || pageName === 'game_oldal' || pageName === 'kikoto_oldal') {
-        contentDiv.style.padding = '0';
-        contentDiv.style.overflow = 'hidden';
-    } else {
-        contentDiv.style.padding = '20px';
-        contentDiv.style.overflowY = 'auto';
+    // =========================================================================
+    // === A. KIKÖTŐ OLDAL (PERZISZTENS 3D NÉZET - 0 MS AZONNALI MEGJELENÍTÉS) ===
+    // =========================================================================
+    if (pageName === 'kikoto_oldal') {
+        if (contentDiv) {
+            contentDiv.style.display = 'none';
+            contentDiv.innerHTML = '';
+        }
+        if (kikotoContainer) {
+            kikotoContainer.style.display = 'block';
+        }
+
+        function afterKikotoMount() {
+            if (typeof updateLanguageUI === 'function') updateLanguageUI();
+            if (typeof bindLanguageButtons === 'function') bindLanguageButtons();
+            
+            if (typeof initializeKikotoOldal === 'function') {
+                initializeKikotoOldal();
+            }
+            if (typeof initializePage === 'function') {
+                initializePage('kikoto_oldal');
+            }
+
+            callBackend('getPageDataAndContent', ['kikoto_oldal'],
+                function (result) {
+                    setupAccordionListeners();
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                },
+                function (error) {
+                    console.warn("Kikötő adatok betöltési figyelmeztetés:", error);
+                    setupAccordionListeners();
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                }
+            );
+        }
+
+        // Ha a kikötő 3D már egyszer felépült a GPU memóriában -> Azonnali aktiválás és állapot visszaállítás (0 ms)!
+        if (kikotoContainer && kikotoContainer.children.length > 0 && window._kikoto3DInitialized) {
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+
+            // ⚓ Állapot, kamera, sötétítő réteg és hover buborékok garantált felébresztése/visszaállítása
+            if (typeof window._resetKikotoViewport === 'function') {
+                window._resetKikotoViewport();
+            } else if (typeof window._kikotoResizeHandler === 'function') {
+                window._kikotoResizeHandler();
+            }
+
+            // Biztonsági sötétítő réteg takarítás a DOM-ban is
+            var sceneOverlay = document.getElementById('scene-transition-overlay');
+            if (sceneOverlay) {
+                sceneOverlay.classList.remove('active');
+                sceneOverlay.style.opacity = '0';
+            }
+
+            window.dispatchEvent(new Event('resize'));
+            if (typeof updateLanguageUI === 'function') updateLanguageUI();
+            if (typeof initializePage === 'function') initializePage('kikoto_oldal');
+            return;
+        }
+
+        // Első inicializálás: Sablon beillesztése és motor indítása
+        if (loadingOverlay) loadingOverlay.style.display = 'flex';
+        if (window.pageTemplateCache && window.pageTemplateCache['kikoto_oldal']) {
+            if (kikotoContainer) kikotoContainer.innerHTML = window.pageTemplateCache['kikoto_oldal'];
+            afterKikotoMount();
+        } else {
+            fetch(getPageHtmlUrl('kikoto_oldal'), { cache: 'no-cache' })
+                .then(function (res) {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.text();
+                })
+                .then(function (htmlText) {
+                    if (window.pageTemplateCache) window.pageTemplateCache['kikoto_oldal'] = htmlText;
+                    if (kikotoContainer) kikotoContainer.innerHTML = htmlText;
+                    afterKikotoMount();
+                })
+                .catch(function (err) {
+                    if (kikotoContainer) kikotoContainer.innerHTML = '<p>Hiba a Kikötő betöltésekor: ' + err.message + '</p>';
+                    if (loadingOverlay) loadingOverlay.style.display = 'none';
+                });
+        }
+        return;
     }
 
-    contentDiv.innerHTML = '';
+    // =========================================================================
+    // === B. MINDEN EGYÉB ALOLDAL (Taverna, Bank, Piac, Fedélzet, stb.) =====
+    // =========================================================================
+    if (kikotoContainer) {
+        kikotoContainer.style.display = 'none'; // 3D kikötő háttérbe rejtése altatás nélkül
+    }
+    if (contentDiv) {
+        contentDiv.style.display = 'block';
+        if (pageName === 'tutorial_oldal' || pageName === 'game_oldal') {
+            contentDiv.style.padding = '0';
+            contentDiv.style.overflow = 'hidden';
+        } else {
+            contentDiv.style.padding = '20px';
+            contentDiv.style.overflowY = 'auto';
+        }
+        contentDiv.innerHTML = '';
+    }
     if (loadingOverlay) loadingOverlay.style.display = 'flex';
 
     function renderAndInitPage(htmlText) {
-        contentDiv.innerHTML = htmlText;
+        if (contentDiv) contentDiv.innerHTML = htmlText;
 
         if (typeof updateLanguageUI === 'function') {
             updateLanguageUI();
@@ -1035,7 +1136,7 @@ function loadPage(pageName) {
         callBackend('getPageDataAndContent', [pageName],
             function (result) {
                 var pageData = (result && result.pageData) ? result.pageData : {};
-                const pagesWithSplash = ['fedelzet_oldal', 'hajomuhely_oldal', 'kikoto_oldal', 'piac_oldal', 'bank_oldal', 'tekercsmester_oldal', 'masolatok_oldal', 'taverna_oldal', 'konyvszentely_oldal', 'felhokolostor_oldal', 'konyvtar', 'kincsek'];
+                const pagesWithSplash = ['fedelzet_oldal', 'hajomuhely_oldal', 'piac_oldal', 'bank_oldal', 'tekercsmester_oldal', 'masolatok_oldal', 'taverna_oldal', 'konyvszentely_oldal', 'felhokolostor_oldal', 'konyvtar', 'kincsek'];
 
                 if (pageName === 'tutorial_oldal') {
                     runTutorialScript();
@@ -1055,9 +1156,6 @@ function loadPage(pageName) {
                     initializePage(pageName);
                     if (typeof initializeTekercsmesterPage === 'function') initializeTekercsmesterPage(pageData);
                     if (typeof loadCompletableScrolls === 'function') loadCompletableScrolls();
-                } else if (pageName === 'kikoto_oldal') {
-                    initializePage(pageName);
-                    if (typeof initializeKikotoOldal === 'function') initializeKikotoOldal();
                 } else if (pageName === 'piac_oldal') {
                     initializePage(pageName);
                     if (typeof initializePiacOldal === 'function') initializePiacOldal();
@@ -1094,9 +1192,6 @@ function loadPage(pageName) {
                 if (loadingOverlay) loadingOverlay.style.display = 'none';
                 if (pageName === 'tutorial_oldal') {
                     runTutorialScript();
-                } else if (pageName === 'kikoto_oldal') {
-                    initializePage(pageName);
-                    if (typeof initializeKikotoOldal === 'function') initializeKikotoOldal();
                 } else {
                     initializePage(pageName);
                 }
@@ -1122,7 +1217,9 @@ function loadPage(pageName) {
                 renderAndInitPage(htmlText);
             })
             .catch(function (error) {
-                contentDiv.innerHTML = '<p>' + (typeof t === 'function' ? t('page_load_error_prefix') : 'Hiba: ') + error.message + '</p>';
+                if (contentDiv) {
+                    contentDiv.innerHTML = '<p>' + (typeof t === 'function' ? t('page_load_error_prefix') : 'Hiba: ') + error.message + '</p>';
+                }
                 if (loadingOverlay) loadingOverlay.style.display = 'none';
             });
     }
@@ -11705,8 +11802,6 @@ function cleanupKikotoOldal() {
 window.cleanupKikotoOldal = cleanupKikotoOldal;
 
 function initializeKikotoOldal() {
-    cleanupKikotoOldal();
-
     var canvasContainer = document.getElementById('webgl-canvas-container');
     var container2D = document.getElementById('kikoto-2d-container');
     var loadingOverlay = document.getElementById('loading-overlay');
@@ -11716,6 +11811,17 @@ function initializeKikotoOldal() {
         if (canvasContainer) canvasContainer.style.display = 'none';
         if (loadingOverlay) loadingOverlay.style.display = 'none';
         if (container2D) container2D.style.display = 'block';
+        return;
+    }
+
+    // Ha a 3D kikötő már inicializálva van és él a jelenet, nem töröljük le!
+    if (window._kikoto3DInitialized && window._kikotoScene) {
+        if (container2D) container2D.style.display = 'none';
+        if (canvasContainer) canvasContainer.style.display = 'block';
+        if (loadingOverlay) loadingOverlay.style.display = 'none';
+        if (typeof window._kikotoResizeHandler === 'function') {
+            window._kikotoResizeHandler();
+        }
         return;
     }
 
@@ -11738,9 +11844,11 @@ function initializeKikotoOldal() {
         const { Water } = modules[4];
         
         window.THREE = THREE;
+        window._kikoto3DInitialized = true;
         runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Water);
     }).catch(function(err) {
         console.error("❌ Hiba a Three.js 3D Kikötő modulok betöltésekor, visszaváltás 2D felületre:", err);
+        window._kikoto3DInitialized = false;
         if (canvasContainer) canvasContainer.style.display = 'none';
         if (loadingOverlay) loadingOverlay.style.display = 'none';
         if (container2D) container2D.style.display = 'block';
@@ -12088,6 +12196,22 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             }
 
             // 4. Hagyományos aloldal betöltése
+            if (typeof resetKikotoViewport === 'function') {
+                resetKikotoViewport();
+            } else {
+                const overlay = document.getElementById('scene-transition-overlay');
+                if (overlay) overlay.classList.remove('active');
+                isCinematicTransitioning = false;
+                if (defaultCameraPos && defaultTargetPos && camera) {
+                    camera.position.copy(defaultCameraPos);
+                    if (controls) {
+                        controls.target.copy(defaultTargetPos);
+                        controls.update();
+                        controls.enabled = true;
+                    }
+                }
+            }
+
             if (window.parent && window.parent !== window && typeof window.parent.loadPage === 'function') {
                 window.parent.loadPage(pageId);
             } else if (typeof window.loadPage === 'function') {
@@ -15446,8 +15570,57 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
 
         // Indítás
 
+    function resetKikotoViewport() {
+        console.log("⚓ 3D Kikötő Viewport Állapot Visszaállítása (0 ms ébresztés)");
+        isCinematicTransitioning = false;
+        isModalOpen = false;
+        pointerDownTime = 0;
+
+        // 1. Fekete sötétítő réteg azonnali feloldása
+        const overlay = document.getElementById('scene-transition-overlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+            overlay.style.opacity = '0';
+        }
+
+        // 2. Kijelölések, hover derengések és buborékszövegek alaphelyzetbe állítása
+        if (currentHoveredLocation) {
+            removeHighlight(currentHoveredLocation.meshes);
+            currentHoveredLocation = null;
+        }
+        const tooltipEl = document.getElementById('interactive-tooltip');
+        if (tooltipEl) {
+            tooltipEl.classList.remove('visible');
+        }
+        document.body.style.cursor = 'default';
+
+        // 3. Kamera és vezérlők visszaállítása az alapértelmezett kikötői rálátási pozícióra
+        if (defaultCameraPos && defaultTargetPos && camera && defaultCameraPos.length() > 0) {
+            camera.position.copy(defaultCameraPos);
+            if (controls) {
+                controls.target.copy(defaultTargetPos);
+                controls.update();
+                controls.enabled = true;
+            }
+        } else if (controls) {
+            controls.enabled = true;
+            controls.update();
+        }
+
+        // 4. Képernyőméret, képarány és vetítési mátrix azonnali frissítése
+        onWindowResize();
+
+        // 5. Esetlegesen nyitva maradt modálok bezárása
+        ['universal-npc-modal', 'toborzo-modal', 'fedelzet-modal'].forEach(function(mId) {
+            var m = document.getElementById(mId);
+            if (m) m.style.display = 'none';
+        });
+    }
+
     // Inicializálás hívása
     init();
+    window._kikotoResizeHandler = onWindowResize;
+    window._resetKikotoViewport = resetKikotoViewport;
 
     // Regisztráljuk a takarító callback-eket
     kikotoCleanupCallbacks.push(function() {

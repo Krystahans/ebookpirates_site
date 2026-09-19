@@ -138,8 +138,8 @@ const translations = {
         'toborzo_captain_desc': 'Válassz ki egyet a kikötőben lévő hajóid közül, hogy betöltsd az üres pozíciókat. Csak azokat a hajókat látod, amik nincsenek expedíción.',
         'toborzo_select_ship_label': 'Hajó kiválasztása:',
         'toborzo_no_ship_selected': 'Nincs kiválasztott hajó',
-        'toborzo_roster_title': 'Legénységi Roster',
-        'toborzo_refresh_list': 'Lista frissítése',
+        'toborzo_roster_title': 'Legénységi beosztás',
+        'toborzo_refresh_list': 'Hajólista frissítése',
 
         // --- Könyvtár ---
         'library_splash_title': 'Könyvtárszoba',

@@ -12365,6 +12365,19 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                 if (e.stopPropagation) e.stopPropagation();
                 if (e.preventDefault) e.preventDefault();
             }
+            var vid = document.getElementById('toborzo-video-player');
+            if (vid) {
+                try { vid.pause(); } catch(err) {}
+            }
+            var cMunk = document.getElementById('toborzo-console-munkavallalo');
+            var cKap = document.getElementById('toborzo-console-kapitany');
+            if (cMunk) cMunk.style.display = 'none';
+            if (cKap) cKap.style.display = 'none';
+
+            document.querySelectorAll('.toborzo-brass-nametag-container').forEach(function(el) {
+                el.style.display = 'flex';
+            });
+
             document.querySelectorAll('#toborzo-modal').forEach(function(m) {
                 m.style.display = 'none';
             });
@@ -12607,9 +12620,84 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             window.addBubbleToUniversal(name, text, "incoming");
         };
 
-        // ─── TOBORZÓBARAKK LOGIKA (MUNKAVÁLLALÓ & KAPITÁNY) ───────────────────────────
+        // ─── TOBORZÓBARAKK LOGIKA (INTERAKTÍV SVG + MP4 ANIMÁCIÓ + KIBER KONZOLOK) ───────────────────────────
         window.toborzoOwnedShips = [];
         window.toborzoAvailableCrew = [];
+
+        window.initToborzoSvgInteractions = function() {
+            var svg = document.getElementById('toborzo-interactive-svg');
+            var tooltip = document.getElementById('toborzo-tooltip');
+            var tooltipText = document.getElementById('toborzo-tooltip-text');
+            var stage = document.getElementById('toborzo-stage-container');
+            if (!svg || !tooltip || !tooltipText || !stage) return;
+            if (svg._interactionsInitialized) return;
+            svg._interactionsInitialized = true;
+
+            var titles = {
+                'kepernyo_bal': '🛠️ Munkavállalói Konzol',
+                'kepernyo_jobb': '🚢 Kapitányi Konzol',
+                'kepernyo_kozepfel': '📡 Kommunikációs Készülék (Hamarosan)',
+                'kepernyo_kozeple': '📜 Kikötői Faliújság (Hamarosan)'
+            };
+
+            var paths = svg.querySelectorAll('.toborzo-screen-path');
+            paths.forEach(function(p) {
+                p.addEventListener('mouseenter', function() {
+                    var text = titles[p.id] || p.getAttribute('title') || '';
+                    if (text) {
+                        tooltipText.textContent = text;
+                        tooltip.style.display = 'block';
+                        tooltip.style.opacity = '1';
+                    }
+                });
+                p.addEventListener('mousemove', function(e) {
+                    var rect = stage.getBoundingClientRect();
+                    var x = e.clientX - rect.left;
+                    var y = e.clientY - rect.top;
+                    tooltip.style.left = x + 'px';
+                    tooltip.style.top = y + 'px';
+                });
+                p.addEventListener('mouseleave', function() {
+                    tooltip.style.display = 'none';
+                    tooltip.style.opacity = '0';
+                });
+            });
+        };
+
+        window.openToborzoConsole = function(type) {
+            var cMunk = document.getElementById('toborzo-console-munkavallalo');
+            var cKap = document.getElementById('toborzo-console-kapitany');
+            var tooltip = document.getElementById('toborzo-tooltip');
+            if (tooltip) tooltip.style.display = 'none';
+
+            // Névtábla elrejtése a konzolok felugrásakor
+            document.querySelectorAll('.toborzo-brass-nametag-container').forEach(function(el) {
+                el.style.display = 'none';
+            });
+
+            if (type === 'munkavallalo') {
+                if (cMunk) cMunk.style.display = 'flex';
+                if (cKap) cKap.style.display = 'none';
+            } else if (type === 'kapitany') {
+                if (cKap) cKap.style.display = 'flex';
+                if (cMunk) cMunk.style.display = 'none';
+                if (typeof window.renderSelectedShipCrew === 'function') {
+                    window.renderSelectedShipCrew();
+                }
+            }
+        };
+
+        window.closeToborzoConsole = function() {
+            var cMunk = document.getElementById('toborzo-console-munkavallalo');
+            var cKap = document.getElementById('toborzo-console-kapitany');
+            if (cMunk) cMunk.style.display = 'none';
+            if (cKap) cKap.style.display = 'none';
+
+            // Névtábla megjelenítése kizárólag az SVG felületen
+            document.querySelectorAll('.toborzo-brass-nametag-container').forEach(function(el) {
+                el.style.display = 'flex';
+            });
+        };
 
         window.hasRequiredRank = function(playerRank, role) {
             var rankHierarchy = [
@@ -12639,9 +12727,24 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
         window.openToborzoBarakk = function() {
             var modal = document.getElementById('toborzo-modal');
             if (modal) modal.style.display = 'flex';
+
+            // Reset consoles and start video
+            window.closeToborzoConsole();
+            if (typeof window.initToborzoSvgInteractions === 'function') {
+                window.initToborzoSvgInteractions();
+            }
+
+            var vid = document.getElementById('toborzo-video-player');
+            if (vid) {
+                try {
+                    vid.currentTime = 0;
+                    var p = vid.play();
+                    if (p && p.catch) p.catch(function() {});
+                } catch(e) {}
+            }
+
             var loadingEl = document.getElementById('toborzo-loading');
             if (loadingEl) loadingEl.style.display = 'flex';
-            window.switchToborzoTab('munkavallalo');
 
             if (typeof window.callBackend === 'function') {
                 window.callBackend('getToborzoData', [], 
@@ -12651,8 +12754,10 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                             if (data.playerStatus) {
                                 var stSelect = document.getElementById('toborzo-status-select');
                                 var rSelect = document.getElementById('toborzo-role-select');
+                                var cInput = document.getElementById('toborzo-cost-input');
                                 if (stSelect) stSelect.value = data.playerStatus.status || "Keresek munkát";
                                 if (rSelect) rSelect.value = data.playerStatus.role || "";
+                                if (cInput && data.playerStatus.cost !== undefined) cInput.value = data.playerStatus.cost;
                             }
                             window.toborzoOwnedShips = data.ownedShips || [];
                             window.toborzoAvailableCrew = data.availableCrew || [];
@@ -12682,19 +12787,6 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             }
         };
 
-        window.switchToborzoTab = function(tab) {
-            var tabMunk = document.getElementById('toborzo-tab-munkavallalo');
-            var tabKap = document.getElementById('toborzo-tab-kapitany');
-            var btnMunk = document.getElementById('tab-btn-munkavallalo');
-            var btnKap = document.getElementById('tab-btn-kapitany');
-
-            if (tabMunk) tabMunk.style.display = (tab === 'munkavallalo') ? 'block' : 'none';
-            if (tabKap) tabKap.style.display = (tab === 'kapitany') ? 'block' : 'none';
-            
-            if (btnMunk) btnMunk.style.background = (tab === 'munkavallalo') ? 'var(--color-gold, #d4af37)' : '#bdbdbd';
-            if (btnKap) btnKap.style.background = (tab === 'kapitany') ? 'var(--color-gold, #d4af37)' : '#bdbdbd';
-        };
-
         window.savePlayerJobStatus = function() {
             var stSelect = document.getElementById('toborzo-status-select');
             var rSelect = document.getElementById('toborzo-role-select');
@@ -12705,7 +12797,11 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             var cost = cInput ? (parseInt(cInput.value, 10) || 10) : 10;
             
             if (status === 'Keresek munkát' && !role) {
-                alert("Kérlek, válassz ki egy keresett pozíciót!");
+                if (typeof window.uiAlert === 'function') {
+                    window.uiAlert("Kérlek, válassz ki egy keresett pozíciót!");
+                } else {
+                    alert("Kérlek, válassz ki egy keresett pozíciót!");
+                }
                 return;
             }
 
@@ -12717,20 +12813,34 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                     function(data) {
                         if (loadingEl) loadingEl.style.display = 'none';
                         if (data && data.success) {
-                            alert("Státuszod sikeresen mentve! A kapitányok mostantól láthatják a faliújságon.");
+                            if (typeof window.uiAlert === 'function') {
+                                window.uiAlert("Státuszod sikeresen mentve! A kapitányok mostantól láthatják a faliújságon.", "Siker");
+                            } else {
+                                alert("Státuszod sikeresen mentve! A kapitányok mostantól láthatják a faliújságon.");
+                            }
+                            window.closeToborzoConsole();
                         } else {
-                            alert("Hiba a mentés során: " + (data ? data.error : 'Ismeretlen hiba'));
+                            var errMsg = "Hiba a mentés során: " + (data ? data.error : 'Ismeretlen hiba');
+                            if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                            else alert(errMsg);
                         }
                     },
                     function(err) {
                         if (loadingEl) loadingEl.style.display = 'none';
-                        alert("Hálózati hiba: " + err.message);
+                        var errMsg = "Hálózati hiba: " + err.message;
+                        if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                        else alert(errMsg);
                     }
                 );
             } else {
                 setTimeout(function() {
                     if (loadingEl) loadingEl.style.display = 'none';
-                    alert("Státuszod sikeresen mentve! (Offline szimuláció)");
+                    if (typeof window.uiAlert === 'function') {
+                        window.uiAlert("Státuszod sikeresen mentve! (Offline szimuláció)", "Siker");
+                    } else {
+                        alert("Státuszod sikeresen mentve! (Offline szimuláció)");
+                    }
+                    window.closeToborzoConsole();
                 }, 400);
             }
         };
@@ -12769,23 +12879,23 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                 var currentEmails = (ship.crew && ship.crew[role]) ? ship.crew[role].split(',').map(function(e) { return e.trim().toLowerCase(); }).filter(function(e) { return e; }) : [];
                 
                 var rowDiv = document.createElement('div');
-                rowDiv.style.cssText = 'display: flex; flex-direction: column; padding: 10px; border-bottom: 1px dashed #ccc; background: #fafafa; border-radius: 4px; margin-bottom: 8px;';
+                rowDiv.className = 'cyber-roster-row';
                 
                 var roleHeader = document.createElement('div');
-                roleHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;';
+                roleHeader.className = 'cyber-roster-role-header';
                 
                 var roleLabel = document.createElement('strong');
-                roleLabel.style.color = '#1f0901';
-                roleLabel.innerHTML = '<i class="fas fa-user-tag" style="color: var(--color-gold, #d4af37);"></i> ' + role + (isSingle ? ' <span style="font-size:0.8em; color:#888;">(1 fő)</span>' : ' <span style="font-size:0.8em; color:#888;">(Több fő)</span>');
+                roleLabel.className = 'cyber-roster-role-label';
+                roleLabel.innerHTML = '<i class="fas fa-user-tag" style="color: #00e5ff;"></i> <span style="color: #00e5ff; font-weight: bold;">' + role + '</span>' + (isSingle ? ' <span style="font-size:0.8em; color:#90a4ae; font-family: monospace;">(1 fő)</span>' : ' <span style="font-size:0.8em; color:#90a4ae; font-family: monospace;">(Több fő)</span>');
                 
                 roleHeader.appendChild(roleLabel);
                 rowDiv.appendChild(roleHeader);
                 
                 var customSelectContainer = document.createElement('div');
-                customSelectContainer.style.cssText = 'position: relative; width: 100%; border: 1px solid #aaa; border-radius: 4px; background: white;';
+                customSelectContainer.className = 'cyber-custom-select';
                 
                 var selectHeader = document.createElement('div');
-                selectHeader.style.cssText = 'padding: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; color: #555;';
+                selectHeader.className = 'cyber-custom-select-header';
                 
                 var currentNamesHtml = "--- Üres ---";
                 if (currentEmails.length > 0) {
@@ -12793,14 +12903,14 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                         var match = availableCrew.find(function(c) { return c.email.toLowerCase() === e; });
                         return match ? match.name : e;
                     });
-                    currentNamesHtml = '<span style="color:#1b5e20; font-weight:bold;">' + namesArr.join(', ') + '</span>';
+                    currentNamesHtml = '<span style="color:#d4af37; font-weight:bold;">' + namesArr.join(', ') + '</span>';
                 }
                 
                 selectHeader.innerHTML = '<span>' + currentNamesHtml + '</span> <i class="fas fa-chevron-down"></i>';
                 
                 var optionsContainer = document.createElement('div');
-                optionsContainer.style.cssText = 'display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #aaa; z-index: 10; max-height: 200px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
-                optionsContainer.className = 'bulk-options-container';
+                optionsContainer.className = 'cyber-custom-options-container bulk-options-container';
+                optionsContainer.style.display = 'none';
                 
                 selectHeader.onclick = function(e) {
                     e.stopPropagation();
@@ -12809,6 +12919,7 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                     optionsContainer.style.display = isVisible ? 'none' : 'block';
                 };
 
+                // Checkbox logika
                 optionsContainer.addEventListener('change', function(e) {
                     if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
                         if (isSingle && e.target.checked) {
@@ -12823,7 +12934,7 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                         } else {
                             var nArr = [];
                             checkedCbs.forEach(function(cb) { nArr.push(cb.getAttribute('data-name')); });
-                            selectHeader.innerHTML = '<span><span style="color:#1b5e20; font-weight:bold;">' + nArr.join(', ') + '</span></span> <i class="fas fa-chevron-down"></i>';
+                            selectHeader.innerHTML = '<span><span style="color:#d4af37; font-weight:bold;">' + nArr.join(', ') + '</span></span> <i class="fas fa-chevron-down"></i>';
                         }
                     }
                 });
@@ -12833,8 +12944,8 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                     var cMatch = availableCrew.find(function(c) { return c.email.toLowerCase() === currEmail; });
                     var dName = cMatch ? cMatch.name : currEmail;
                     var label = document.createElement('label');
-                    label.style.cssText = 'display: block; padding: 5px 8px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 0.9em; background: #e8f5e9;';
-                    label.innerHTML = '<input type="checkbox" value="' + currEmail + '" data-role="' + role + '" data-name="' + dName + '" checked> <strong>' + dName + '</strong>';
+                    label.className = 'cyber-option-label';
+                    label.innerHTML = '<input type="checkbox" value="' + currEmail + '" data-role="' + role + '" data-name="' + dName + '" checked> <strong style="color:#d4af37;">' + dName + '</strong>';
                     optionsContainer.appendChild(label);
                     optionAdded = true;
                 });
@@ -12845,7 +12956,7 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                     if (!window.hasRequiredRank(player.rank, role)) return;
                     
                     var label = document.createElement('label');
-                    label.style.cssText = 'display: block; padding: 5px 8px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 0.9em;';
+                    label.className = 'cyber-option-label';
                     label.innerHTML = '<input type="checkbox" value="' + player.email + '" data-role="' + role + '" data-name="' + player.name + '"> ' + player.name + ' <span style="color:#888; font-size:0.8em;">(' + (player.rank || '') + ')</span>';
                     optionsContainer.appendChild(label);
                     optionAdded = true;
@@ -12853,8 +12964,8 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
 
                 if (!optionAdded) {
                     var noMore = document.createElement('div');
-                    noMore.style.cssText = 'padding: 8px; color: #888; font-style: italic;';
-                    noMore.innerText = 'Nincs felbérelhető tag.';
+                    noMore.style.cssText = 'padding: 8px 12px; color: #78909c; font-style: italic; font-size: 0.9em;';
+                    noMore.innerText = 'Nincs felbérelhető tag erre a posztra.';
                     optionsContainer.appendChild(noMore);
                 }
 
@@ -12865,15 +12976,16 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             });
 
             document.addEventListener('click', function(e) {
-                if (!e.target.closest('.bulk-options-container') && !e.target.closest('div[style*="cursor: pointer"]')) {
+                if (!e.target.closest('.bulk-options-container') && !e.target.closest('.cyber-custom-select-header') && !e.target.closest('div[style*="cursor: pointer"]')) {
                     document.querySelectorAll('.bulk-options-container').forEach(function(el) { el.style.display = 'none'; });
                 }
             });
 
             var submitBtn = document.createElement('button');
-            submitBtn.className = 'btn';
-            submitBtn.style.cssText = 'width: 100%; padding: 12px; background: var(--color-primary, #1b263b); color: white; border: 2px solid var(--color-gold, #d4af37); font-size: 1.1em; font-weight: bold; margin-top: 15px; border-radius: 4px; cursor: pointer; transition: 0.2s;';
-            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Kijelöltek Felírása (OK)';
+            submitBtn.type = 'button';
+            submitBtn.className = 'cyber-btn cyber-btn-primary';
+            submitBtn.style.cssText = 'width: 100%; margin-top: 15px;';
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> <span>BEOSZTÁS MENTÉSE ÉS JÓVÁHAGYÁSA</span>';
             submitBtn.onclick = function() { window.submitBulkCrewAssignment(ship.id); };
 
             if (rolesContainer) {

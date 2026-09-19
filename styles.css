@@ -2153,3 +2153,469 @@ html.ebp-authenticated #app-view {
         display: none !important;
     }
 }
+
+/* ========================================= */
+/* === TOBORZÓBARAKK INTERAKTÍV SVG & KIBER KONZOL === */
+/* ========================================= */
+/* ─── TOBORZÓBARAKK ZOZO FRAME & KIBER KONZOL STÍLUSOK ─── */
+.toborzo-modal-content {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 12px !important;
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.toborzo-brass-nametag-container {
+    position: absolute;
+    top: 3px;
+    left: 15px;
+    transform: none;
+    width: 33%;
+    max-width: 500px;
+    aspect-ratio: 500 / 255;
+    z-index: 30;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('https://storage.googleapis.com/kalozsziget-assets/assets/images/steampunk_brass_transparent.png?v=20260919_v500') no-repeat top left / contain;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.7));
+}
+
+.toborzo-brass-nametag-text {
+    width: 90%;
+    max-width: 480px;
+    text-align: center;
+    font-family: 'Pirata One', 'Cinzel', serif;
+    font-size: clamp(0.9rem, 1.8vw, 1.4rem);
+    color: #ffe680;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9), 0 0 10px rgba(212, 175, 55, 0.8);
+    letter-spacing: 2px;
+    font-weight: bold;
+    margin-top: 13px;
+}
+
+.toborzo-modal-exit-btn {
+    position: absolute !important;
+    bottom: 15px !important;
+    right: 15px !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer;
+    z-index: 100 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.85));
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.toborzo-modal-exit-btn:hover {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.9));
+}
+
+.toborzo-modal-exit-btn:focus,
+.toborzo-modal-exit-btn:active {
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.toborzo-modal-exit-btn img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+    background: transparent !important;
+}
+
+.toborzo-stage-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 364.06668 / 203.2;
+    background-color: #020408;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 2px solid var(--color-gold, #d4af37);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.35), 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 0, 0, 0.9);
+    box-sizing: border-box;
+}
+
+.toborzo-video-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.toborzo-screen-path {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 0.8;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.toborzo-screen-path:hover {
+    fill: rgba(0, 255, 204, 0.22);
+    stroke: #00ffcc;
+    filter: drop-shadow(0 0 10px #00ffcc);
+}
+
+.toborzo-path-standby:hover {
+    fill: rgba(212, 175, 55, 0.22);
+    stroke: #d4af37;
+    filter: drop-shadow(0 0 10px #d4af37);
+}
+
+.toborzo-tooltip {
+    background: rgba(2, 4, 8, 0.94);
+    border: 1px solid #00ffcc;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    color: #00ffcc;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85em;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    transform: translate(-50%, -130%);
+}
+
+/* CRT Monitor Authentic Effects (Csak a kinagyított konzolhoz) */
+.toborzo-cyber-console {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 6, 12, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 25;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: fadeInCyberConsole 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), crtTwitch 6s infinite ease-in-out;
+    border: 1px solid rgba(0, 255, 204, 0.4);
+    box-sizing: border-box;
+}
+
+.crt-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.18) 0px,
+        rgba(0, 0, 0, 0.18) 1px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.85;
+    animation: crtFlicker 0.15s infinite;
+}
+
+.crt-cursor {
+    display: inline-block;
+    color: #00ffcc;
+    font-weight: bold;
+    animation: crtBlink 0.9s steps(2, start) infinite;
+}
+
+@keyframes crtBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+@keyframes fadeInCyberConsole {
+    0% { opacity: 0; transform: scaleY(0.02) scaleX(0.8); filter: brightness(2.5); }
+    70% { opacity: 1; transform: scaleY(1.02) scaleX(1.01); filter: brightness(1.3); }
+    100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+}
+
+@keyframes crtFlicker {
+    0% { opacity: 0.82; }
+    50% { opacity: 0.87; }
+    52% { opacity: 0.79; }
+    54% { opacity: 0.86; }
+    80% { opacity: 0.84; }
+    100% { opacity: 0.85; }
+}
+
+@keyframes crtTwitch {
+    0%, 94%, 100% { transform: translate(0, 0); }
+    95% { transform: translate(-1px, 0.5px); }
+    96% { transform: translate(1px, -0.5px); }
+    97% { transform: translate(-0.5px, 0.5px); }
+    98% { transform: translate(0, 0); }
+}
+
+.cyber-console-header {
+    background: #0d1b2a;
+    padding: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #00ffcc;
+    flex-shrink: 0;
+}
+
+.cyber-console-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.95em;
+    font-weight: bold;
+    color: #00ffcc;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cyber-close-btn {
+    background: transparent;
+    border: none;
+    color: #00ffcc;
+    font-size: 1.6em;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+}
+
+.cyber-close-btn:hover {
+    color: #ff3366;
+}
+
+.cyber-console-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.cyber-hint-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.82em;
+    color: #90a4ae;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    background: rgba(0, 255, 204, 0.05);
+    padding: 6px 10px;
+    border-left: 3px solid #00ffcc;
+    border-radius: 2px;
+}
+
+.cyber-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.cyber-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78em;
+    font-weight: bold;
+    color: #cfd8dc;
+    letter-spacing: 1px;
+}
+
+.cyber-select, 
+.cyber-input,
+.toborzo-cyber-console input,
+.toborzo-cyber-console select {
+    width: 100%;
+    padding: 10px 14px;
+    background-color: #1e2633 !important;
+    background: #1e2633 !important;
+    border: 1.5px solid #00ffcc !important;
+    border-radius: 4px;
+    color: #00ffcc !important;
+    font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    font-size: 0.9em;
+    font-weight: bold;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.cyber-select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300ffcc'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 10px center !important;
+    background-size: 18px 18px !important;
+    padding-right: 32px !important;
+    cursor: pointer;
+}
+
+.cyber-select option {
+    background-color: #151c27 !important;
+    background: #151c27 !important;
+    color: #00ffcc !important;
+    font-family: 'Orbitron', 'Share Tech Mono', monospace;
+    padding: 8px 12px;
+}
+
+.cyber-select:focus, 
+.cyber-input:focus,
+.toborzo-cyber-console input:focus,
+.toborzo-cyber-console select:focus {
+    outline: none !important;
+    border-color: #33ffdd !important;
+    background-color: #242f40 !important;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.6) !important;
+}
+
+.cyber-btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.cyber-btn {
+    padding: 10px 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85em;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+
+.cyber-btn-primary {
+    background: #00ffcc;
+    color: #020408;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+}
+
+.cyber-btn-primary:hover {
+    background: #33ffdd;
+    box-shadow: 0 0 22px rgba(0, 255, 204, 0.7);
+    transform: translateY(-1px);
+}
+
+.cyber-btn-secondary {
+    background: #1e3a5f;
+    color: #cfd8dc;
+    border: 1px solid #37474f;
+}
+
+.cyber-btn-secondary:hover {
+    background: #2c4d7d;
+    color: #ffffff;
+}
+
+.cyber-roster-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85em;
+    font-weight: bold;
+    color: #d4af37;
+    padding: 8px 12px;
+    background: #0a1420;
+    border: 1px solid #d4af37;
+    border-radius: 4px 4px 0 0;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cyber-roster-container {
+    border: 1px solid #1e3a5f;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    padding: 10px;
+    background: #050b14;
+    display: grid;
+    gap: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.cyber-roster-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cyber-roster-role-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cyber-roster-role-label {
+    font-family: 'Orbitron', 'Share Tech Mono', sans-serif;
+    font-size: 0.88em;
+    font-weight: 700;
+    color: #00e5ff !important;
+}
+
+.cyber-custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.cyber-custom-select-header {
+    background: #1e2633;
+    border: 1px solid #1e3a5f;
+    border-radius: 4px;
+    padding: 7px 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.88em;
+    color: #cfd8dc;
+}
+
+.cyber-custom-options-container {
+    background: #151c27;
+    border: 1px solid #1e3a5f;
+    border-radius: 4px;
+    margin-top: 4px;
+    padding: 6px 10px;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+.cyber-option-label {
+    display: block;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 0.88em;
+    color: #cfd8dc;
+}

@@ -64,57 +64,84 @@
         </div>
     </div>
 
-    <!-- Toborzóbarakk Modal -->
+    <!-- Toborzóbarakk Modal (Zozo Monolog Frame + Steampunk Brass Nametag + Interaktív SVG/MP4) -->
     <div id="toborzo-modal" class="gamemode-modal" style="display: none; align-items: center; justify-content: center; z-index: 1000;" onclick="if(event.target===this) closeToborzoModal(event)">
-        <div class="gamemode-modal-content" style="width: 90%; max-width: 700px; max-height: 90vh; padding: 0; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-paper, #fdfbf7); border-radius: 8px; border: 2px solid var(--color-gold, #d4af37); box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+        <div class="gamemode-modal-content toborzo-modal-content" style="width: 95%; max-width: 960px; max-height: 94vh; padding: 0; margin: 0; display: flex; flex-direction: column; overflow: visible; background: transparent; border: none; box-shadow: none; position: relative; border-radius: 12px; box-sizing: border-box;">
             
-            <div style="background: var(--color-primary, #1b263b); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--color-gold, #d4af37);">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-users" style="font-size: 1.5em; color: var(--color-gold, #d4af37);"></i>
-                    <div>
-                        <h3 style="margin: 0; font-family: var(--font-serif, 'Pirata One', cursive); font-size: 1.5em; color: white;" data-lang="toborzo_modal_title">Toborzóbarakk</h3>
-                        <small style="color: #bdc3c7;" data-lang="toborzo_modal_subtitle">Álláskeresés és Legénység Menedzsment</small>
-                    </div>
-                </div>
-                <button onclick="closeToborzoModal(event)" style="background: transparent; border: none; color: white; font-size: 1.5em; cursor: pointer;">&times;</button>
+            <!-- STEAMPUNK BRASS NAMETAG (Felső 3px margóhoz igazítva, BALRA 15px behúzással, 33% szélességben) -->
+            <div class="toborzo-brass-nametag-container" style="position: absolute; top: 3px; left: 15px; width: 33%; max-width: 500px; aspect-ratio: 500 / 255; z-index: 30; pointer-events: none; display: flex; align-items: center; justify-content: center; background: url('https://storage.googleapis.com/kalozsziget-assets/assets/images/steampunk_brass_transparent.png?v=20260919_v500') no-repeat top left / contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.7));">
+                <span class="toborzo-brass-nametag-text" style="width: 90%; max-width: 480px; text-align: center; font-family: 'Pirata One', 'Cinzel', serif; font-size: clamp(0.9rem, 1.8vw, 1.4rem); color: #ffe680; text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(212,175,55,0.8); letter-spacing: 2px; font-weight: bold; margin-top: 13px;">
+                    TENGERÉSZTOBORZÓ
+                </span>
             </div>
 
-            <!-- TAB HEADER -->
-            <div style="display: flex; background: #e0e0e0; border-bottom: 2px solid #ccc;">
-                <button id="tab-btn-munkavallalo" class="btn" style="flex: 1; border-radius: 0; background: var(--color-gold, #d4af37); color: #333;" onclick="switchToborzoTab('munkavallalo')">
-                    <i class="fas fa-user-tag"></i> <span data-lang="toborzo_tab_worker">Munkavállaló</span>
-                </button>
-                <button id="tab-btn-kapitany" class="btn" style="flex: 1; border-radius: 0; background: #bdbdbd; color: #333;" onclick="switchToborzoTab('kapitany')">
-                    <i class="fas fa-ship"></i> <span data-lang="toborzo_tab_captain">Kapitány</span>
-                </button>
-            </div>
-
-            <div style="padding: 20px; overflow-y: auto; flex: 1; position: relative; color: #222;">
+            <!-- SZÍNPAD / VIDEÓ + SVG + KONZOL KONTÉNER (Arany 2px kerettel) -->
+            <div id="toborzo-stage-container" class="toborzo-stage-container" style="position: relative; width: 100%; aspect-ratio: 364.06668 / 203.2; max-height: calc(94vh - 50px); background: #020408; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 2px solid #d4af37; box-shadow: 0 0 20px rgba(212, 175, 55, 0.35), 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0,0,0,0.9); box-sizing: border-box;">
                 
-                <!-- LOADING INDICATOR -->
-                <div id="toborzo-loading" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: none; align-items: center; justify-content: center; z-index: 10; flex-direction: column;">
-                    <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--color-gold, #d4af37);"></i>
-                    <p style="margin-top: 15px; font-weight: bold; font-family: var(--font-serif, 'Pirata One', cursive);" data-lang="toborzo_loading">Adatok feldolgozása...</p>
+                <!-- 1. HÁTTÉRVIDEÓ -->
+                <video id="toborzo-video-player" class="toborzo-video-bg" autoplay muted loop playsinline poster="https://storage.googleapis.com/kalozsziget-assets/assets/images/toborzoiroda_interior.jpeg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
+                    <source src="https://storage.googleapis.com/kalozsziget-assets/assets/videos/toborzoiroda_animate.mp4" type="video/mp4">
+                </video>
+
+                <!-- 2. RÉTEGELT INTERAKTÍV SVG -->
+                <svg id="toborzo-interactive-svg" viewBox="0 0 364.06668 203.2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: auto;">
+                    <g id="toborzo-svg-layer">
+                        <!-- Bal Monitor -> Munkavállaló -->
+                        <path id="kepernyo_bal" class="toborzo-screen-path" onclick="openToborzoConsole('munkavallalo')" d="m 96.915789,94.136841 4.515791,23.273679 29.52631,-2.77894 -6.25263,-21.884214 z">
+                            <title>🛠️ Munkavállalói Konzol</title>
+                        </path>
+                        <!-- Közép-Felső Monitor -> Standby / Későbbi funkció -->
+                        <path id="kepernyo_kozepfel" class="toborzo-screen-path toborzo-path-standby" d="m 162.22105,85.452632 4.86316,26.052628 35.43158,-2.77894 -5.21053,-24.663164 z">
+                            <title>📡 Kommunikációs Készülék (Hamarosan)</title>
+                        </path>
+                        <!-- Közép-Alsó Monitor -> Standby / Későbbi funkció -->
+                        <path id="kepernyo_kozeple" class="toborzo-screen-path toborzo-path-standby" d="m 177.15789,121.57895 9.03158,7.98947 31.26316,-2.77895 -13.2,-7.98947 z">
+                            <title>📜 Kikötői Faliújság (Hamarosan)</title>
+                        </path>
+                        <!-- Jobb Monitor -> Kapitány -->
+                        <path id="kepernyo_jobb" class="toborzo-screen-path" onclick="openToborzoConsole('kapitany')" d="m 251.14737,91.357893 4.86315,18.410527 22.23158,-1.0421 -5.55789,-18.757899 z">
+                            <title>🚢 Kapitányi Konzol</title>
+                        </path>
+                    </g>
+                </svg>
+
+                <!-- 3. LEBEGŐ TOOLTIP -->
+                <div id="toborzo-tooltip" class="toborzo-tooltip" style="display: none; position: absolute; z-index: 10; pointer-events: none;">
+                    <span id="toborzo-tooltip-text">🛠️ Munkavállalói Konzol</span>
                 </div>
 
-                <!-- I. MUNKAVÁLLALÓ NÉZET -->
-                <div id="toborzo-tab-munkavallalo">
-                    <h4 style="color: var(--color-accent, #8b5a2b); font-family: var(--font-serif, 'Pirata One', cursive); border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 15px;" data-lang="toborzo_worker_title">
-                        Jelentkezés Munkára
-                    </h4>
-                    <p style="font-size: 0.9em; margin-bottom: 15px;" data-lang="toborzo_worker_desc">Itt adhatod meg, hogy milyen hajós munkát vállalnál. A jelentkezésed felkerül a faliújságra, ahol a kapitányok megláthatják és felbérelhetnek.</p>
-                    
-                    <div style="display: grid; gap: 15px; max-width: 400px; margin: 0 auto;">
-                        <div>
-                            <label style="font-weight: bold; display: block; margin-bottom: 5px;" data-lang="toborzo_worker_status_label">Munkavállalói státuszod:</label>
-                            <select id="toborzo-status-select" class="form-control" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+                <!-- 4. BETÖLTŐ JELZÉS (LOADING) -->
+                <div id="toborzo-loading" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 4, 8, 0.85); display: none; align-items: center; justify-content: center; z-index: 30; flex-direction: column; backdrop-filter: blur(4px);">
+                    <div class="loader-spinner" style="border-top-color: #00ffcc; border-right-color: #d4af37;"></div>
+                    <p style="margin-top: 15px; font-weight: bold; font-family: 'Orbitron', sans-serif; color: #00ffcc; letter-spacing: 2px;" data-lang="toborzo_loading">ADATOK SZINKRONIZÁLÁSA...</p>
+                </div>
+
+                <!-- 5. KIBER KONZOL I. : MUNKAVÁLLALÓI TERMINÁL (CRT Effecktekkel) -->
+                <div id="toborzo-console-munkavallalo" class="toborzo-cyber-console crt-screen" style="display: none;">
+                    <div class="crt-scanlines"></div>
+                    <div class="cyber-console-header">
+                        <div class="cyber-console-title">
+                            <i class="fas fa-user-tag" style="color: #00ffcc;"></i> [ MUNKAVÁLLALÓI TERMINÁL // ADATBEVITEL ] <span class="crt-cursor">_</span>
+                        </div>
+                        <button type="button" class="cyber-close-btn" onclick="closeToborzoConsole()" title="Vissza a főképernyőre">&times;</button>
+                    </div>
+
+                    <div class="cyber-console-body">
+                        <p class="cyber-hint-text" data-lang="toborzo_worker_desc">
+                            // Állítsd be a keresett tengerész pozíciót és havi bérigényedet. A státuszod azonnal megjelenik a kapitányok faliújságján. <span class="crt-cursor">▋</span>
+                        </p>
+
+                        <div class="cyber-form-group">
+                            <label class="cyber-label" data-lang="toborzo_worker_status_label">MUNKAVÁLLALÓI STÁTUSZ:</label>
+                            <select id="toborzo-status-select" class="cyber-select">
                                 <option value="Keresek munkát" data-lang="toborzo_status_seeking">Aktívan keresek munkát</option>
                                 <option value="Foglalt" data-lang="toborzo_status_busy">Már van munkám / Nem érek rá</option>
                             </select>
                         </div>
-                        <div>
-                            <label style="font-weight: bold; display: block; margin-bottom: 5px;" data-lang="toborzo_role_label">Keresett Pozíció (ha aktív vagy):</label>
-                            <select id="toborzo-role-select" class="form-control" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;">
+
+                        <div class="cyber-form-group">
+                            <label class="cyber-label" data-lang="toborzo_role_label">KERESETT POZÍCIÓ:</label>
+                            <select id="toborzo-role-select" class="cyber-select">
                                 <option value="" data-lang="toborzo_role_select">- Válassz -</option>
                                 <option value="Kapitány">Kapitány</option>
                                 <option value="Navigátor">Navigátor</option>
@@ -134,42 +161,64 @@
                                 <option value="Tengerész">Tengerész</option>
                             </select>
                         </div>
-                        <div>
-                            <label style="font-weight: bold; display: block; margin-bottom: 5px;" data-lang="toborzo_wage_label">Havi Bérigény (Kr):</label>
-                            <input type="number" id="toborzo-cost-input" class="form-control" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc;" min="0" value="10" placeholder="Pl.: 10">
+
+                        <div class="cyber-form-group">
+                            <label class="cyber-label" data-lang="toborzo_wage_label">HAVI BÉRIGÉNY (KR):</label>
+                            <input type="number" id="toborzo-cost-input" class="cyber-input" min="0" value="10" placeholder="Pl.: 10">
                         </div>
-                        <button class="btn" style="background: var(--color-gold, #d4af37); color: #333; padding: 12px; font-weight: bold; margin-top: 10px; cursor: pointer; border-radius: 4px; border: none;" onclick="savePlayerJobStatus()">
-                            <i class="fas fa-save"></i> <span data-lang="toborzo_save_status_btn">Státusz Mentése</span>
-                        </button>
+
+                        <div class="cyber-btn-row" style="margin-top: 15px;">
+                            <button type="button" class="cyber-btn cyber-btn-primary" onclick="savePlayerJobStatus()" style="width: 100%;">
+                                <i class="fas fa-save"></i> <span data-lang="toborzo_save_status_btn">STÁTUSZ MENTÉSE</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- II. KAPITÁNY NÉZET -->
-                <div id="toborzo-tab-kapitany" style="display: none;">
-                    <h4 style="color: var(--color-accent, #8b5a2b); font-family: var(--font-serif, 'Pirata One', cursive); border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 15px;" data-lang="toborzo_captain_title">
-                        Saját Hajóim Legénysége
-                    </h4>
-                    <p style="font-size: 0.9em; margin-bottom: 15px;" data-lang="toborzo_captain_desc">Válassz ki egyet a kikötőben lévő hajóid közül, hogy betöltsd az üres pozíciókat. Csak azokat a hajókat látod, amik nincsenek expedíción.</p>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <label style="font-weight: bold;" data-lang="toborzo_select_ship_label">Hajó kiválasztása:</label>
-                        <div style="display: flex; gap: 10px; margin-top: 5px; align-items: center;">
-                            <select id="toborzo-myships-select" class="form-control" style="flex: 1; min-width: 0; padding: 8px; border-radius: 4px; border: 1px solid #ccc;" onchange="renderSelectedShipCrew()">
-                                <option value="" data-lang="toborzo_no_ship_selected">Nincs kiválasztott hajó</option>
-                            </select>
-                            <button class="btn" onclick="openToborzoBarakk()" style="padding: 0; width: 60px; height: 40px; min-width: 60px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-left: auto; cursor: pointer;" title="Lista frissítése"><i class="fas fa-sync-alt"></i></button>
+                <!-- 6. KIBER KONZOL II. : KAPITÁNYI TERMINÁL (CRT Effecktekkel) -->
+                <div id="toborzo-console-kapitany" class="toborzo-cyber-console crt-screen" style="display: none;">
+                    <div class="crt-scanlines"></div>
+                    <div class="cyber-console-header">
+                        <div class="cyber-console-title">
+                            <i class="fas fa-ship" style="color: #d4af37;"></i> [ KAPITÁNYI TERMINÁL // LEGÉNYSÉG MENEDZSMENT ] <span class="crt-cursor">_</span>
                         </div>
+                        <button type="button" class="cyber-close-btn" onclick="closeToborzoConsole()" title="Vissza a főképernyőre">&times;</button>
                     </div>
 
-                    <div id="toborzo-myship-details" style="display: none;">
-                        <h5 style="background: #37474f; color: white; padding: 8px; margin: 0; border-radius: 4px 4px 0 0;" data-lang="toborzo_roster_title">Legénységi Roster</h5>
-                        <div id="toborzo-myship-roles" style="border: 1px solid #ccc; border-top: none; padding: 10px; border-radius: 0 0 4px 4px; display: grid; gap: 10px;">
-                            <!-- Ide generáljuk az adott hajó posztjait -->
+                    <div class="cyber-console-body">
+                        <p class="cyber-hint-text" data-lang="toborzo_captain_desc">
+                            // Válassz ki egyet a kikötőben állomásozó hajóid közül a legénységi posztok feltöltéséhez és beosztásához. <span class="crt-cursor">▋</span>
+                        </p>
+
+                        <div class="cyber-form-group" style="margin-bottom: 12px;">
+                            <label class="cyber-label" data-lang="toborzo_select_ship_label">HAJÓ KIVÁLASZTÁSA:</label>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <select id="toborzo-myships-select" class="cyber-select" style="width: auto; min-width: 140px; max-width: 180px; flex: 0 0 auto;" onchange="renderSelectedShipCrew()">
+                                    <option value="" data-lang="toborzo_no_ship_selected">Nincs kiválasztott hajó</option>
+                                </select>
+                                <button type="button" class="cyber-btn cyber-btn-secondary" onclick="openToborzoBarakk()" style="flex: 1; padding: 10px 14px; white-space: nowrap;" title="Hajólista frissítése">
+                                    <i class="fas fa-sync-alt"></i> <span data-lang="toborzo_refresh_list">Hajólista frissítése</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="toborzo-myship-details" style="display: none; margin-top: 10px;">
+                            <div class="cyber-roster-title" data-lang="toborzo_roster_title">
+                                <i class="fas fa-users-cog"></i> LEGÉNYSÉGI BEOSZTÁS
+                            </div>
+                            <div id="toborzo-myship-roles" class="cyber-roster-container">
+                                <!-- Ide generálódnak a posztok -->
+                            </div>
                         </div>
                     </div>
                 </div>
-                
+
             </div>
+
+            <!-- MODÁL BEZÁRÓ / KILÉPŐ GOMB (Jobb alsó saroktól 15px-re rögzítve, exit-r 1.png ikonnal) -->
+            <button type="button" onclick="closeToborzoModal(event)" class="toborzo-modal-exit-btn" style="position: absolute !important; bottom: 15px !important; right: 15px !important; left: auto !important; top: auto !important; z-index: 100 !important; background: transparent !important; border: none !important; outline: none !important; cursor: pointer; padding: 0 !important; margin: 0 !important; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;" title="Kilépés / Bezárás">
+                <img src="https://storage.googleapis.com/kalozsziget-assets/assets/images/exit-r%201.png?v=20260919_rec1" alt="Kilépés" style="width: 44px; height: 44px; object-fit: contain; display: block; pointer-events: none; background: transparent !important;">
+            </button>
         </div>
     </div>
 

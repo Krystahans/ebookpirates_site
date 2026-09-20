@@ -1638,9 +1638,10 @@
 
             // 5. Küldetés tekercsek dropdown feltöltése a Meghirdetés Submodalban
             var missionSelect = document.getElementById('post-job-mission-select');
-            if (missionSelect && data.gameScrolls) {
+            var scrollsList = data.gameScrolls || data.availableScrolls || [];
+            if (missionSelect && scrollsList.length > 0) {
                 missionSelect.innerHTML = '<option value="">- Nincs kitűzött küldetés cél (Általános szolgálat) -</option>';
-                data.gameScrolls.forEach(function(scroll) {
+                scrollsList.forEach(function(scroll) {
                     if (!scroll) return;
                     var opt = document.createElement('option');
                     opt.value = scroll;

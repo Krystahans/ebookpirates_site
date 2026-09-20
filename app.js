@@ -14099,7 +14099,9 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
          * 🌀 Dinamikus Hullámgyűrű Generátor (Módszer 2: Dynamic Wave & Ripple System)
          * Koncentrikus, kifelé terjedő animált hullámokat generál a hajók, mólók, hidak és partvonal körül.
          */
-        function createBoatRipple(targetOrPos, sizeX, sizeZ, speed = 1.0, intensity = 1.0) {
+        function createBoatRipple(targetOrPos, sizeX, sizeZ, speed, intensity) {
+            if (typeof speed === 'undefined') speed = 1.0;
+            if (typeof intensity === 'undefined') intensity = 1.0;
             if (!targetOrPos) return;
 
             const rippleGeo = new THREE.PlaneGeometry(sizeZ * 2.2, sizeZ * 2.2);

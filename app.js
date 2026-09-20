@@ -12636,14 +12636,15 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             var titles = {
                 'kepernyo_bal': '🛠️ Munkavállalói Konzol',
                 'kepernyo_jobb': '🚢 Kapitányi Konzol',
-                'kepernyo_kozepfel': '📡 Kommunikációs Készülék (Hamarosan)',
-                'kepernyo_kozeple': '📜 Kikötői Faliújság (Hamarosan)'
+                'kepernyo_kozepfel': '📡 Álláshirdetések & Nyitott Pozíciók',
+                'kepernyo_kozeple': '📜 Szabadúszó Zsoldosok & Ajánlattétel'
             };
 
             var paths = svg.querySelectorAll('.toborzo-screen-path');
             paths.forEach(function(p) {
+                p.removeAttribute('title');
                 p.addEventListener('mouseenter', function() {
-                    var text = titles[p.id] || p.getAttribute('title') || '';
+                    var text = titles[p.id] || '';
                     if (text) {
                         tooltipText.textContent = text;
                         tooltip.style.display = 'block';
@@ -12667,6 +12668,8 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
         window.openToborzoConsole = function(type) {
             var cMunk = document.getElementById('toborzo-console-munkavallalo');
             var cKap = document.getElementById('toborzo-console-kapitany');
+            var cHird = document.getElementById('toborzo-console-hirdetesek');
+            var cZsol = document.getElementById('toborzo-console-zsoldosok');
             var tooltip = document.getElementById('toborzo-tooltip');
             if (tooltip) tooltip.style.display = 'none';
 
@@ -12675,23 +12678,29 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                 el.style.display = 'none';
             });
 
-            if (type === 'munkavallalo') {
-                if (cMunk) cMunk.style.display = 'flex';
-                if (cKap) cKap.style.display = 'none';
-            } else if (type === 'kapitany') {
-                if (cKap) cKap.style.display = 'flex';
-                if (cMunk) cMunk.style.display = 'none';
-                if (typeof window.renderSelectedShipCrew === 'function') {
-                    window.renderSelectedShipCrew();
-                }
+            if (cMunk) cMunk.style.display = (type === 'munkavallalo') ? 'flex' : 'none';
+            if (cKap) cKap.style.display = (type === 'kapitany') ? 'flex' : 'none';
+            if (cHird) cHird.style.display = (type === 'hirdetesek') ? 'flex' : 'none';
+            if (cZsol) cZsol.style.display = (type === 'zsoldosok') ? 'flex' : 'none';
+
+            if (type === 'kapitany' && typeof window.renderSelectedShipCrew === 'function') {
+                window.renderSelectedShipCrew();
             }
         };
 
         window.closeToborzoConsole = function() {
             var cMunk = document.getElementById('toborzo-console-munkavallalo');
             var cKap = document.getElementById('toborzo-console-kapitany');
+            var cHird = document.getElementById('toborzo-console-hirdetesek');
+            var cZsol = document.getElementById('toborzo-console-zsoldosok');
             if (cMunk) cMunk.style.display = 'none';
             if (cKap) cKap.style.display = 'none';
+            if (cHird) cHird.style.display = 'none';
+            if (cZsol) cZsol.style.display = 'none';
+
+            if (typeof window.closeToborzoSubmodals === 'function') {
+                window.closeToborzoSubmodals();
+            }
 
             // Névtábla megjelenítése kizárólag az SVG felületen
             document.querySelectorAll('.toborzo-brass-nametag-container').forEach(function(el) {
@@ -12747,43 +12756,247 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             if (loadingEl) loadingEl.style.display = 'flex';
 
             if (typeof window.callBackend === 'function') {
-                window.callBackend('getToborzoData', [], 
-                    function(data) {
-                        if (loadingEl) loadingEl.style.display = 'none';
-                        if (data && data.success) {
-                            if (data.playerStatus) {
-                                var stSelect = document.getElementById('toborzo-status-select');
-                                var rSelect = document.getElementById('toborzo-role-select');
-                                var cInput = document.getElementById('toborzo-cost-input');
-                                if (stSelect) stSelect.value = data.playerStatus.status || "Keresek munkát";
-                                if (rSelect) rSelect.value = data.playerStatus.role || "";
-                                if (cInput && data.playerStatus.cost !== undefined) cInput.value = data.playerStatus.cost;
+                var loadFallback = function() {
+                    window.callBackend('getToborzoData', [], 
+                        function(fbData) {
+                            if (loadingEl) loadingEl.style.display = 'none';
+                            if (fbData && fbData.success) {
+                                window.toborzoMarketData = fbData;
+                                window.toborzoOwnedShips = fbData.ownedShips || [];
+                                window.toborzoAvailableCrew = fbData.availableCrew || [];
+                                window.renderToborzoFullMarket(fbData);
+                                window.renderSelectedShipCrew();
                             }
+                        },
+                        function(fbErr) {
+                            if (loadingEl) loadingEl.style.display = 'none';
+                            console.warn('ToborzoData fallback lekérdezési hiba:', fbErr);
+                        }
+                    );
+                };
+
+                window.callBackend('getToborzoFullMarketData', [], 
+                    function(data) {
+                        if (data && data.success) {
+                            if (loadingEl) loadingEl.style.display = 'none';
+                            window.toborzoMarketData = data;
                             window.toborzoOwnedShips = data.ownedShips || [];
                             window.toborzoAvailableCrew = data.availableCrew || [];
-                            var myshipsSelect = document.getElementById('toborzo-myships-select');
-                            if (myshipsSelect) {
-                                myshipsSelect.innerHTML = '<option value="">Nincs kiválasztott hajó</option>';
-                                window.toborzoOwnedShips.forEach(function(ship) {
-                                    var opt = document.createElement('option');
-                                    opt.value = ship.id;
-                                    opt.textContent = ship.name + (ship.inHarbor ? "" : " (Expedíción)");
-                                    opt.disabled = !ship.inHarbor;
-                                    myshipsSelect.appendChild(opt);
-                                });
-                            }
+                            window.renderToborzoFullMarket(data);
                             window.renderSelectedShipCrew();
+                        } else {
+                            loadFallback();
                         }
                     },
                     function(err) {
-                        if (loadingEl) loadingEl.style.display = 'none';
-                        console.warn('ToborzoData lekérdezési hiba:', err);
+                        loadFallback();
                     }
                 );
             } else {
                 setTimeout(function() {
                     if (loadingEl) loadingEl.style.display = 'none';
                 }, 300);
+            }
+        };
+
+        window.renderToborzoFullMarket = function(data) {
+            if (!data) return;
+
+            // 1. Bal Monitor: Munkavállaló adatok és Kapott állásajánlatok
+            if (data.playerStatus) {
+                var stSelect = document.getElementById('toborzo-status-select');
+                var rSelect = document.getElementById('toborzo-role-select');
+                var cInput = document.getElementById('toborzo-cost-input');
+                if (stSelect) stSelect.value = data.playerStatus.status || "Keresek munkát";
+                if (rSelect) rSelect.value = data.playerStatus.role || "";
+                if (cInput && data.playerStatus.cost !== undefined) cInput.value = data.playerStatus.cost;
+            }
+
+            var offersList = document.getElementById('toborzo-incoming-offers-list');
+            var offersCount = document.getElementById('toborzo-incoming-offers-count');
+            if (offersList) {
+                var incoming = data.incomingOffers || [];
+                if (offersCount) offersCount.textContent = incoming.length + ' db';
+                if (incoming.length === 0) {
+                    offersList.innerHTML = '<div style="color: #78909c; font-style: italic; font-size: 0.85em; padding: 6px;">Jelenleg nincs függőben lévő ajánlatod.</div>';
+                } else {
+                    offersList.innerHTML = '';
+                    incoming.forEach(function(offer) {
+                        var card = document.createElement('div');
+                        card.className = 'cyber-card';
+                        card.style.cssText = 'margin-bottom: 8px; padding: 10px;';
+                        
+                        var isPending = (offer.statusz === 'Függőben');
+                        var badgeClass = isPending ? 'cyber-badge-gold' : (offer.statusz === 'Elfogadva' ? 'cyber-badge-cyan' : 'cyber-badge-danger');
+                        
+                        var html = '<div style="display: flex; justify-content: space-between; align-items: flex-start;">' +
+                            '<div>' +
+                            '<strong style="color: #00ffcc; font-size: 0.95em;">' + (offer.hajoNev || 'Hajó') + '</strong>' +
+                            '<div style="color: #d4af37; font-size: 0.85em; font-weight: bold; margin-top: 2px;">Tisztség: ' + (offer.pozicio || '-') + '</div>' +
+                            '<div style="color: #90a4ae; font-size: 0.8em; margin-top: 2px;">Kapitány: ' + (offer.kapitanyNev || offer.kapitanyEmail || '-') + '</div>' +
+                            '<div style="color: #b0bec5; font-size: 0.78em; margin-top: 2px;">' + (offer.megjegyzes || (offer.idotartam ? (offer.idotartam + ' hónapra') : '')) + '</div>' +
+                            '</div>' +
+                            '<div><span class="cyber-badge ' + badgeClass + '">' + (offer.statusz || 'Függőben') + '</span></div>' +
+                            '</div>';
+                        
+                        if (isPending) {
+                            html += '<div style="display: flex; gap: 8px; margin-top: 8px;">' +
+                                '<button type="button" class="cyber-btn-sm cyber-btn-success" onclick="window.respondToJobOffer(\'' + offer.id + '\', true)" style="flex: 1;"><i class="fas fa-check"></i> Elfogadom</button>' +
+                                '<button type="button" class="cyber-btn-sm cyber-btn-danger" onclick="window.respondToJobOffer(\'' + offer.id + '\', false)" style="flex: 1;"><i class="fas fa-times"></i> Nem fogadom el</button>' +
+                                '</div>';
+                        }
+                        card.innerHTML = html;
+                        offersList.appendChild(card);
+                    });
+                }
+            }
+
+            // 2. Jobb Monitor: Kapitány hajóválasztó és Beérkezett jelentkezők
+            var myshipsSelect = document.getElementById('toborzo-myships-select');
+            if (myshipsSelect) {
+                var currentVal = myshipsSelect.value;
+                myshipsSelect.innerHTML = '<option value="">Nincs kiválasztott hajó</option>';
+                (data.ownedShips || []).forEach(function(ship) {
+                    var opt = document.createElement('option');
+                    opt.value = ship.id;
+                    opt.textContent = ship.name + (ship.inHarbor ? "" : " (Expedíción)");
+                    opt.disabled = !ship.inHarbor;
+                    if (ship.id === currentVal) opt.selected = true;
+                    myshipsSelect.appendChild(opt);
+                });
+            }
+
+            var capAppsSection = document.getElementById('toborzo-captain-applicants-section');
+            var capAppsList = document.getElementById('toborzo-captain-applicants-list');
+            var capAppsCount = document.getElementById('toborzo-captain-applicants-count');
+            if (capAppsSection && capAppsList) {
+                var applicants = data.captainApplicants || [];
+                capAppsSection.style.display = (data.ownedShips && data.ownedShips.length > 0) ? 'block' : 'none';
+                if (capAppsCount) capAppsCount.textContent = applicants.length + ' db';
+                if (applicants.length === 0) {
+                    capAppsList.innerHTML = '<div style="color: #78909c; font-style: italic; font-size: 0.85em; padding: 6px;">Nincsenek elbírálásra váró jelentkezők.</div>';
+                } else {
+                    capAppsList.innerHTML = '';
+                    applicants.forEach(function(app) {
+                        var card = document.createElement('div');
+                        card.className = 'cyber-card';
+                        card.style.cssText = 'margin-bottom: 8px; padding: 10px;';
+                        var isPending = (app.statusz === 'Függőben');
+                        var badgeClass = isPending ? 'cyber-badge-gold' : (app.statusz === 'Elfogadva' ? 'cyber-badge-cyan' : 'cyber-badge-danger');
+                        
+                        var html = '<div style="display: flex; justify-content: space-between; align-items: flex-start;">' +
+                            '<div>' +
+                            '<strong style="color: #d4af37; font-size: 0.95em;">' + (app.matrozName || app.matrozEmail) + '</strong>' +
+                            '<div style="color: #00e5ff; font-size: 0.85em; margin-top: 2px;">Hajó: ' + (app.hajoNev || '-') + ' &bull; Tisztség: ' + (app.pozicio || '-') + '</div>' +
+                            '<div style="color: #90a4ae; font-size: 0.8em; margin-top: 2px;">Képzettség: <strong style="color: #00ffcc;">' + (app.kepzettsegSzazalek || 0) + '%</strong> &bull; Bérigény: <strong style="color: #ffd700;">' + (app.berigeny || 10) + ' KR/hó</strong></div>' +
+                            '<div style="color: #78909c; font-size: 0.75em; margin-top: 2px;">Jelentkezés dátuma: ' + (app.datum || '-') + '</div>' +
+                            '</div>' +
+                            '<div><span class="cyber-badge ' + badgeClass + '">' + (app.statusz || 'Függőben') + '</span></div>' +
+                            '</div>';
+                        
+                        if (isPending) {
+                            html += '<div style="display: flex; gap: 8px; margin-top: 8px;">' +
+                                '<button type="button" class="cyber-btn-sm cyber-btn-success" onclick="window.reviewJobApplicant(\'' + app.id + '\', true)" style="flex: 1;"><i class="fas fa-check"></i> Elfogadom</button>' +
+                                '<button type="button" class="cyber-btn-sm cyber-btn-danger" onclick="window.reviewJobApplicant(\'' + app.id + '\', false)" style="flex: 1;"><i class="fas fa-times"></i> Nem fogadom el</button>' +
+                                '</div>';
+                        }
+                        card.innerHTML = html;
+                        capAppsList.appendChild(card);
+                    });
+                }
+            }
+
+            // 3. Közép-Felső Monitor: Álláshirdetések és aktív szolgálat kapuőr
+            var dutyWarning = document.getElementById('toborzo-duty-warning');
+            if (dutyWarning) {
+                dutyWarning.style.display = data.hasActiveDuty ? 'block' : 'none';
+            }
+
+            var jobList = document.getElementById('toborzo-job-postings-list');
+            if (jobList) {
+                var postings = data.activeJobPostings || [];
+                if (postings.length === 0) {
+                    jobList.innerHTML = '<div style="color: #78909c; font-style: italic; font-size: 0.9em; padding: 12px; text-align: center;">Jelenleg nincsenek aktív álláshirdetések a faliújságon.</div>';
+                } else {
+                    jobList.innerHTML = '';
+                    postings.forEach(function(job) {
+                        var card = document.createElement('div');
+                        card.className = 'cyber-card';
+                        card.style.cssText = 'margin-bottom: 8px; padding: 10px;';
+                        
+                        var alreadyApplied = (data.userAppliedJobIds && data.userAppliedJobIds.indexOf(job.id) !== -1);
+                        var actionHtml = '';
+                        if (alreadyApplied) {
+                            actionHtml = '<span class="cyber-badge cyber-badge-cyan"><i class="fas fa-check"></i> Jelentkezve</span>';
+                        } else if (data.hasActiveDuty) {
+                            actionHtml = '<button type="button" class="cyber-btn-sm" disabled style="opacity: 0.5; cursor: not-allowed;" title="Aktív szolgálat miatt lezárva"><i class="fas fa-lock"></i> Szolgálatban</button>';
+                        } else {
+                            actionHtml = '<button type="button" class="cyber-btn-sm cyber-btn-primary" onclick="window.applyForJobOpening(\'' + job.id + '\')"><i class="fas fa-paper-plane"></i> Jelentkezem</button>';
+                        }
+
+                        card.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: flex-start;">' +
+                            '<div style="flex: 1;">' +
+                            '<strong style="color: #00ffcc; font-size: 1em;">' + (job.hajoNev || 'Hajó') + '</strong>' +
+                            '<div style="color: #d4af37; font-size: 0.88em; font-weight: bold; margin-top: 2px;"><i class="fas fa-user-tag"></i> ' + (job.pozicio || '-') + '</div>' +
+                            '<div style="color: #90a4ae; font-size: 0.8em; margin-top: 2px;">Kapitány: <span style="color: #cfd8dc;">' + (job.kapitanyNev || '-') + '</span> &bull; Feladva: ' + (job.datum || '-') + '</div>' +
+                            '<div style="color: #80cbc4; font-size: 0.82em; margin-top: 4px; background: rgba(0,255,204,0.06); padding: 4px 6px; border-radius: 3px; border-left: 2px solid #00ffcc;">' +
+                            '<i class="fas fa-scroll"></i> Küldetés célja: <strong>' + (job.kuldetesCelja || 'Általános szolgálat') + '</strong>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div style="margin-left: 10px; align-self: center;">' + actionHtml + '</div>' +
+                            '</div>';
+                        jobList.appendChild(card);
+                    });
+                }
+            }
+
+            // 4. Közép-Alsó Monitor: Zsoldosok listája
+            var mercList = document.getElementById('toborzo-mercenaries-list');
+            if (mercList) {
+                var mercs = data.availableMercenaries || [];
+                if (mercs.length === 0) {
+                    mercList.innerHTML = '<div style="color: #78909c; font-style: italic; font-size: 0.9em; padding: 12px; text-align: center;">Jelenleg nincsenek munkát kereső szabad matrózok a kikötőben.</div>';
+                } else {
+                    mercList.innerHTML = '';
+                    mercs.forEach(function(merc) {
+                        var card = document.createElement('div');
+                        card.className = 'cyber-card';
+                        card.style.cssText = 'margin-bottom: 8px; padding: 10px;';
+                        
+                        var safeEmail = (merc.email || '').replace(/'/g, "\\'");
+                        var safeName = (merc.name || '').replace(/'/g, "\\'");
+                        var safeRole = (merc.role || '').replace(/'/g, "\\'");
+                        var cost = merc.cost || 10;
+
+                        card.innerHTML = '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+                            '<div>' +
+                            '<strong style="color: #d4af37; font-size: 0.98em;">' + (merc.name || merc.email) + '</strong>' +
+                            '<div style="color: #00e5ff; font-size: 0.85em; margin-top: 2px;">Keresett poszt: <strong>' + (merc.role || 'Bármilyen') + '</strong></div>' +
+                            '<div style="color: #90a4ae; font-size: 0.8em; margin-top: 2px;">Rang: <span style="color: #cfd8dc;">' + (merc.rank || '-') + '</span></div>' +
+                            '<div style="color: #00ffcc; font-size: 0.82em; margin-top: 2px;">Bérigény: <strong>' + cost + ' KR / hó</strong></div>' +
+                            '</div>' +
+                            '<div>' +
+                            '<button type="button" class="cyber-btn-sm cyber-btn-primary" onclick="window.openDirectOfferSubmodal(\'' + safeEmail + '\', \'' + safeName + '\', \'' + safeRole + '\', ' + cost + ')">' +
+                            '<i class="fas fa-handshake"></i> Állásajánlat' +
+                            '</button>' +
+                            '</div>' +
+                            '</div>';
+                        mercList.appendChild(card);
+                    });
+                }
+            }
+
+            // 5. Küldetés tekercsek dropdown feltöltése a Meghirdetés Submodalban
+            var missionSelect = document.getElementById('post-job-mission-select');
+            if (missionSelect && data.gameScrolls) {
+                missionSelect.innerHTML = '<option value="">- Nincs kitűzött küldetés cél (Általános szolgálat) -</option>';
+                data.gameScrolls.forEach(function(scroll) {
+                    if (!scroll) return;
+                    var opt = document.createElement('option');
+                    opt.value = scroll;
+                    opt.textContent = scroll;
+                    missionSelect.appendChild(opt);
+                });
             }
         };
 
@@ -12818,7 +13031,7 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                             } else {
                                 alert("Státuszod sikeresen mentve! A kapitányok mostantól láthatják a faliújságon.");
                             }
-                            window.closeToborzoConsole();
+                            window.openToborzoBarakk();
                         } else {
                             var errMsg = "Hiba a mentés során: " + (data ? data.error : 'Ismeretlen hiba');
                             if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
@@ -12877,18 +13090,36 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             allRoles.forEach(function(role) {
                 var isSingle = (role !== 'Tengerész');
                 var currentEmails = (ship.crew && ship.crew[role]) ? ship.crew[role].split(',').map(function(e) { return e.trim().toLowerCase(); }).filter(function(e) { return e; }) : [];
-                
+                var isVacant = (currentEmails.length === 0);
+
                 var rowDiv = document.createElement('div');
                 rowDiv.className = 'cyber-roster-row';
                 
                 var roleHeader = document.createElement('div');
                 roleHeader.className = 'cyber-roster-role-header';
+                roleHeader.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;';
                 
                 var roleLabel = document.createElement('strong');
                 roleLabel.className = 'cyber-roster-role-label';
                 roleLabel.innerHTML = '<i class="fas fa-user-tag" style="color: #00e5ff;"></i> <span style="color: #00e5ff; font-weight: bold;">' + role + '</span>' + (isSingle ? ' <span style="font-size:0.8em; color:#90a4ae; font-family: monospace;">(1 fő)</span>' : ' <span style="font-size:0.8em; color:#90a4ae; font-family: monospace;">(Több fő)</span>');
-                
                 roleHeader.appendChild(roleLabel);
+
+                // Ha betöltetlen a pozíció, hozzáadunk egy Meghirdetem gombot
+                if (isVacant) {
+                    var postBtn = document.createElement('button');
+                    postBtn.type = 'button';
+                    postBtn.className = 'cyber-btn-sm cyber-btn-primary';
+                    postBtn.style.cssText = 'padding: 3px 8px; font-size: 0.78em;';
+                    postBtn.innerHTML = '<i class="fas fa-bullhorn"></i> Meghirdetem';
+                    postBtn.onclick = (function(sId, sName, rName) {
+                        return function(e) {
+                            e.stopPropagation();
+                            window.openPostJobSubmodal(sId, sName, rName);
+                        };
+                    })(ship.id, ship.name, role);
+                    roleHeader.appendChild(postBtn);
+                }
+
                 rowDiv.appendChild(roleHeader);
                 
                 var customSelectContainer = document.createElement('div');
@@ -13022,15 +13253,20 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                     function(data) {
                         if (loadingEl) loadingEl.style.display = 'none';
                         if (data && data.success) {
-                            alert("Legénység sikeresen beosztva!");
+                            if (typeof window.uiAlert === 'function') window.uiAlert("Legénység sikeresen beosztva!", "Siker");
+                            else alert("Legénység sikeresen beosztva!");
                             window.openToborzoBarakk();
                         } else {
-                            alert("Hiba a legénység mentésekor: " + (data ? data.error : 'Ismeretlen hiba'));
+                            var errMsg = "Hiba a legénység mentésekor: " + (data ? data.error : 'Ismeretlen hiba');
+                            if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                            else alert(errMsg);
                         }
                     },
                     function(err) {
                         if (loadingEl) loadingEl.style.display = 'none';
-                        alert("Hálózati hiba: " + err.message);
+                        var errMsg = "Hálózati hiba: " + err.message;
+                        if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                        else alert(errMsg);
                     }
                 );
             } else {
@@ -13041,7 +13277,258 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             }
         };
 
-        // ─── FEDÉLZET MODAL LOGIKA & IRÁNYÍTÁS (STANDALONE & BEÁGYAZOTT TÁMOGATÁS) ────────
+        // ─── SUBMODAL ÉS TOBORZÓBARAKK PIACI LOGIKÁK ──────────────────────────────────
+        window.closeToborzoSubmodals = function() {
+            var postModal = document.getElementById('toborzo-post-job-submodal');
+            var directModal = document.getElementById('toborzo-direct-offer-submodal');
+            if (postModal) postModal.style.display = 'none';
+            if (directModal) directModal.style.display = 'none';
+        };
+
+        window.openPostJobSubmodal = function(shipId, shipName, role) {
+            var submodal = document.getElementById('toborzo-post-job-submodal');
+            if (!submodal) return;
+            document.getElementById('post-job-ship-id').value = shipId;
+            document.getElementById('post-job-role').value = role;
+            document.getElementById('post-job-ship-name-display').textContent = shipName;
+            document.getElementById('post-job-role-display').textContent = role;
+            submodal.style.display = 'flex';
+        };
+
+        window.submitPostJobOpening = function() {
+            var shipId = document.getElementById('post-job-ship-id').value;
+            var role = document.getElementById('post-job-role').value;
+            var missionSelect = document.getElementById('post-job-mission-select');
+            var missionGoal = missionSelect ? missionSelect.value : '';
+
+            if (!shipId || !role) {
+                if (typeof window.uiAlert === 'function') window.uiAlert("Hiányzó hajó vagy pozíció adat!");
+                else alert("Hiányzó hajó vagy pozíció adat!");
+                return;
+            }
+
+            var loadingEl = document.getElementById('toborzo-loading');
+            if (loadingEl) loadingEl.style.display = 'flex';
+
+            if (typeof window.callBackend === 'function') {
+                window.callBackend('postShipJobOpening', [shipId, role, missionGoal],
+                    function(data) {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (data && data.success) {
+                            if (typeof window.uiAlert === 'function') window.uiAlert(data.message || "Pozíció sikeresen meghirdetve a faliújságon!", "Siker");
+                            else alert(data.message || "Pozíció sikeresen meghirdetve a faliújságon!");
+                            window.closeToborzoSubmodals();
+                            window.openToborzoBarakk();
+                        } else {
+                            var errMsg = "Hiba a hirdetés feladásakor: " + (data ? data.error : 'Ismeretlen hiba');
+                            if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                            else alert(errMsg);
+                        }
+                    },
+                    function(err) {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        var errMsg = "Hálózati hiba: " + err.message;
+                        if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                        else alert(errMsg);
+                    }
+                );
+            }
+        };
+
+        window.openDirectOfferSubmodal = function(matrozEmail, matrozName, matrozRole, matrozWage) {
+            var submodal = document.getElementById('toborzo-direct-offer-submodal');
+            if (!submodal) return;
+            
+            document.getElementById('direct-offer-matroz-email').value = matrozEmail;
+            document.getElementById('direct-offer-matroz-name').textContent = matrozName;
+            document.getElementById('direct-offer-matroz-role').textContent = matrozRole || 'Bármilyen';
+            document.getElementById('direct-offer-matroz-wage').textContent = matrozWage || 10;
+            
+            var shipSelect = document.getElementById('direct-offer-ship-select');
+            if (shipSelect) {
+                shipSelect.innerHTML = '<option value="">- Válassz saját hajót -</option>';
+                (window.toborzoOwnedShips || []).forEach(function(ship) {
+                    if (ship.inHarbor) {
+                        var opt = document.createElement('option');
+                        opt.value = ship.id;
+                        opt.textContent = ship.name;
+                        shipSelect.appendChild(opt);
+                    }
+                });
+            }
+            window.updateDirectOfferRolesDropdown();
+            submodal.style.display = 'flex';
+        };
+
+        window.updateDirectOfferRolesDropdown = function() {
+            var shipSelect = document.getElementById('direct-offer-ship-select');
+            var roleSelect = document.getElementById('direct-offer-role-select');
+            if (!roleSelect) return;
+            roleSelect.innerHTML = '<option value="">- Válassz tisztséget -</option>';
+            
+            if (!shipSelect || !shipSelect.value) return;
+            var ship = (window.toborzoOwnedShips || []).find(function(s) { return s.id === shipSelect.value; });
+            if (!ship) return;
+
+            var allRoles = [
+                "Kapitány", "Navigátor", "Kormányos", "Vitorlamester", "Fedélzetmester", 
+                "Tüzér", "Hajóorvos", "Hajószakács", "Térképrajzoló", 
+                "Tekercsmester", "Felfedező", "Gépész", "Hajóács", 
+                "Letmester", "Monk", "Tengerész"
+            ];
+
+            allRoles.forEach(function(role) {
+                var currentEmails = (ship.crew && ship.crew[role]) ? ship.crew[role].split(',').map(function(e) { return e.trim().toLowerCase(); }).filter(function(e) { return e; }) : [];
+                // Csak betöltetlen vagy többszemélyes tisztség
+                if (currentEmails.length === 0 || role === 'Tengerész') {
+                    var opt = document.createElement('option');
+                    opt.value = role;
+                    opt.textContent = role + (currentEmails.length === 0 ? ' (Üres)' : ' (' + currentEmails.length + ' fő)');
+                    roleSelect.appendChild(opt);
+                }
+            });
+        };
+
+        window.submitDirectJobOffer = function() {
+            var targetMatrozEmail = document.getElementById('direct-offer-matroz-email').value;
+            var shipSelect = document.getElementById('direct-offer-ship-select');
+            var roleSelect = document.getElementById('direct-offer-role-select');
+            var durationInput = document.getElementById('direct-offer-duration-input');
+
+            var shipId = shipSelect ? shipSelect.value : '';
+            var role = roleSelect ? roleSelect.value : '';
+            var durationMonths = durationInput ? (parseInt(durationInput.value, 10) || 1) : 1;
+
+            if (!targetMatrozEmail || !shipId || !role) {
+                if (typeof window.uiAlert === 'function') window.uiAlert("Kérlek, válassz ki egy hajót és egy szabad pozíciót!");
+                else alert("Kérlek, válassz ki egy hajót és egy szabad pozíciót!");
+                return;
+            }
+
+            var loadingEl = document.getElementById('toborzo-loading');
+            if (loadingEl) loadingEl.style.display = 'flex';
+
+            if (typeof window.callBackend === 'function') {
+                window.callBackend('sendDirectJobOffer', [targetMatrozEmail, shipId, role, durationMonths],
+                    function(data) {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (data && data.success) {
+                            if (typeof window.uiAlert === 'function') window.uiAlert(data.message || "Állásajánlat sikeresen elküldve a matróznak!", "Siker");
+                            else alert(data.message || "Állásajánlat sikeresen elküldve a matróznak!");
+                            window.closeToborzoSubmodals();
+                            window.openToborzoBarakk();
+                        } else {
+                            var errMsg = "Hiba az ajánlat küldésekor: " + (data ? data.error : 'Ismeretlen hiba');
+                            if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                            else alert(errMsg);
+                        }
+                    },
+                    function(err) {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        var errMsg = "Hálózati hiba: " + err.message;
+                        if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                        else alert(errMsg);
+                    }
+                );
+            }
+        };
+
+        window.applyForJobOpening = function(hirdetesId) {
+            if (!confirm("Biztosan jelentkezni szeretnél erre a hajós pozícióra?")) return;
+
+            var loadingEl = document.getElementById('toborzo-loading');
+            if (loadingEl) loadingEl.style.display = 'flex';
+
+            if (typeof window.callBackend === 'function') {
+                window.callBackend('applyForJobOpening', [hirdetesId],
+                    function(data) {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (data && data.success) {
+                            if (typeof window.uiAlert === 'function') window.uiAlert(data.message || "Jelentkezés sikeresen elküldve!", "Siker");
+                            else alert(data.message || "Jelentkezés sikeresen elküldve!");
+                            window.openToborzoBarakk();
+                        } else {
+                            var errMsg = "Hiba a jelentkezés során: " + (data ? data.error : 'Ismeretlen hiba');
+                            if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                            else alert(errMsg);
+                        }
+                    },
+                    function(err) {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        var errMsg = "Hálózati hiba: " + err.message;
+                        if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                        else alert(errMsg);
+                    }
+                );
+            }
+        };
+
+        window.reviewJobApplicant = function(jelentkezesId, isApproved) {
+            var actionName = isApproved ? "elfogadni és ajánlatot tenni a pozícióra" : "elutasítani ezt a jelentkezést";
+            if (!confirm("Biztosan szeretnéd " + actionName + "?")) return;
+
+            var loadingEl = document.getElementById('toborzo-loading');
+            if (loadingEl) loadingEl.style.display = 'flex';
+
+            if (typeof window.callBackend === 'function') {
+                window.callBackend('reviewJobApplicant', [jelentkezesId, isApproved],
+                    function(data) {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (data && data.success) {
+                            if (typeof window.uiAlert === 'function') window.uiAlert(data.message || "Döntés sikeresen rögzítve!", "Siker");
+                            else alert(data.message || "Döntés sikeresen rögzítve!");
+                            window.openToborzoBarakk();
+                        } else {
+                            var errMsg = "Hiba a döntés rögzítésekor: " + (data ? data.error : 'Ismeretlen hiba');
+                            if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                            else alert(errMsg);
+                        }
+                    },
+                    function(err) {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        var errMsg = "Hálózati hiba: " + err.message;
+                        if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                        else alert(errMsg);
+                    }
+                );
+            }
+        };
+
+        window.respondToJobOffer = function(ajanlatId, isAccepted) {
+            var promptMsg = isAccepted ? 
+                "Biztosan ELFOGADOD az állásajánlatot? Ezzel a szerződés azonnal megkötésre kerül, és szolgálatba lépsz a hajón!" : 
+                "Biztosan ELUTASÍTOD az állásajánlatot?";
+            if (!confirm(promptMsg)) return;
+
+            var loadingEl = document.getElementById('toborzo-loading');
+            if (loadingEl) loadingEl.style.display = 'flex';
+
+            if (typeof window.callBackend === 'function') {
+                window.callBackend('respondToJobOffer', [ajanlatId, isAccepted],
+                    function(data) {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (data && data.success) {
+                            if (typeof window.uiAlert === 'function') window.uiAlert(data.message || "Válaszod sikeresen rögzítve!", "Siker");
+                            else alert(data.message || "Válaszod sikeresen rögzítve!");
+                            window.openToborzoBarakk();
+                        } else {
+                            var errMsg = "Hiba a válaszadás során: " + (data ? data.error : 'Ismeretlen hiba');
+                            if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                            else alert(errMsg);
+                        }
+                    },
+                    function(err) {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        var errMsg = "Hálózati hiba: " + err.message;
+                        if (typeof window.uiAlert === 'function') window.uiAlert(errMsg);
+                        else alert(errMsg);
+                    }
+                );
+            }
+        };
+
+
+                // ─── FEDÉLZET MODAL LOGIKA & IRÁNYÍTÁS (STANDALONE & BEÁGYAZOTT TÁMOGATÁS) ────────
         window.fedelzetUserShips = [];
         window.fedelzetSelectedShip = null;
         window.fedelzetSelectedGameType = null;

@@ -83,25 +83,17 @@
                     <source src="https://storage.googleapis.com/kalozsziget-assets/assets/videos/toborzoiroda_animate.mp4" type="video/mp4">
                 </video>
 
-                <!-- 2. RÉTEGELT INTERAKTÍV SVG -->
+                <!-- 2. RÉTEGELT INTERAKTÍV SVG (Mind a 4 monitor aktív) -->
                 <svg id="toborzo-interactive-svg" viewBox="0 0 364.06668 203.2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: auto;">
                     <g id="toborzo-svg-layer">
                         <!-- Bal Monitor -> Munkavállaló -->
-                        <path id="kepernyo_bal" class="toborzo-screen-path" onclick="openToborzoConsole('munkavallalo')" d="m 96.915789,94.136841 4.515791,23.273679 29.52631,-2.77894 -6.25263,-21.884214 z">
-                            <title>🛠️ Munkavállalói Konzol</title>
-                        </path>
-                        <!-- Közép-Felső Monitor -> Standby / Későbbi funkció -->
-                        <path id="kepernyo_kozepfel" class="toborzo-screen-path toborzo-path-standby" d="m 162.22105,85.452632 4.86316,26.052628 35.43158,-2.77894 -5.21053,-24.663164 z">
-                            <title>📡 Kommunikációs Készülék (Hamarosan)</title>
-                        </path>
-                        <!-- Közép-Alsó Monitor -> Standby / Későbbi funkció -->
-                        <path id="kepernyo_kozeple" class="toborzo-screen-path toborzo-path-standby" d="m 177.15789,121.57895 9.03158,7.98947 31.26316,-2.77895 -13.2,-7.98947 z">
-                            <title>📜 Kikötői Faliújság (Hamarosan)</title>
-                        </path>
+                        <path id="kepernyo_bal" class="toborzo-screen-path" onclick="openToborzoConsole('munkavallalo')" d="m 96.915789,94.136841 4.515791,23.273679 29.52631,-2.77894 -6.25263,-21.884214 z"></path>
+                        <!-- Közép-Felső Monitor -> Nyitott Pozíciók / Álláshirdetések -->
+                        <path id="kepernyo_kozepfel" class="toborzo-screen-path" onclick="openToborzoConsole('hirdetesek')" d="m 162.22105,85.452632 4.86316,26.052628 35.43158,-2.77894 -5.21053,-24.663164 z"></path>
+                        <!-- Közép-Alsó Monitor -> Zsoldos Faliújság & Ajánlattétel -->
+                        <path id="kepernyo_kozeple" class="toborzo-screen-path" onclick="openToborzoConsole('zsoldosok')" d="m 177.15789,121.57895 9.03158,7.98947 31.26316,-2.77895 -13.2,-7.98947 z"></path>
                         <!-- Jobb Monitor -> Kapitány -->
-                        <path id="kepernyo_jobb" class="toborzo-screen-path" onclick="openToborzoConsole('kapitany')" d="m 251.14737,91.357893 4.86315,18.410527 22.23158,-1.0421 -5.55789,-18.757899 z">
-                            <title>🚢 Kapitányi Konzol</title>
-                        </path>
+                        <path id="kepernyo_jobb" class="toborzo-screen-path" onclick="openToborzoConsole('kapitany')" d="m 251.14737,91.357893 4.86315,18.410527 22.23158,-1.0421 -5.55789,-18.757899 z"></path>
                     </g>
                 </svg>
 
@@ -116,7 +108,7 @@
                     <p style="margin-top: 15px; font-weight: bold; font-family: 'Orbitron', sans-serif; color: #00ffcc; letter-spacing: 2px;" data-lang="toborzo_loading">ADATOK SZINKRONIZÁLÁSA...</p>
                 </div>
 
-                <!-- 5. KIBER KONZOL I. : MUNKAVÁLLALÓI TERMINÁL (CRT Effecktekkel) -->
+                <!-- 5. KIBER KONZOL I. : MUNKAVÁLLALÓI TERMINÁL (Bal) -->
                 <div id="toborzo-console-munkavallalo" class="toborzo-cyber-console crt-screen" style="display: none;">
                     <div class="crt-scanlines"></div>
                     <div class="cyber-console-header">
@@ -167,15 +159,26 @@
                             <input type="number" id="toborzo-cost-input" class="cyber-input" min="0" value="10" placeholder="Pl.: 10">
                         </div>
 
-                        <div class="cyber-btn-row" style="margin-top: 15px;">
+                        <div class="cyber-btn-row" style="margin-top: 10px;">
                             <button type="button" class="cyber-btn cyber-btn-primary" onclick="savePlayerJobStatus()" style="width: 100%;">
                                 <i class="fas fa-save"></i> <span data-lang="toborzo_save_status_btn">STÁTUSZ MENTÉSE</span>
                             </button>
                         </div>
+
+                        <!-- ÚJ SZEKCIÓ: Kapott ajánlatok és jóváhagyások -->
+                        <div id="toborzo-incoming-offers-section" style="margin-top: 15px; border-top: 1px dashed #00ffcc; padding-top: 12px;">
+                            <div class="cyber-label" style="color: #00ffcc; margin-bottom: 8px; font-size: 0.88em; display: flex; align-items: center; justify-content: space-between;">
+                                <span><i class="fas fa-envelope-open-text"></i> KAPOTT ÁLLÁSAJÁNLATOK:</span>
+                                <span id="toborzo-incoming-offers-count" class="cyber-badge cyber-badge-cyan">0 db</span>
+                            </div>
+                            <div id="toborzo-incoming-offers-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto;">
+                                <div style="color: #78909c; font-style: italic; font-size: 0.85em; padding: 6px;">Jelenleg nincs függőben lévő ajánlatod.</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 6. KIBER KONZOL II. : KAPITÁNYI TERMINÁL (CRT Effecktekkel) -->
+                <!-- 6. KIBER KONZOL II. : KAPITÁNYI TERMINÁL (Jobb) -->
                 <div id="toborzo-console-kapitany" class="toborzo-cyber-console crt-screen" style="display: none;">
                     <div class="crt-scanlines"></div>
                     <div class="cyber-console-header">
@@ -192,14 +195,9 @@
 
                         <div class="cyber-form-group" style="margin-bottom: 12px;">
                             <label class="cyber-label" data-lang="toborzo_select_ship_label">HAJÓ KIVÁLASZTÁSA:</label>
-                            <div style="display: flex; gap: 8px; align-items: center;">
-                                <select id="toborzo-myships-select" class="cyber-select" style="width: auto; min-width: 140px; max-width: 180px; flex: 0 0 auto;" onchange="renderSelectedShipCrew()">
-                                    <option value="" data-lang="toborzo_no_ship_selected">Nincs kiválasztott hajó</option>
-                                </select>
-                                <button type="button" class="cyber-btn cyber-btn-secondary" onclick="openToborzoBarakk()" style="flex: 1; padding: 10px 14px; white-space: nowrap;" title="Hajólista frissítése">
-                                    <i class="fas fa-sync-alt"></i> <span data-lang="toborzo_refresh_list">Hajólista frissítése</span>
-                                </button>
-                            </div>
+                            <select id="toborzo-myships-select" class="cyber-select" style="width: 100%;" onchange="renderSelectedShipCrew()">
+                                <option value="" data-lang="toborzo_no_ship_selected">Nincs kiválasztott hajó</option>
+                            </select>
                         </div>
 
                         <div id="toborzo-myship-details" style="display: none; margin-top: 10px;">
@@ -209,6 +207,145 @@
                             <div id="toborzo-myship-roles" class="cyber-roster-container">
                                 <!-- Ide generálódnak a posztok -->
                             </div>
+                        </div>
+
+                        <!-- ÚJ SZEKCIÓ: Beérkezett jelentkezők elbírálása -->
+                        <div id="toborzo-captain-applicants-section" style="margin-top: 15px; border-top: 1px dashed #d4af37; padding-top: 12px; display: none;">
+                            <div class="cyber-label" style="color: #d4af37; margin-bottom: 8px; font-size: 0.88em; display: flex; align-items: center; justify-content: space-between;">
+                                <span><i class="fas fa-user-check"></i> BEÉRKEZETT JELENTKEZŐK:</span>
+                                <span id="toborzo-captain-applicants-count" class="cyber-badge cyber-badge-gold">0 db</span>
+                            </div>
+                            <div id="toborzo-captain-applicants-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto;">
+                                <div style="color: #78909c; font-style: italic; font-size: 0.85em; padding: 6px;">Nincsenek elbírálásra váró jelentkezők.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. KIBER KONZOL III. : MUNKAKERESŐ ÉS ÁLLÁSHIRDETÉSEK (Közép-Felső) -->
+                <div id="toborzo-console-hirdetesek" class="toborzo-cyber-console crt-screen" style="display: none;">
+                    <div class="crt-scanlines"></div>
+                    <div class="cyber-console-header">
+                        <div class="cyber-console-title">
+                            <i class="fas fa-broadcast-tower" style="color: #00ffcc;"></i> [ NYITOTT HAJÓS POZÍCIÓK // ÁLLÁSHIRDETÉSEK ] <span class="crt-cursor">_</span>
+                        </div>
+                        <button type="button" class="cyber-close-btn" onclick="closeToborzoConsole()" title="Vissza a főképernyőre">&times;</button>
+                    </div>
+
+                    <div class="cyber-console-body">
+                        <p class="cyber-hint-text">
+                            // Böngészd a kapitányok által meghirdetett nyitott hajópozíciókat és küldetéseket. Jelentkezéskor a rendszer automatikusan csatolja a képzettségedet. <span class="crt-cursor">▋</span>
+                        </p>
+
+                        <div id="toborzo-duty-warning" style="display: none; background: rgba(255, 51, 102, 0.15); border: 1px solid #ff3366; border-radius: 4px; padding: 10px; color: #ff6688; font-family: 'Share Tech Mono', monospace; font-size: 0.85em;">
+                            <i class="fas fa-exclamation-triangle"></i> <strong>FIGYELEM:</strong> Jelenleg aktív szolgálatban állsz egy hajón! Új pozícióra csak a meglévő szolgálatod befejezése vagy felmondása után jelentkezhetsz.
+                        </div>
+
+                        <div id="toborzo-job-postings-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto;">
+                            <!-- Ide generálódnak az aktív hirdetések -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. KIBER KONZOL IV. : ZSOLDOS FALIÚJSÁG ÉS AJÁNLATTÉTEL (Közép-Alsó) -->
+                <div id="toborzo-console-zsoldosok" class="toborzo-cyber-console crt-screen" style="display: none;">
+                    <div class="crt-scanlines"></div>
+                    <div class="cyber-console-header">
+                        <div class="cyber-console-title">
+                            <i class="fas fa-scroll" style="color: #d4af37;"></i> [ SZABADÚSZÓ ZSOLDOSOK // FALIÚJSÁG ] <span class="crt-cursor">_</span>
+                        </div>
+                        <button type="button" class="cyber-close-btn" onclick="closeToborzoConsole()" title="Vissza a főképernyőre">&times;</button>
+                    </div>
+
+                    <div class="cyber-console-body">
+                        <p class="cyber-hint-text">
+                            // Munkát kereső szabadúszó tengerészek és kalózok névsora. Válassz ki egy matrózt, és küldj neki közvetlen állásajánlatot a hajódra. <span class="crt-cursor">▋</span>
+                        </p>
+
+                        <div id="toborzo-mercenaries-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto;">
+                            <!-- Ide generálódnak a szabadúszó zsoldosok -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. SUBMODAL: POZÍCIÓ MEGHIRDETÉSE KÜLDETÉS CÉLLAL -->
+                <div id="toborzo-post-job-submodal" class="cyber-submodal-overlay" style="display: none;">
+                    <div class="cyber-submodal-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #00ffcc; padding-bottom: 6px;">
+                            <div style="font-family: 'Orbitron', sans-serif; font-size: 0.9em; font-weight: bold; color: #00ffcc;">
+                                <i class="fas fa-bullhorn"></i> POZÍCIÓ MEGHIRDETÉSE
+                            </div>
+                            <button type="button" class="cyber-close-btn" onclick="closeToborzoSubmodals()">&times;</button>
+                        </div>
+                        <input type="hidden" id="post-job-ship-id" value="">
+                        <input type="hidden" id="post-job-role" value="">
+                        
+                        <div style="font-family: 'Share Tech Mono', monospace; font-size: 0.88em; color: #cfd8dc;">
+                            Hajó: <strong id="post-job-ship-name-display" style="color: #d4af37;">-</strong><br>
+                            Tisztség: <strong id="post-job-role-display" style="color: #00e5ff;">-</strong>
+                        </div>
+
+                        <div class="cyber-form-group">
+                            <label class="cyber-label">KÜLDETÉS CÉLJA (VÁLASZTHATÓ TEKERCS):</label>
+                            <select id="post-job-mission-select" class="cyber-select">
+                                <option value="">- Nincs kitűzött küldetés cél (Általános szolgálat) -</option>
+                            </select>
+                        </div>
+
+                        <div class="cyber-btn-row" style="margin-top: 10px;">
+                            <button type="button" class="cyber-btn cyber-btn-primary" onclick="submitPostJobOpening()" style="flex: 1;">
+                                <i class="fas fa-check-circle"></i> MEGHIRDETÉS KÖZZÉTÉTELE
+                            </button>
+                            <button type="button" class="cyber-btn cyber-btn-secondary" onclick="closeToborzoSubmodals()">
+                                Mégsem
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. SUBMODAL: KÖZVETLEN ÁLLÁSAJÁNLAT KÜLDÉSE -->
+                <div id="toborzo-direct-offer-submodal" class="cyber-submodal-overlay" style="display: none;">
+                    <div class="cyber-submodal-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d4af37; padding-bottom: 6px;">
+                            <div style="font-family: 'Orbitron', sans-serif; font-size: 0.9em; font-weight: bold; color: #d4af37;">
+                                <i class="fas fa-handshake"></i> ÁLLÁSAJÁNLAT KÜLDÉSE
+                            </div>
+                            <button type="button" class="cyber-close-btn" onclick="closeToborzoSubmodals()">&times;</button>
+                        </div>
+                        <input type="hidden" id="direct-offer-matroz-email" value="">
+
+                        <div style="font-family: 'Share Tech Mono', monospace; font-size: 0.88em; color: #cfd8dc;">
+                            Kiválasztott matróz: <strong id="direct-offer-matroz-name" style="color: #d4af37;">-</strong><br>
+                            Keresett pozíció: <strong id="direct-offer-matroz-role" style="color: #00e5ff;">-</strong><br>
+                            Havi bérigény: <strong id="direct-offer-matroz-wage" style="color: #00ffcc;">-</strong> KR / hó
+                        </div>
+
+                        <div class="cyber-form-group">
+                            <label class="cyber-label">CÉL HAJÓ KIVÁLASZTÁSA:</label>
+                            <select id="direct-offer-ship-select" class="cyber-select" onchange="updateDirectOfferRolesDropdown()">
+                                <option value="">- Válassz saját hajót -</option>
+                            </select>
+                        </div>
+
+                        <div class="cyber-form-group">
+                            <label class="cyber-label">SZABAD POZÍCIÓ A HAJÓN:</label>
+                            <select id="direct-offer-role-select" class="cyber-select">
+                                <option value="">- Válassz tisztséget -</option>
+                            </select>
+                        </div>
+
+                        <div class="cyber-form-group">
+                            <label class="cyber-label">SZERZŐDÉS IDŐTARTAMA (HÓNAPOKBAN):</label>
+                            <input type="number" id="direct-offer-duration-input" class="cyber-input" min="1" max="12" value="1">
+                        </div>
+
+                        <div class="cyber-btn-row" style="margin-top: 10px;">
+                            <button type="button" class="cyber-btn cyber-btn-primary" onclick="submitDirectJobOffer()" style="flex: 1;">
+                                <i class="fas fa-paper-plane"></i> AJÁNLAT ELKÜLDÉSE
+                            </button>
+                            <button type="button" class="cyber-btn cyber-btn-secondary" onclick="closeToborzoSubmodals()">
+                                Mégsem
+                            </button>
                         </div>
                     </div>
                 </div>

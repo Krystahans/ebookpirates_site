@@ -2287,18 +2287,22 @@ html.ebp-authenticated #app-view {
 }
 
 .toborzo-tooltip {
-    background: rgba(2, 4, 8, 0.94);
+    background: rgba(4, 10, 20, 0.95);
     border: 1px solid #00ffcc;
-    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5), inset 0 0 8px rgba(0, 255, 204, 0.2);
     color: #00ffcc;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Orbitron', 'Share Tech Mono', monospace;
     font-size: 0.85em;
-    letter-spacing: 1px;
-    padding: 6px 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 7px 15px;
     border-radius: 4px;
     pointer-events: none;
     transition: opacity 0.15s ease;
-    transform: translate(-50%, -130%);
+    transform: translate(-50%, -135%);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    white-space: nowrap;
 }
 
 /* CRT Monitor Authentic Effects (Csak a kinagyított konzolhoz) */
@@ -2618,4 +2622,132 @@ html.ebp-authenticated #app-view {
     cursor: pointer;
     font-size: 0.88em;
     color: #cfd8dc;
+}
+
+/* Toborzóbarakk 4 Konzol Bővítmények */
+.cyber-card {
+    background: rgba(10, 20, 32, 0.85);
+    border: 1px solid #1e3a5f;
+    border-radius: 6px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cyber-card:hover {
+    border-color: #00ffcc;
+    box-shadow: 0 0 12px rgba(0, 255, 204, 0.2);
+}
+
+.cyber-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 255, 204, 0.15);
+    padding-bottom: 6px;
+}
+
+.cyber-card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #00ffcc;
+    letter-spacing: 0.5px;
+}
+
+.cyber-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78em;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.cyber-badge-gold {
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid #d4af37;
+    color: #d4af37;
+}
+
+.cyber-badge-cyan {
+    background: rgba(0, 255, 204, 0.15);
+    border: 1px solid #00ffcc;
+    color: #00ffcc;
+}
+
+.cyber-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.84em;
+    color: #cfd8dc;
+}
+
+.cyber-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.cyber-btn-sm {
+    padding: 6px 12px;
+    font-size: 0.78em;
+}
+
+.cyber-btn-success {
+    background: #00e676;
+    color: #020408;
+    box-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+}
+
+.cyber-btn-success:hover {
+    background: #69f0ae;
+    box-shadow: 0 0 15px rgba(0, 230, 118, 0.6);
+}
+
+.cyber-btn-danger {
+    background: rgba(255, 51, 102, 0.2);
+    border: 1px solid #ff3366;
+    color: #ff6688;
+}
+
+.cyber-btn-danger:hover {
+    background: #ff3366;
+    color: #ffffff;
+}
+
+/* Modális kis panelek a toborzó kiber konzolokon belül */
+.cyber-submodal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 6, 12, 0.9);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.cyber-submodal-content {
+    background: #0d1b2a;
+    border: 1.5px solid #00ffcc;
+    border-radius: 6px;
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.35);
+    width: 100%;
+    max-width: 440px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }

@@ -10329,11 +10329,26 @@ function renderSelectedShipCrew() {
     ];
     
     var availableCrew = window.toborzoAvailableCrew || []; 
-    var sortedCrew = availableCrew.slice().sort(function(a, b) { return a.name.localeCompare(b.name); });
+    var nameDict = window.toborzoNameDict || (window.toborzoMarketData && window.toborzoMarketData.nameDict) || {};
+    
+    var resolvePirateName = function(email) {
+        if (!email) return '';
+        var lower = String(email).toLowerCase().trim();
+        if (nameDict[lower]) return nameDict[lower];
+        var match = availableCrew.find(function(c) { return String(c.email).toLowerCase().trim() === lower; });
+        if (match && match.name) return match.name;
+        return email;
+    };
+
+    var sortedCrew = availableCrew.slice().sort(function(a, b) { 
+        var nameA = resolvePirateName(a.email) || a.name || '';
+        var nameB = resolvePirateName(b.email) || b.name || '';
+        return nameA.localeCompare(nameB); 
+    });
     
     allRoles.forEach(function(role) {
         var isSingle = (role !== 'Tengerész');
-        var currentEmails = ship.crew[role] ? ship.crew[role].split(',').map(function(e) { return e.trim().toLowerCase(); }).filter(function(e) { return e; }) : [];
+        var currentEmails = (ship.crew && ship.crew[role]) ? ship.crew[role].split(',').map(function(e) { return e.trim().toLowerCase(); }).filter(function(e) { return e; }) : [];
         
         var rowDiv = document.createElement('div');
         rowDiv.style.cssText = 'display: flex; flex-direction: column; padding: 10px; border-bottom: 1px dashed #ccc; background: #fafafa; border-radius: 4px; margin-bottom: 8px;';
@@ -10358,10 +10373,9 @@ function renderSelectedShipCrew() {
         var currentNamesHtml = "--- Üres ---";
         if (currentEmails.length > 0) {
             var namesArr = currentEmails.map(function(e) {
-                var match = availableCrew.find(function(c) { return c.email.toLowerCase() === e; });
-                return match ? match.name : e;
+                return resolvePirateName(e);
             });
-            currentNamesHtml = '<span style="color:#1b5e20; font-weight:bold;">' + namesArr.join(', ') + '</span>';
+            currentNamesHtml = '<span style="color:#d4af37; font-weight:bold;">' + namesArr.join(', ') + '</span>';
         }
         
         selectHeader.innerHTML = '<span>' + currentNamesHtml + '</span> <i class="fas fa-chevron-down"></i>';
@@ -10393,8 +10407,11 @@ function renderSelectedShipCrew() {
                     selectHeader.innerHTML = '<span>--- Üres ---</span> <i class="fas fa-chevron-down"></i>';
                 } else {
                     var nArr = [];
-                    checkedCbs.forEach(function(cb) { nArr.push(cb.getAttribute('data-name')); });
-                    selectHeader.innerHTML = '<span><span style="color:#1b5e20; font-weight:bold;">' + nArr.join(', ') + '</span></span> <i class="fas fa-chevron-down"></i>';
+                    checkedCbs.forEach(function(cb) { 
+                        var cName = resolvePirateName(cb.value) || cb.getAttribute('data-name') || cb.value;
+                        nArr.push(cName); 
+                    });
+                    selectHeader.innerHTML = '<span><span style="color:#d4af37; font-weight:bold;">' + nArr.join(', ') + '</span></span> <i class="fas fa-chevron-down"></i>';
                 }
             }
         });
@@ -10404,8 +10421,7 @@ function renderSelectedShipCrew() {
         
         // Akik már ezen a pozíción vannak
         currentEmails.forEach(function(currEmail) {
-            var cMatch = availableCrew.find(function(c) { return c.email.toLowerCase() === currEmail; });
-            var dName = cMatch ? cMatch.name : currEmail;
+            var dName = resolvePirateName(currEmail);
             var label = document.createElement('label');
             label.style.cssText = 'display: block; padding: 5px 8px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 0.9em; background: #e8f5e9;';
             label.innerHTML = '<input type="checkbox" value="' + currEmail + '" data-role="' + role + '" data-name="' + dName + '" checked> <strong>' + dName + '</strong>';
@@ -10413,17 +10429,16 @@ function renderSelectedShipCrew() {
             optionAdded = true;
         });
 
-        // Akik szabadok (nincsenek ezen a pozíción, de nincsenek máshol sem a hajón - VAGY ha máshol vannak, az szerveroldalon ki lesz szűrve, de itt mindent mutatunk)
+        // Akik szabadok
         sortedCrew.forEach(function(player) {
             if (currentEmails.includes(player.email.toLowerCase())) return;
-            if (player.isBusy) return; // SKIP BUSY PLAYERS
-            
-            // Kiszűrjük azokat, akiknek nincs meg a megfelelő rangjuk
+            if (player.isBusy) return;
             if (!hasRequiredRank(player.rank, role)) return;
             
+            var dName = resolvePirateName(player.email) || player.name;
             var label = document.createElement('label');
             label.style.cssText = 'display: block; padding: 5px 8px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 0.9em;';
-            label.innerHTML = '<input type="checkbox" value="' + player.email + '" data-role="' + role + '" data-name="' + player.name + '"> ' + player.name + ' <span style="color:#888; font-size:0.8em;">(' + (player.rank || '') + ')</span>';
+            label.innerHTML = '<input type="checkbox" value="' + player.email + '" data-role="' + role + '" data-name="' + dName + '"> ' + dName + ' <span style="color:#888; font-size:0.8em;">(' + (player.rank || '') + ')</span>';
             optionsContainer.appendChild(label);
             optionAdded = true;
         });
@@ -12764,6 +12779,8 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                                 window.toborzoMarketData = fbData;
                                 window.toborzoOwnedShips = fbData.ownedShips || [];
                                 window.toborzoAvailableCrew = fbData.availableCrew || [];
+                                window.toborzoNameDict = fbData.nameDict || {};
+                                window.toborzoGameScrolls = fbData.gameScrolls || fbData.availableScrolls || [];
                                 window.renderToborzoFullMarket(fbData);
                                 window.renderSelectedShipCrew();
                             }
@@ -12782,6 +12799,8 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                             window.toborzoMarketData = data;
                             window.toborzoOwnedShips = data.ownedShips || [];
                             window.toborzoAvailableCrew = data.availableCrew || [];
+                            window.toborzoNameDict = data.nameDict || {};
+                            window.toborzoGameScrolls = data.gameScrolls || data.availableScrolls || [];
                             window.renderToborzoFullMarket(data);
                             window.renderSelectedShipCrew();
                         } else {
@@ -13085,7 +13104,22 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             ];
             
             var availableCrew = window.toborzoAvailableCrew || []; 
-            var sortedCrew = availableCrew.slice().sort(function(a, b) { return a.name.localeCompare(b.name); });
+            var nameDict = window.toborzoNameDict || (window.toborzoMarketData && window.toborzoMarketData.nameDict) || {};
+            
+            var resolvePirateName = function(email) {
+                if (!email) return '';
+                var lower = String(email).toLowerCase().trim();
+                if (nameDict[lower]) return nameDict[lower];
+                var match = availableCrew.find(function(c) { return String(c.email).toLowerCase().trim() === lower; });
+                if (match && match.name) return match.name;
+                return email;
+            };
+
+            var sortedCrew = availableCrew.slice().sort(function(a, b) { 
+                var nameA = resolvePirateName(a.email) || a.name || '';
+                var nameB = resolvePirateName(b.email) || b.name || '';
+                return nameA.localeCompare(nameB); 
+            });
             
             allRoles.forEach(function(role) {
                 var isSingle = (role !== 'Tengerész');
@@ -13131,8 +13165,7 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                 var currentNamesHtml = "--- Üres ---";
                 if (currentEmails.length > 0) {
                     var namesArr = currentEmails.map(function(e) {
-                        var match = availableCrew.find(function(c) { return c.email.toLowerCase() === e; });
-                        return match ? match.name : e;
+                        return resolvePirateName(e);
                     });
                     currentNamesHtml = '<span style="color:#d4af37; font-weight:bold;">' + namesArr.join(', ') + '</span>';
                 }
@@ -13164,7 +13197,10 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                             selectHeader.innerHTML = '<span>--- Üres ---</span> <i class="fas fa-chevron-down"></i>';
                         } else {
                             var nArr = [];
-                            checkedCbs.forEach(function(cb) { nArr.push(cb.getAttribute('data-name')); });
+                            checkedCbs.forEach(function(cb) { 
+                                var cName = resolvePirateName(cb.value) || cb.getAttribute('data-name') || cb.value;
+                                nArr.push(cName); 
+                            });
                             selectHeader.innerHTML = '<span><span style="color:#d4af37; font-weight:bold;">' + nArr.join(', ') + '</span></span> <i class="fas fa-chevron-down"></i>';
                         }
                     }
@@ -13172,8 +13208,7 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
 
                 var optionAdded = false;
                 currentEmails.forEach(function(currEmail) {
-                    var cMatch = availableCrew.find(function(c) { return c.email.toLowerCase() === currEmail; });
-                    var dName = cMatch ? cMatch.name : currEmail;
+                    var dName = resolvePirateName(currEmail);
                     var label = document.createElement('label');
                     label.className = 'cyber-option-label';
                     label.innerHTML = '<input type="checkbox" value="' + currEmail + '" data-role="' + role + '" data-name="' + dName + '" checked> <strong style="color:#d4af37;">' + dName + '</strong>';
@@ -13186,9 +13221,10 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                     if (player.isBusy) return;
                     if (!window.hasRequiredRank(player.rank, role)) return;
                     
+                    var dName = resolvePirateName(player.email) || player.name;
                     var label = document.createElement('label');
                     label.className = 'cyber-option-label';
-                    label.innerHTML = '<input type="checkbox" value="' + player.email + '" data-role="' + role + '" data-name="' + player.name + '"> ' + player.name + ' <span style="color:#888; font-size:0.8em;">(' + (player.rank || '') + ')</span>';
+                    label.innerHTML = '<input type="checkbox" value="' + player.email + '" data-role="' + role + '" data-name="' + dName + '"> ' + dName + ' <span style="color:#888; font-size:0.8em;">(' + (player.rank || '') + ')</span>';
                     optionsContainer.appendChild(label);
                     optionAdded = true;
                 });
@@ -13288,10 +13324,34 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
         window.openPostJobSubmodal = function(shipId, shipName, role) {
             var submodal = document.getElementById('toborzo-post-job-submodal');
             if (!submodal) return;
-            document.getElementById('post-job-ship-id').value = shipId;
-            document.getElementById('post-job-role').value = role;
-            document.getElementById('post-job-ship-name-display').textContent = shipName;
-            document.getElementById('post-job-role-display').textContent = role;
+            
+            var sIdEl = document.getElementById('post-job-ship-id');
+            var rEl = document.getElementById('post-job-role');
+            var sNameDisp = document.getElementById('post-job-ship-name-display');
+            var rDisp = document.getElementById('post-job-role-display');
+            
+            if (sIdEl) sIdEl.value = shipId;
+            if (rEl) rEl.value = role;
+            if (sNameDisp) sNameDisp.textContent = shipName;
+            if (rDisp) rDisp.textContent = role;
+            
+            // Küldetés tekercsek lista betöltése a jatektekercsek E oszlopából
+            var missionSelect = document.getElementById('post-job-mission-select');
+            var scrolls = window.toborzoGameScrolls || (window.toborzoMarketData && (window.toborzoMarketData.gameScrolls || window.toborzoMarketData.availableScrolls)) || [];
+            
+            if (missionSelect) {
+                missionSelect.innerHTML = '<option value="">- Nincs kitűzött küldetés cél (Általános szolgálat) -</option>';
+                if (scrolls && scrolls.length > 0) {
+                    scrolls.forEach(function(scroll) {
+                        if (!scroll) return;
+                        var opt = document.createElement('option');
+                        opt.value = scroll;
+                        opt.textContent = scroll;
+                        missionSelect.appendChild(opt);
+                    });
+                }
+            }
+            
             submodal.style.display = 'flex';
         };
 

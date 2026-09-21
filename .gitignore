@@ -1,4 +1,4 @@
-# ============================================================================
+﻿# ============================================================================
 # 🚫 SZIGORÚ PROJECT-WIDE GITIGNORE SZABÁLYZAT
 # ============================================================================
 
@@ -50,3 +50,26 @@ Toolbox/
 *toolbox*
 *debug_panel*
 Protected_Backups/
+
+# ============================================================================
+# ✅ DEMOJATEK (Tutorial) KIVÉTELEK - ezek felkerülnek a fork-ba
+# ============================================================================
+# A demojatek/ mappában lévő assets, modellek és médiafájlok engedélyezése
+!demojatek/assets/
+!demojatek/assets/**
+!demojatek/models/
+!demojatek/models/**
+!demojatek/**/*.glb
+!demojatek/**/*.mp4
+!demojatek/**/*.webm
+!demojatek/**/*.mp3
+!demojatek/**/*.wav
+!demojatek/**/*.otf
+!demojatek/**/*.ttf
+!demojatek/**/*.jpg
+!demojatek/**/*.png
+!demojatek/**/*.psd
+
+# 🚫 DE a túl nagy fájlokat továbbra is kizárjuk (GitHub 100MB limit)
+demojatek/models/FullTrack.glb
+demojatek/models/FullTrack_Stripped.glb

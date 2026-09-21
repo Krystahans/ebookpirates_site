@@ -1,0 +1,278 @@
+using UnityEngine;
+using TMPro;
+using System;
+using System.IO;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+public class ScoreManager : MonoBehaviour
+{
+    public static ScoreManager Instance { get; private set; }
+
+    [Header("Player")]
+    [Tooltip("Name used for save file (PlayerName.txt). Leave empty to use 'Player'.")]
+    public string PlayerName = "Player";
+
+    // Number of carried items collected
+    public int Carried { get; private set; } = 0;
+
+    // Number of items permanently stored at Home
+    public int Stored { get; private set; } = 0;
+
+    [Header("UI")]
+    [Tooltip("Optional TextMeshProUGUI that will display the current Carried value.")]
+    public TextMeshProUGUI carriedText;
+
+    [Tooltip("Optional TextMeshProUGUI that will display the current Stored value.")]
+    public TextMeshProUGUI storedText;
+
+    [Tooltip("Optional TextMeshProUGUI that will display the player's name.")]
+    public TextMeshProUGUI playerNameText; // shows PlayerName in UI (optional) 
+
+    [Header("Data")]
+    [Tooltip("Optional TextAsset (DBtemp.txt) to use as input; assign in the Inspector to load from this asset instead of disk.")]
+    public TextAsset dbTempFile;
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+
+        // Try to load DBtemp.txt automatically on start
+        LoadFromDBTemp();
+
+        // initialize UI (LoadFromDBTemp may have already updated some UI)
+        UpdateCarriedUI();
+        UpdateStoredUI();
+        UpdatePlayerNameUI(); // ensure name is shown if a UI field is assigned
+    }
+
+    /// <summary>
+    /// Increment the Carried score by the specified amount (default 1).
+    /// </summary>
+    public void AddCarried(int amount = 1)
+    {
+        Carried += amount;
+        Debug.Log($"Carried: {Carried}");
+        UpdateCarriedUI();
+    }
+
+    /// <summary>
+    /// Move all carried items into stored and reset Carried to 0.
+    /// </summary>
+    public void StoreCarried()
+    {
+        if (Carried <= 0) return;
+        Stored += Carried;
+        Carried = 0;
+        Debug.Log($"Stored: {Stored}");
+        UpdateCarriedUI();
+        UpdateStoredUI();
+
+        // Persist the updated Stored value to DBtemp.txt
+        SaveToDBTemp();
+    }
+
+    /// <summary>
+    /// Set the UI text if a TextMeshProUGUI has been assigned.
+    /// </summary>
+    private void UpdateCarriedUI()
+    {
+        if (carriedText != null)
+        {
+            carriedText.text = Carried.ToString();
+        }
+    }
+
+    private void UpdateStoredUI()
+    {
+        if (storedText != null)
+        {
+            storedText.text = Stored.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Update the player name UI element if assigned.
+    /// </summary>
+    private void UpdatePlayerNameUI()
+    {
+        if (playerNameText != null)
+        {
+            playerNameText.text = string.IsNullOrEmpty(PlayerName) ? string.Empty : PlayerName;
+        }
+    }
+
+    /// <summary>
+    /// Read the PlayerName (line 1) and Stored (line 2) from DBtemp.txt located in Application.persistentDataPath.
+    /// Returns true if the file was read and parsed successfully; false otherwise.
+    /// </summary>
+    public bool LoadFromDBTemp()
+    {
+        try
+        {
+            string[] lines;
+            string chosenSource = null;
+
+            // If a TextAsset has been assigned in the Inspector, use that first
+            if (dbTempFile != null)
+            {
+                chosenSource = $"TextAsset:{dbTempFile.name}";
+                Debug.Log($"Loading DBtemp from assigned TextAsset '{dbTempFile.name}'");
+                lines = dbTempFile.text.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            }
+            else
+            {
+                // Try multiple locations on disk so a DBtemp.txt in the project (Assets) can be used during development.
+                string[] candidatePaths = new[] {
+                    Path.Combine(Application.persistentDataPath, "DBtemp.txt"),
+                    Path.Combine(Application.dataPath, "Scripts", "DBtemp.txt"),
+                    Path.Combine(Application.dataPath, "DBtemp.txt")
+                };
+
+                string chosenPath = null;
+                foreach (var p in candidatePaths)
+                {
+                    if (File.Exists(p))
+                    {
+                        chosenPath = p;
+                        break;
+                    }
+                }
+
+                if (chosenPath == null)
+                {
+                    Debug.LogWarning($"DBtemp.txt not found in any known path (checked persistent and Assets). Searched: {string.Join(", ", candidatePaths)}");
+                    return false;
+                }
+
+                chosenSource = chosenPath;
+                Debug.Log($"Loading DBtemp.txt from {chosenPath}");
+
+                lines = File.ReadAllLines(chosenPath);
+            }
+
+            Debug.Log($"Using source: {chosenSource}");
+
+            if (lines.Length >= 1)
+            {
+                // Trim and remove potential BOM
+                string rawName = (lines[0] ?? string.Empty).Trim().TrimStart('\uFEFF');
+
+                // Remove common prefixes like "PlayerName:" or "Name:"
+                if (rawName.StartsWith("PlayerName:", StringComparison.OrdinalIgnoreCase))
+                    rawName = rawName.Substring("PlayerName:".Length).Trim();
+                if (rawName.StartsWith("Name:", StringComparison.OrdinalIgnoreCase))
+                    rawName = rawName.Substring("Name:".Length).Trim();
+
+                PlayerName = rawName;
+
+                // If the file contains an empty name, prefer any existing UI name (if assigned)
+                if (string.IsNullOrEmpty(PlayerName) && playerNameText != null && !string.IsNullOrEmpty(playerNameText.text))
+                {
+                    PlayerName = playerNameText.text.Trim();
+                    Debug.Log($"DBtemp.txt had empty PlayerName; using UI value '{PlayerName}'");
+                }
+                UpdatePlayerNameUI();
+            }
+
+            if (lines.Length >= 2)
+            {
+                string storedRaw = (lines[1] ?? string.Empty).Trim();
+
+                if (!int.TryParse(storedRaw, out int val))
+                {
+                    // tolerate strings like "Stored: 2" by extracting first integer
+                    var m = System.Text.RegularExpressions.Regex.Match(storedRaw, "(-?\\d+)");
+                    if (m.Success && int.TryParse(m.Value, out val))
+                    {
+                        // parsed ok
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Failed to parse Stored from DBtemp.txt: '{lines[1]}'");
+                        return false;
+                    }
+                }
+
+                Stored = val;
+                UpdateStoredUI();
+            }
+
+            Debug.Log($"Loaded DBtemp.txt - PlayerName: {PlayerName}, Stored: {Stored}");
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error reading DBtemp.txt: {e}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Save current PlayerName and Stored to DBtemp.txt in Application.persistentDataPath.
+    /// </summary>
+    public bool SaveToDBTemp()
+    {
+        try
+        {
+            string[] lines = new[] { $"PlayerName: {PlayerName}", $"Stored: {Stored}" };
+
+#if UNITY_EDITOR
+            // If user assigned a TextAsset in the Inspector, write back to that asset file
+            if (dbTempFile != null)
+            {
+                string assetPath = AssetDatabase.GetAssetPath(dbTempFile); // returns e.g. "Assets/DBtemp.txt"
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    string absPath = Path.Combine(Application.dataPath, assetPath.Substring("Assets/".Length));
+                    File.WriteAllLines(absPath, lines);
+                    AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
+                    Debug.Log($"Saved DBtemp.txt asset to {assetPath} (abs: {absPath})");
+                    return true;
+                }
+            }
+
+            // Otherwise, try known project locations
+            string assetsScriptPath = Path.Combine(Application.dataPath, "Scripts", "DBtemp.txt");
+            if (File.Exists(assetsScriptPath))
+            {
+                File.WriteAllLines(assetsScriptPath, lines);
+                AssetDatabase.ImportAsset("Assets/Scripts/DBtemp.txt", ImportAssetOptions.ForceUpdate);
+                Debug.Log($"Saved DBtemp.txt to Assets/Scripts/DBtemp.txt (abs: {assetsScriptPath})");
+                return true;
+            }
+
+            string assetsRootPath = Path.Combine(Application.dataPath, "DBtemp.txt");
+            if (File.Exists(assetsRootPath))
+            {
+                File.WriteAllLines(assetsRootPath, lines);
+                AssetDatabase.ImportAsset("Assets/DBtemp.txt", ImportAssetOptions.ForceUpdate);
+                Debug.Log($"Saved DBtemp.txt to Assets/DBtemp.txt (abs: {assetsRootPath})");
+                return true;
+            }
+#endif
+
+            // Fallback: write to persistent data path (will work in builds)
+            string persistPath = Path.Combine(Application.persistentDataPath, "DBtemp.txt");
+            File.WriteAllLines(persistPath, lines);
+            Debug.Log($"Saved DBtemp.txt to persistent path {persistPath} (PlayerName: {PlayerName}, Stored: {Stored})");
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to save DBtemp.txt: {e}");
+            return false;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+}

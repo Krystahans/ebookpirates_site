@@ -241,48 +241,26 @@ function setupTopBarEvents() {
     btnFullscreen.addEventListener('click', function(clickEvt) {
       clickEvt.stopPropagation();
       
-      // Vizuális debug banner
-      var dbg = document.createElement('div');
-      dbg.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:999999;background:yellow;color:black;font-size:16px;padding:10px;text-align:center;font-weight:bold;';
-      document.body.appendChild(dbg);
+      const fse = document.fullscreenElement || document.webkitFullscreenElement;
       
-      var fse = document.fullscreenElement;
-      var wfse = document.webkitFullscreenElement;
-      dbg.textContent = 'STATE: fullscreenElement=' + (fse ? fse.tagName : 'null') + 
-                         ', webkitFSE=' + (wfse ? wfse.tagName : 'null') +
-                         ', body.is-fullscreen=' + document.body.classList.contains('is-fullscreen');
-      
-      // MINDIG próbáljunk fullscreen-be lépni/kilépni
       try {
-        if (!fse && !wfse) {
+        if (!fse) {
           // Nincs fullscreen → BELÉPÉS
           document.documentElement.requestFullscreen().then(function() {
-            dbg.textContent = '✅ BELÉPVE fullscreen-be!';
-            dbg.style.background = 'lime';
             document.body.classList.add('is-fullscreen');
-            setTimeout(function() { dbg.remove(); }, 3000);
           }).catch(function(err) {
-            dbg.textContent = '❌ HIBA: ' + err.name + ': ' + err.message;
-            dbg.style.background = 'red';
-            dbg.style.color = 'white';
-            setTimeout(function() { dbg.remove(); }, 8000);
+            console.warn('Fullscreen request error:', err);
           });
         } else {
           // Van fullscreen → KILÉPÉS
           document.exitFullscreen().then(function() {
-            dbg.textContent = '🔄 KILÉPVE fullscreen-ből';
             document.body.classList.remove('is-fullscreen');
-            setTimeout(function() { dbg.remove(); }, 2000);
           }).catch(function(e) {
-            dbg.textContent = '❌ Exit hiba: ' + e.message;
-            setTimeout(function() { dbg.remove(); }, 5000);
+            console.warn('Fullscreen exit error:', e);
           });
         }
       } catch(ex) {
-        dbg.textContent = '💥 KIVÉTEL: ' + ex.message;
-        dbg.style.background = 'red';
-        dbg.style.color = 'white';
-        setTimeout(function() { dbg.remove(); }, 8000);
+        console.warn('Fullscreen exception:', ex);
       }
       
       setTimeout(function() {

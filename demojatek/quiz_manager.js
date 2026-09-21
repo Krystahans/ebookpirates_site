@@ -1,4 +1,4 @@
-﻿window.QuizConfig = {
+window.QuizConfig = {
                 TUTORZEP: {
     panelWidth: 831,
     panelHeight: 768,
@@ -543,6 +543,10 @@ class QuizManager {
 
   // ─── 🛠️ ÉLŐ VIZUÁLIS SZERKESZTŐ (AGENTS.md Felhasználói Szabály) ───
   initVisualEditor() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('edit') !== '1' && params.get('editor') !== '1') {
+      return;
+    }
     let editor = document.getElementById('quiz-visual-editor');
     if (editor) return;
 

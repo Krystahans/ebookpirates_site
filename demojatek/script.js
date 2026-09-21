@@ -1,4 +1,4 @@
-﻿window.onerror = function (message, source, lineno, colno, error) {
+window.onerror = function (message, source, lineno, colno, error) {
   const errDiv = document.createElement('div');
   errDiv.style.position = 'absolute'; errDiv.style.top = '10px'; errDiv.style.left = '10px';
   errDiv.style.zIndex = '999999'; errDiv.style.background = 'red'; errDiv.style.color = 'white';
@@ -18,10 +18,7 @@ window.getAssetUrl = function (path) {
   if (!path) return '';
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
   const clean = path.replace(/^\.?\//, '');
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return clean;
-  }
-  return GCS_ASSET_BASE + clean;
+  return clean;
 };
 
 window.zozoWelcomeTexts = [];

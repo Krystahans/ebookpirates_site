@@ -36,7 +36,8 @@
     <!-- Universal NPC Modal (universal-npc-modal) -->
     <div id="universal-npc-modal" class="gamemode-modal" style="display: none; align-items: center; justify-content: center; z-index: 1000;" onclick="if(event.target===this) closeUniversalNPCModal(event)">
         <div id="npc-portrait-panel" class="npc-portrait-closed">
-            <img id="npc-portrait-image" src="" alt="NPC">
+            <img id="npc-portrait-image" src="" alt="NPC" style="display: none;">
+            <video id="npc-portrait-video" playsinline muted autoplay loop style="display: none;"></video>
         </div>
         <div class="gamemode-modal-content" style="width: 90%; max-width: 500px; height: 80vh; padding: 0; display: flex; flex-direction: column; overflow: hidden; background: #fff;">
             <div id="npc-header" style="background: #37474f; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #cfd8dc;">
@@ -362,7 +363,8 @@
     <!-- Fedélzet Modal (fedelzet-modal) -->
     <div id="fedelzet-modal" class="gamemode-modal" style="display: none; align-items: center; justify-content: center; z-index: 1000;" onclick="if(event.target===this) closeFedelzetModal(event)">
         <div id="fedelzet-portrait-panel" class="npc-portrait-closed">
-            <img id="fedelzet-portrait-image" src="https://storage.googleapis.com/kalozsziget-assets/caracters/jatekmester03.png" alt="Kapitány">
+            <img id="fedelzet-portrait-image" src="https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg" alt="Barba Negra" style="display: none;">
+            <video id="fedelzet-portrait-video" playsinline muted poster="https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg" src="https://storage.googleapis.com/kalozsziget-assets/assets/videos/Barba_Negra_greeting_on_dock.mp4" style="display: block;"></video>
         </div>
         <div class="gamemode-modal-content" style="width: 90%; max-width: 650px; max-height: 90vh; padding: 0; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-paper, #fdfbf7); border-radius: 8px; border: 2px solid var(--color-gold, #d4af37); box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
             
@@ -476,7 +478,9 @@
                       role: 'Kikötőmester',
                       icon: '<i class=\'fas fa-anchor\'></i>', 
                       headerColor: '#37474f',
-                      portrait: 'https://img.index.hu/imgfrm/2/5/4/1/THM_0000922541.jpg', 
+                      portrait: 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Pirate_sitting_in_pilot_chair.jpg', 
+                      video: 'https://storage.googleapis.com/kalozsziget-assets/assets/videos/Pirate_sitting_in_pilot_chair.mp4',
+                      videoLoop: true, 
                       msgIcon: '<i class=\'fas fa-anchor\' style=\'color:#d4af37; margin-right:5px;\'></i>',
                       loaderHTML: '<i class=\'fas fa-anchor fa-spin\' style=\'color:#d4af37; margin-right:8px;\'></i> <i>A Kikötőmester számol...</i>',
                       styles: {

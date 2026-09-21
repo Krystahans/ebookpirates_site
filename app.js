@@ -9356,12 +9356,14 @@ var ACTIVE_NPC_CONFIG = {};
 
 function openUniversalNPC(npcId, config) {
     var modal = document.getElementById('universal-npc-modal');
+    if (!modal) return;
     var modalContent = modal.querySelector('.gamemode-modal-content');
     var portraitPanel = document.getElementById('npc-portrait-panel');
     var portraitImg = document.getElementById('npc-portrait-image');
 
     // 1. Állapot mentése
-    document.getElementById('current-npc-id').value = npcId;
+    var currentIdEl = document.getElementById('current-npc-id');
+    if (currentIdEl) currentIdEl.value = npcId;
     // Globális változóba mentjük, hogy elérhető legyen máshol is
     window.currentNPCConfig = config || {};
     ACTIVE_NPC_CONFIG = window.currentNPCConfig;
@@ -9372,43 +9374,84 @@ function openUniversalNPC(npcId, config) {
     var icon = config.icon || '👤';
     var headerColor = config.headerColor || '#333';
 
-    document.getElementById('npc-name').innerText = name;
-    document.getElementById('npc-role').innerText = role;
-    document.getElementById('npc-icon').innerHTML = icon;
-    document.getElementById('npc-header').style.backgroundColor = headerColor;
+    var nameEl = document.getElementById('npc-name');
+    var roleEl = document.getElementById('npc-role');
+    var iconEl = document.getElementById('npc-icon');
+    var headerEl = document.getElementById('npc-header');
 
-    modal.style.cssText = "display: flex; z-index: 100; background: rgba(0,0,0,0.5);";
-    modalContent.style.cssText = "";
-    modalContent.className = "gamemode-modal-content";
+    if (nameEl) nameEl.innerText = name;
+    if (roleEl) roleEl.innerText = role;
+    if (iconEl) iconEl.innerHTML = icon;
+    if (headerEl) headerEl.style.backgroundColor = headerColor;
 
-    // 4. PORTRÉ KEZELÉS
-    portraitPanel.className = 'npc-portrait-closed';
-    portraitImg.src = '';
+    modal.style.cssText = "display: flex; z-index: 1000; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5);";
+    if (modalContent) {
+        modalContent.style.cssText = "";
+        modalContent.className = "gamemode-modal-content";
+    }
 
-    if (config.portrait) {
-        portraitImg.src = config.portrait;
+    // 4. PORTRÉ ÉS VIDEÓ KEZELÉS
+    var portraitVideo = document.getElementById('npc-portrait-video');
+    if (portraitPanel) {
+        if (!portraitVideo) {
+            portraitVideo = document.createElement('video');
+            portraitVideo.id = 'npc-portrait-video';
+            portraitVideo.setAttribute('playsinline', '');
+            portraitVideo.muted = true;
+            portraitVideo.autoplay = true;
+            portraitVideo.loop = true;
+            portraitVideo.style.display = 'none';
+            portraitPanel.appendChild(portraitVideo);
+        }
 
-        setTimeout(function () {
-            portraitPanel.className = 'npc-portrait-open';
-            if (config.styles && config.styles.content && config.styles.content.height === '100%') {
-                portraitPanel.style.height = '100%';
-            } else {
-                portraitPanel.style.height = '80vh';
+        portraitPanel.className = 'npc-portrait-closed';
+
+        if (portraitVideo && config.video) {
+            if (portraitImg) portraitImg.style.display = 'none';
+            portraitVideo.style.display = 'block';
+            portraitVideo.src = config.video;
+            if (config.portrait) {
+                portraitVideo.poster = config.portrait;
             }
-        }, 100);
+            portraitVideo.loop = (config.videoLoop !== undefined) ? config.videoLoop : true;
+            portraitVideo.muted = true;
+            portraitVideo.currentTime = 0;
+            var playProm = portraitVideo.play();
+            if (playProm !== undefined) {
+                playProm.catch(function(e){ console.log("NPC portré videó autoplay megjegyzés:", e); });
+            }
+        } else if (portraitImg) {
+            if (portraitVideo) {
+                try { portraitVideo.pause(); portraitVideo.src = ''; } catch(e){}
+                portraitVideo.style.display = 'none';
+            }
+            portraitImg.style.display = 'block';
+            portraitImg.src = config.portrait || '';
+        }
+
+        if (config.video || config.portrait) {
+            setTimeout(function () {
+                portraitPanel.className = 'npc-portrait-open';
+                if (config.styles && config.styles.content && (config.styles.content.height === '100%' || config.styles.content.height === '100vh')) {
+                    portraitPanel.style.height = '100%';
+                } else {
+                    portraitPanel.style.height = '80vh';
+                }
+            }, 100);
+        }
     }
 
     if (config.styles) {
-        if (config.styles.modal) {
+        if (config.styles.modal && modal) {
             for (var key in config.styles.modal) { modal.style[key] = config.styles.modal[key]; }
         }
-        if (config.styles.content) {
+        if (config.styles.content && modalContent) {
             for (var k in config.styles.content) { modalContent.style[k] = config.styles.content[k]; }
         }
     }
 
     var chatArea = document.getElementById('universal-chat-area');
-    chatArea.innerHTML = '';
+    if (chatArea) chatArea.innerHTML = '';
 
     var input = document.getElementById('universal-chat-input');
     if (input) {
@@ -9424,6 +9467,7 @@ function openUniversalNPC(npcId, config) {
         callBackend('handleNPCInteraction', [npcId, "", "INIT", null], handleUniversalResponse);
     }
 }
+window.openUniversalNPC = openUniversalNPC;
 
 function sendUniversalMessage() {
     var input = document.getElementById('universal-chat-input');
@@ -10656,6 +10700,38 @@ function initFedelzetOldal() {
     var selector = document.getElementById('ship-selector');
     var nameHeader = document.getElementById('active-ship-name');
     var chatHistory = document.getElementById('deck-chat-history');
+
+    // Fedélzet portré videó egyszeri lejátszása és helyettesítő kép beállítása
+    var subVid = document.getElementById('fedelzet-subpage-portrait-video');
+    var subImg = document.getElementById('fedelzet-subpage-portrait-image');
+    if (subVid) {
+        subVid.style.display = 'block';
+        if (subImg) subImg.style.display = 'none';
+        subVid.currentTime = 0;
+        subVid.loop = false;
+        subVid.muted = true;
+        subVid.onended = function() {
+            subVid.style.display = 'none';
+            if (subImg) {
+                subImg.style.display = 'block';
+                subImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
+            }
+        };
+        var p = subVid.play();
+        if (p !== undefined) {
+            p.catch(function(e) {
+                console.log('Fedélzet aloldal videó autoplay megjegyzés:', e);
+                subVid.style.display = 'none';
+                if (subImg) {
+                    subImg.style.display = 'block';
+                    subImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
+                }
+            });
+        }
+    } else if (subImg) {
+        subImg.style.display = 'block';
+        subImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
+    }
 
     selectedShipForDeparture = null;
     selectedGameTypeForDeparture = null;
@@ -12300,6 +12376,10 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
 
                 if (typeof window.openFedelzetModal === 'function') {
                     window.openFedelzetModal();
+                } else if (typeof openFedelzetModal === 'function') {
+                    openFedelzetModal();
+                } else if (typeof loadPage === 'function') {
+                    loadPage('fedelzet_oldal');
                 }
                 const overlay = document.getElementById('scene-transition-overlay');
                 if (overlay) overlay.classList.remove('active');
@@ -12425,90 +12505,6 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             currentHoveredLocation = null;
             isModalOpen = false;
             isCinematicTransitioning = false;
-        };
-
-        window.openUniversalNPC = function(npcId, config) {
-            console.log("⚓ Universal NPC megnyitása:", npcId, config);
-            var modal = document.getElementById('universal-npc-modal');
-            if (!modal) return;
-            var modalContent = modal.querySelector('.gamemode-modal-content');
-            var portraitPanel = document.getElementById('npc-portrait-panel');
-            var portraitImg = document.getElementById('npc-portrait-image');
-
-            var currentIdEl = document.getElementById('current-npc-id');
-            if (currentIdEl) currentIdEl.value = npcId;
-            window.currentNPCConfig = config || {};
-            window.ACTIVE_NPC_CONFIG = window.currentNPCConfig;
-
-            config = window.ACTIVE_NPC_CONFIG;
-            var name = config.name || 'NPC';
-            var role = config.role || '';
-            var icon = config.icon || '👤';
-            var headerColor = config.headerColor || '#333';
-
-            var nameEl = document.getElementById('npc-name');
-            var roleEl = document.getElementById('npc-role');
-            var iconEl = document.getElementById('npc-icon');
-            var headerEl = document.getElementById('npc-header');
-
-            if (nameEl) nameEl.innerText = name;
-            if (roleEl) roleEl.innerText = role;
-            if (iconEl) iconEl.innerHTML = icon;
-            if (headerEl) headerEl.style.backgroundColor = headerColor;
-
-            modal.style.cssText = "display: flex; z-index: 1000; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5);";
-            if (modalContent) {
-                modalContent.style.cssText = "";
-                modalContent.className = "gamemode-modal-content";
-            }
-
-            // Portré animáció és méret
-            if (portraitPanel && portraitImg) {
-                portraitPanel.className = 'npc-portrait-closed';
-                portraitImg.src = '';
-                if (config.portrait) {
-                    portraitImg.src = config.portrait;
-                    setTimeout(function () {
-                        portraitPanel.className = 'npc-portrait-open';
-                        if (config.styles && config.styles.content && config.styles.content.height === '100%') {
-                            portraitPanel.style.height = '100%';
-                        } else {
-                            portraitPanel.style.height = '80vh';
-                        }
-                    }, 100);
-                }
-            }
-
-            // Testreszabott stílusok alkalmazása
-            if (config.styles) {
-                if (config.styles.modal && modal) {
-                    for (var key in config.styles.modal) { modal.style[key] = config.styles.modal[key]; }
-                }
-                if (config.styles.content && modalContent) {
-                    for (var k in config.styles.content) { modalContent.style[k] = config.styles.content[k]; }
-                }
-            }
-
-            var chatArea = document.getElementById('universal-chat-area');
-            if (chatArea) {
-                chatArea.innerHTML = '';
-            }
-
-            var input = document.getElementById('universal-chat-input');
-            if (input) {
-                input.value = '';
-                input.disabled = false;
-                input.placeholder = name + " figyel...";
-            }
-
-            modal.style.display = 'flex';
-
-            // Kezdő üdvözlés vagy backend hívás
-            if (typeof window.callBackend === 'function' && (!config || !config.skipInit)) {
-                window.callBackend('handleNPCInteraction', [npcId, "", "INIT", null], window.handleUniversalResponse);
-            } else {
-                window.addBubbleToUniversal(name, "Üdvözöllek a Kikötőben, kalóz! Miben lehetek a szolgálatodra?", "incoming");
-            }
         };
 
         window.sendUniversalMessage = function() {
@@ -13655,8 +13651,38 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
 
             var portraitPanel = document.getElementById('fedelzet-portrait-panel');
             var portraitImg = document.getElementById('fedelzet-portrait-image');
-            if (portraitPanel && portraitImg) {
+            var portraitVideo = document.getElementById('fedelzet-portrait-video');
+            if (portraitPanel) {
                 portraitPanel.className = 'npc-portrait-closed';
+                if (portraitVideo) {
+                    portraitVideo.style.display = 'block';
+                    if (portraitImg) portraitImg.style.display = 'none';
+                    portraitVideo.currentTime = 0;
+                    portraitVideo.loop = false;
+                    portraitVideo.muted = true;
+                    portraitVideo.onended = function() {
+                        portraitVideo.style.display = 'none';
+                        if (portraitImg) {
+                            portraitImg.style.display = 'block';
+                            portraitImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
+                        }
+                    };
+                    var playProm = portraitVideo.play();
+                    if (playProm !== undefined) {
+                        playProm.catch(function(e) {
+                            console.log('Fedélzet videó autoplay megjegyzés:', e);
+                            portraitVideo.style.display = 'none';
+                            if (portraitImg) {
+                                portraitImg.style.display = 'block';
+                                portraitImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
+                            }
+                        });
+                    }
+                } else if (portraitImg) {
+                    portraitImg.style.display = 'block';
+                    portraitImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
+                }
+
                 setTimeout(function() {
                     portraitPanel.className = 'npc-portrait-open';
                 }, 100);
@@ -13670,6 +13696,10 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
             if (e) {
                 if (e.stopPropagation) e.stopPropagation();
                 if (e.preventDefault) e.preventDefault();
+            }
+            var portraitVideo = document.getElementById('fedelzet-portrait-video');
+            if (portraitVideo) {
+                try { portraitVideo.pause(); } catch(e){}
             }
             document.querySelectorAll('#fedelzet-modal').forEach(function(m) {
                 m.style.display = 'none';
@@ -15267,7 +15297,9 @@ function runKikoto3DModule(THREE, OrbitControls, GLTFLoader, RoomEnvironment, Wa
                                 role: 'Kikötőmester',
                                 icon: '<i class="fas fa-anchor"></i>', 
                                 headerColor: '#37474f',
-                                portrait: 'https://img.index.hu/imgfrm/2/5/4/1/THM_0000922541.jpg', 
+                                portrait: 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Pirate_sitting_in_pilot_chair.jpg', 
+                                video: 'https://storage.googleapis.com/kalozsziget-assets/assets/videos/Pirate_sitting_in_pilot_chair.mp4',
+                                videoLoop: true, 
                                 msgIcon: '<i class="fas fa-anchor" style="color:#d4af37; margin-right:5px;"></i>',
                                 loaderHTML: '<i class="fas fa-anchor fa-spin" style="color:#d4af37; margin-right:8px;"></i> <i>A Kikötőmester számol...</i>',
                                 styles: {

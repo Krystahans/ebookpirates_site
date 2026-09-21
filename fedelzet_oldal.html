@@ -72,17 +72,24 @@
                 </button>
             </div>
 
-            <!-- FEDÉLZETI CHAT -->
-            <div style="background: #eceff1; border-radius: 8px; border: 1px solid #ccc; max-width: 500px; margin: 0 auto; overflow: hidden; display: flex; flex-direction: column; height: 300px;">
-                <div style="background: #37474f; color: white; padding: 10px; font-weight: bold;">
-                    Fedélzeti Megbeszélés
+            <!-- FEDÉLZETI CHAT ÉS PORTRÉ -->
+            <div style="display: flex; justify-content: center; align-items: flex-end; gap: 15px; max-width: 820px; margin: 0 auto;">
+                <div id="fedelzet-subpage-portrait-panel" style="width: 260px; max-width: 35vw; height: 300px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; border-radius: 8px;">
+                    <img id="fedelzet-subpage-portrait-image" src="https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg" alt="Barba Negra" style="display: none; height: 100%; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(5px 5px 15px rgba(0,0,0,0.5)); border-radius: 6px;">
+                    <video id="fedelzet-subpage-portrait-video" playsinline muted poster="https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg" src="https://storage.googleapis.com/kalozsziget-assets/assets/videos/Barba_Negra_greeting_on_dock.mp4" style="height: 100%; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(5px 5px 15px rgba(0,0,0,0.5)); border-radius: 6px;"></video>
                 </div>
-                <div id="deck-chat-history" style="flex: 1; padding: 10px; overflow-y: auto; text-align: left; font-size: 0.9em; background: #fff;">
-                    <p style="color: #888;"><i>Csend van a fedélzeten. A legénység a parancsaidra vár...</i></p>
-                </div>
-                <div style="display: flex; padding: 5px; background: #ddd; border-top: 1px solid #ccc; width: 100%; box-sizing: border-box;">
-                    <input type="text" id="deck-chat-input" placeholder="Szólj a legénységhez..." style="width: 75%; padding: 8px; border: 1px solid #aaa; border-radius: 4px; flex-grow: 4;">
-                    <button class="btn" onclick="sendDeckChat()" style="width: 25%; margin-left: 5px; padding: 8px 15px; flex-grow: 1; white-space: nowrap;">Mond</button>
+
+                <div style="background: #eceff1; border-radius: 8px; border: 1px solid #ccc; width: 100%; max-width: 500px; overflow: hidden; display: flex; flex-direction: column; height: 300px;">
+                    <div style="background: #37474f; color: white; padding: 10px; font-weight: bold;">
+                        Fedélzeti Megbeszélés
+                    </div>
+                    <div id="deck-chat-history" style="flex: 1; padding: 10px; overflow-y: auto; text-align: left; font-size: 0.9em; background: #fff;">
+                        <p style="color: #888;"><i>Csend van a fedélzeten. A legénység a parancsaidra vár...</i></p>
+                    </div>
+                    <div style="display: flex; padding: 5px; background: #ddd; border-top: 1px solid #ccc; width: 100%; box-sizing: border-box;">
+                        <input type="text" id="deck-chat-input" placeholder="Szólj a legénységhez..." style="width: 75%; padding: 8px; border: 1px solid #aaa; border-radius: 4px; flex-grow: 4;">
+                        <button class="btn" onclick="sendDeckChat()" style="width: 25%; margin-left: 5px; padding: 8px 15px; flex-grow: 1; white-space: nowrap;">Mond</button>
+                    </div>
                 </div>
             </div>
 

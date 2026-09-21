@@ -164,12 +164,25 @@
             margin-right: 0;
         }
 
-        #npc-portrait-image, #fedelzet-portrait-image {
+        #npc-portrait-image, #npc-portrait-video, #fedelzet-portrait-image, #fedelzet-portrait-video {
             height: 100%;
             width: auto;
             max-width: 100%;
             object-fit: contain;
             filter: drop-shadow(5px 5px 15px rgba(0, 0, 0, 0.5));
+            border-radius: 6px;
+        }
+
+        .npc-portrait-closed {
+            width: 0px !important;
+            opacity: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .npc-portrait-open {
+            width: 300px !important;
+            opacity: 1 !important;
+            margin-right: -20px !important;
         }
 
         @media (max-width: 800px) {
@@ -212,9 +225,10 @@
     <div id="scene-transition-overlay"></div>
 
     <!-- Universal NPC Modal (universal-npc-modal) -->
-    <div id="universal-npc-modal" class="gamemode-modal" style="display: none; align-items: center; justify-content: center; z-index: 1000;">
+    <div id="universal-npc-modal" class="gamemode-modal" style="display: none; align-items: center; justify-content: center; z-index: 1000;" onclick="if(event.target===this) closeUniversalNPCModal(event)">
         <div id="npc-portrait-panel" class="npc-portrait-closed">
-            <img id="npc-portrait-image" src="" alt="NPC">
+            <img id="npc-portrait-image" src="" alt="NPC" style="display: none;">
+            <video id="npc-portrait-video" playsinline muted autoplay loop style="display: none;"></video>
         </div>
         <div class="gamemode-modal-content" style="width: 90%; max-width: 500px; height: 80vh; padding: 0; display: flex; flex-direction: column; overflow: hidden; background: #fff;">
             <div id="npc-header" style="background: #37474f; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #cfd8dc;">
@@ -538,9 +552,10 @@
     </div>
 
     <!-- Fedélzet Modal (fedelzet-modal) -->
-    <div id="fedelzet-modal" class="gamemode-modal" style="display: none; align-items: center; justify-content: center; z-index: 1000;">
+    <div id="fedelzet-modal" class="gamemode-modal" style="display: none; align-items: center; justify-content: center; z-index: 1000;" onclick="if(event.target===this) closeFedelzetModal(event)">
         <div id="fedelzet-portrait-panel" class="npc-portrait-closed">
-            <img id="fedelzet-portrait-image" src="https://storage.googleapis.com/kalozsziget-assets/caracters/jatekmester03.png" alt="Kapitány">
+            <img id="fedelzet-portrait-image" src="https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg" alt="Barba Negra" style="display: none;">
+            <video id="fedelzet-portrait-video" playsinline muted poster="https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg" src="https://storage.googleapis.com/kalozsziget-assets/assets/videos/Barba_Negra_greeting_on_dock.mp4" style="display: block;"></video>
         </div>
         <div class="gamemode-modal-content" style="width: 90%; max-width: 650px; max-height: 90vh; padding: 0; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-paper, #fdfbf7); border-radius: 8px; border: 2px solid var(--color-gold, #d4af37); box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
             
@@ -988,8 +1003,16 @@
                     }
                 }
 
-                if (typeof window.openFedelzetModal === 'function') {
+                if (window.parent && window.parent !== window && typeof window.parent.openFedelzetModal === 'function') {
+                    window.parent.openFedelzetModal();
+                } else if (typeof window.openFedelzetModal === 'function') {
                     window.openFedelzetModal();
+                } else if (window.parent && window.parent !== window && typeof window.parent.loadPage === 'function') {
+                    window.parent.loadPage('fedelzet_oldal');
+                } else if (typeof window.loadPage === 'function') {
+                    window.loadPage('fedelzet_oldal');
+                } else {
+                    window.location.href = 'fedelzet_oldal.html';
                 }
                 const overlay = document.getElementById('scene-transition-overlay');
                 if (overlay) overlay.classList.remove('active');
@@ -1096,15 +1119,48 @@
                 modalContent.className = "gamemode-modal-content";
             }
 
-            // Portré animáció és méret
-            if (portraitPanel && portraitImg) {
+            // Portré és Videó animáció és méret
+            var portraitVideo = document.getElementById('npc-portrait-video');
+            if (portraitPanel) {
+                if (!portraitVideo) {
+                    portraitVideo = document.createElement('video');
+                    portraitVideo.id = 'npc-portrait-video';
+                    portraitVideo.setAttribute('playsinline', '');
+                    portraitVideo.muted = true;
+                    portraitVideo.autoplay = true;
+                    portraitVideo.loop = true;
+                    portraitVideo.style.display = 'none';
+                    portraitPanel.appendChild(portraitVideo);
+                }
+
                 portraitPanel.className = 'npc-portrait-closed';
-                portraitImg.src = '';
-                if (config.portrait) {
-                    portraitImg.src = config.portrait;
+                if (portraitVideo && config.video) {
+                    if (portraitImg) portraitImg.style.display = 'none';
+                    portraitVideo.style.display = 'block';
+                    portraitVideo.src = config.video;
+                    if (config.portrait) {
+                        portraitVideo.poster = config.portrait;
+                    }
+                    portraitVideo.loop = (config.videoLoop !== undefined) ? config.videoLoop : true;
+                    portraitVideo.muted = true;
+                    portraitVideo.currentTime = 0;
+                    var playProm = portraitVideo.play();
+                    if (playProm !== undefined) {
+                        playProm.catch(function(e){ console.log("NPC portré videó autoplay megjegyzés:", e); });
+                    }
+                } else if (portraitImg) {
+                    if (portraitVideo) {
+                        try { portraitVideo.pause(); portraitVideo.src = ''; } catch(e){}
+                        portraitVideo.style.display = 'none';
+                    }
+                    portraitImg.style.display = 'block';
+                    portraitImg.src = config.portrait || '';
+                }
+
+                if (config.video || config.portrait) {
                     setTimeout(function () {
                         portraitPanel.className = 'npc-portrait-open';
-                        if (config.styles && config.styles.content && config.styles.content.height === '100%') {
+                        if (config.styles && config.styles.content && (config.styles.content.height === '100%' || config.styles.content.height === '100vh')) {
                             portraitPanel.style.height = '100%';
                         } else {
                             portraitPanel.style.height = '80vh';
@@ -2291,8 +2347,38 @@
 
             var portraitPanel = document.getElementById('fedelzet-portrait-panel');
             var portraitImg = document.getElementById('fedelzet-portrait-image');
-            if (portraitPanel && portraitImg) {
+            var portraitVideo = document.getElementById('fedelzet-portrait-video');
+            if (portraitPanel) {
                 portraitPanel.className = 'npc-portrait-closed';
+                if (portraitVideo) {
+                    portraitVideo.style.display = 'block';
+                    if (portraitImg) portraitImg.style.display = 'none';
+                    portraitVideo.currentTime = 0;
+                    portraitVideo.loop = false;
+                    portraitVideo.muted = true;
+                    portraitVideo.onended = function() {
+                        portraitVideo.style.display = 'none';
+                        if (portraitImg) {
+                            portraitImg.style.display = 'block';
+                            portraitImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
+                        }
+                    };
+                    var playProm = portraitVideo.play();
+                    if (playProm !== undefined) {
+                        playProm.catch(function(e) {
+                            console.log('Fedélzet videó autoplay megjegyzés:', e);
+                            portraitVideo.style.display = 'none';
+                            if (portraitImg) {
+                                portraitImg.style.display = 'block';
+                                portraitImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
+                            }
+                        });
+                    }
+                } else if (portraitImg) {
+                    portraitImg.style.display = 'block';
+                    portraitImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
+                }
+
                 setTimeout(function() {
                     portraitPanel.className = 'npc-portrait-open';
                 }, 100);
@@ -2306,6 +2392,10 @@
             if (e) {
                 if (e.stopPropagation) e.stopPropagation();
                 if (e.preventDefault) e.preventDefault();
+            }
+            var portraitVideo = document.getElementById('fedelzet-portrait-video');
+            if (portraitVideo) {
+                try { portraitVideo.pause(); } catch(e){}
             }
             var modal = document.getElementById('fedelzet-modal');
             if (modal) modal.style.display = 'none';
@@ -3886,7 +3976,9 @@
                                 role: 'Kikötőmester',
                                 icon: '<i class="fas fa-anchor"></i>', 
                                 headerColor: '#37474f',
-                                portrait: 'https://img.index.hu/imgfrm/2/5/4/1/THM_0000922541.jpg', 
+                                portrait: 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Pirate_sitting_in_pilot_chair.jpg', 
+                                video: 'https://storage.googleapis.com/kalozsziget-assets/assets/videos/Pirate_sitting_in_pilot_chair.mp4',
+                                videoLoop: true, 
                                 msgIcon: '<i class="fas fa-anchor" style="color:#d4af37; margin-right:5px;"></i>',
                                 loaderHTML: '<i class="fas fa-anchor fa-spin" style="color:#d4af37; margin-right:8px;"></i> <i>A Kikötőmester számol...</i>',
                                 styles: {

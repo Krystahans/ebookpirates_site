@@ -1470,11 +1470,7 @@ canvas.addEventListener('mousedown', e => { mDown = true; mx = e.clientX; my = e
 addEventListener('mouseup', () => { mDown = false; canvas.style.cursor = 'grab'; });
 addEventListener('mousemove', e => {
   if (!mDown) return;
-  const deltaX = (e.clientX - mx) * ORB_SENS_H * (Math.PI / 180);
-  if (typeof boat !== 'undefined' && boat && boat.rotation) {
-    boat.rotation.y -= deltaX;
-  }
-  orbH = 0.0;
+  orbH -= (e.clientX - mx) * ORB_SENS_H;
   orbV = THREE.MathUtils.clamp(orbV + (e.clientY - my) * ORB_SENS_V, ORB_MIN_V, ORB_MAX_V);
   mx = e.clientX; my = e.clientY;
 });
@@ -2351,7 +2347,7 @@ addEventListener('click', (e) => {
 
 window.resetAirshipChase = function () {
   window.airshipChaseState = 'RETREAT';
-  window.airshipChaseCooldown = 28.0;
+  window.airshipChaseCooldown = 20.0;
   window.monologState.airshipCaughtPlayer = false;
   window.airshipAbductionActive = false;
   if (window.airshipLadderMesh) window.airshipLadderMesh.visible = false;

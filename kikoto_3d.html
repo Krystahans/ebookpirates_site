@@ -156,6 +156,7 @@
             height: 80vh;
             background-color: transparent;
             overflow: hidden;
+            position: relative;
             transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.6s ease;
             display: flex;
             align-items: center;
@@ -171,6 +172,39 @@
             object-fit: contain;
             filter: drop-shadow(5px 5px 15px rgba(0, 0, 0, 0.5));
             border-radius: 6px;
+        }
+
+        .portrait-audio-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(13, 27, 42, 0.85);
+            border: 2px solid #d4af37;
+            color: #d4af37;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 50;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+            font-size: 1.1rem;
+            padding: 0;
+            outline: none;
+        }
+
+        .portrait-audio-btn:hover {
+            background: rgba(212, 175, 55, 0.35);
+            color: #ffd700;
+            border-color: #ffd700;
+            transform: scale(1.12);
+        }
+
+        .portrait-audio-btn i {
+            pointer-events: none;
         }
 
         .npc-portrait-closed {
@@ -229,6 +263,9 @@
         <div id="npc-portrait-panel" class="npc-portrait-closed">
             <img id="npc-portrait-image" src="" alt="NPC" style="display: none;">
             <video id="npc-portrait-video" playsinline muted autoplay loop style="display: none;"></video>
+            <button id="npc-portrait-audio-btn" type="button" class="portrait-audio-btn" title="Hang némítása / bekapcsolása" onclick="toggleVideoAudio('npc-portrait-video', 'npc-portrait-audio-btn')">
+                <i class="fas fa-volume-mute"></i>
+            </button>
         </div>
         <div class="gamemode-modal-content" style="width: 90%; max-width: 500px; height: 80vh; padding: 0; display: flex; flex-direction: column; overflow: hidden; background: #fff;">
             <div id="npc-header" style="background: #37474f; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #cfd8dc;">
@@ -556,6 +593,9 @@
         <div id="fedelzet-portrait-panel" class="npc-portrait-closed">
             <img id="fedelzet-portrait-image" src="https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg" alt="Barba Negra" style="display: none;">
             <video id="fedelzet-portrait-video" playsinline muted poster="https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg" src="https://storage.googleapis.com/kalozsziget-assets/assets/videos/Barba_Negra_greeting_on_dock.mp4" style="display: block;"></video>
+            <button id="fedelzet-portrait-audio-btn" type="button" class="portrait-audio-btn" title="Hang némítása / bekapcsolása" onclick="toggleVideoAudio('fedelzet-portrait-video', 'fedelzet-portrait-audio-btn')">
+                <i class="fas fa-volume-mute"></i>
+            </button>
         </div>
         <div class="gamemode-modal-content" style="width: 90%; max-width: 650px; max-height: 90vh; padding: 0; display: flex; flex-direction: column; overflow: hidden; background: var(--bg-paper, #fdfbf7); border-radius: 8px; border: 2px solid var(--color-gold, #d4af37); box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
             
@@ -1033,11 +1073,38 @@
         // ─── UNIVERZÁLIS NPC & TOBORZÓ MODAL VEZÉRLÉS (STANDALONE & BEÁGYAZOTT TÁMOGATÁS) ─────────────
         window.ACTIVE_NPC_CONFIG = {};
 
+        function toggleVideoAudio(videoId, btnId) {
+            var video = document.getElementById(videoId);
+            var btn = document.getElementById(btnId);
+            if (!video || !btn) return;
+
+            video.muted = !video.muted;
+            if (!video.muted) {
+                video.volume = 1.0;
+                btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                btn.title = 'Némítás';
+                if (video.paused) {
+                    video.play().catch(function(e){ console.log("Play error on unmute:", e); });
+                }
+            } else {
+                btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                btn.title = 'Hang bekapcsolása';
+            }
+        }
+        window.toggleVideoAudio = toggleVideoAudio;
+
         window.closeUniversalNPCModal = function(e) {
             if (e) {
                 if (e.stopPropagation) e.stopPropagation();
                 if (e.preventDefault) e.preventDefault();
             }
+            var portraitVideo = document.getElementById('npc-portrait-video');
+            if (portraitVideo) {
+                try { portraitVideo.pause(); } catch(err){}
+            }
+            var audioBtn = document.getElementById('npc-portrait-audio-btn');
+            if (audioBtn) audioBtn.style.display = 'none';
+
             var modal = document.getElementById('universal-npc-modal');
             if (modal) modal.style.display = 'none';
             if (defaultCameraPos && defaultTargetPos && camera && defaultCameraPos.length() > 0) {
@@ -1121,6 +1188,8 @@
 
             // Portré és Videó animáció és méret
             var portraitVideo = document.getElementById('npc-portrait-video');
+            var audioBtn = document.getElementById('npc-portrait-audio-btn');
+
             if (portraitPanel) {
                 if (!portraitVideo) {
                     portraitVideo = document.createElement('video');
@@ -1133,6 +1202,20 @@
                     portraitPanel.appendChild(portraitVideo);
                 }
 
+                if (!audioBtn) {
+                    audioBtn = document.createElement('button');
+                    audioBtn.id = 'npc-portrait-audio-btn';
+                    audioBtn.type = 'button';
+                    audioBtn.className = 'portrait-audio-btn';
+                    audioBtn.title = 'Hang némítása / bekapcsolása';
+                    audioBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    audioBtn.onclick = function(e) {
+                        if (e) { e.stopPropagation(); e.preventDefault(); }
+                        toggleVideoAudio('npc-portrait-video', 'npc-portrait-audio-btn');
+                    };
+                    portraitPanel.appendChild(audioBtn);
+                }
+
                 portraitPanel.className = 'npc-portrait-closed';
                 if (portraitVideo && config.video) {
                     if (portraitImg) portraitImg.style.display = 'none';
@@ -1142,13 +1225,35 @@
                         portraitVideo.poster = config.portrait;
                     }
                     portraitVideo.loop = (config.videoLoop !== undefined) ? config.videoLoop : true;
-                    portraitVideo.muted = true;
                     portraitVideo.currentTime = 0;
+                    portraitVideo.muted = false;
+                    portraitVideo.volume = 1.0;
+
+                    portraitVideo.onended = function() {
+                        if (audioBtn) audioBtn.style.display = 'none';
+                    };
+
                     var playProm = portraitVideo.play();
                     if (playProm !== undefined) {
-                        playProm.catch(function(e){ console.log("NPC portré videó autoplay megjegyzés:", e); });
+                        playProm.then(function() {
+                            if (audioBtn) {
+                                audioBtn.style.display = 'flex';
+                                audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                                audioBtn.title = 'Némítás';
+                            }
+                        }).catch(function(e) {
+                            console.log("NPC portré videó autoplay fallback muted:", e);
+                            portraitVideo.muted = true;
+                            portraitVideo.play().catch(function(){});
+                            if (audioBtn) {
+                                audioBtn.style.display = 'flex';
+                                audioBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                                audioBtn.title = 'Hang bekapcsolása';
+                            }
+                        });
                     }
                 } else if (portraitImg) {
+                    if (audioBtn) audioBtn.style.display = 'none';
                     if (portraitVideo) {
                         try { portraitVideo.pause(); portraitVideo.src = ''; } catch(e){}
                         portraitVideo.style.display = 'none';
@@ -2348,15 +2453,33 @@
             var portraitPanel = document.getElementById('fedelzet-portrait-panel');
             var portraitImg = document.getElementById('fedelzet-portrait-image');
             var portraitVideo = document.getElementById('fedelzet-portrait-video');
+            var audioBtn = document.getElementById('fedelzet-portrait-audio-btn');
+
             if (portraitPanel) {
+                if (!audioBtn) {
+                    audioBtn = document.createElement('button');
+                    audioBtn.id = 'fedelzet-portrait-audio-btn';
+                    audioBtn.type = 'button';
+                    audioBtn.className = 'portrait-audio-btn';
+                    audioBtn.title = 'Hang némítása / bekapcsolása';
+                    audioBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    audioBtn.onclick = function(e) {
+                        if (e) { e.stopPropagation(); e.preventDefault(); }
+                        toggleVideoAudio('fedelzet-portrait-video', 'fedelzet-portrait-audio-btn');
+                    };
+                    portraitPanel.appendChild(audioBtn);
+                }
+
                 portraitPanel.className = 'npc-portrait-closed';
                 if (portraitVideo) {
                     portraitVideo.style.display = 'block';
                     if (portraitImg) portraitImg.style.display = 'none';
                     portraitVideo.currentTime = 0;
                     portraitVideo.loop = false;
-                    portraitVideo.muted = true;
+                    portraitVideo.muted = false;
+                    portraitVideo.volume = 1.0;
                     portraitVideo.onended = function() {
+                        if (audioBtn) audioBtn.style.display = 'none';
                         portraitVideo.style.display = 'none';
                         if (portraitImg) {
                             portraitImg.style.display = 'block';
@@ -2365,16 +2488,25 @@
                     };
                     var playProm = portraitVideo.play();
                     if (playProm !== undefined) {
-                        playProm.catch(function(e) {
-                            console.log('Fedélzet videó autoplay megjegyzés:', e);
-                            portraitVideo.style.display = 'none';
-                            if (portraitImg) {
-                                portraitImg.style.display = 'block';
-                                portraitImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
+                        playProm.then(function() {
+                            if (audioBtn) {
+                                audioBtn.style.display = 'flex';
+                                audioBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                                audioBtn.title = 'Némítás';
+                            }
+                        }).catch(function(e) {
+                            console.log('Fedélzet videó autoplay fallback muted:', e);
+                            portraitVideo.muted = true;
+                            portraitVideo.play().catch(function(){});
+                            if (audioBtn) {
+                                audioBtn.style.display = 'flex';
+                                audioBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                                audioBtn.title = 'Hang bekapcsolása';
                             }
                         });
                     }
                 } else if (portraitImg) {
+                    if (audioBtn) audioBtn.style.display = 'none';
                     portraitImg.style.display = 'block';
                     portraitImg.src = 'https://storage.googleapis.com/kalozsziget-assets/assets/images/Barba_Negra_greeting_on_dock.jpg';
                 }
@@ -2397,6 +2529,9 @@
             if (portraitVideo) {
                 try { portraitVideo.pause(); } catch(e){}
             }
+            var audioBtn = document.getElementById('fedelzet-portrait-audio-btn');
+            if (audioBtn) audioBtn.style.display = 'none';
+
             var modal = document.getElementById('fedelzet-modal');
             if (modal) modal.style.display = 'none';
             if (defaultCameraPos && defaultTargetPos && camera && defaultCameraPos.length() > 0) {

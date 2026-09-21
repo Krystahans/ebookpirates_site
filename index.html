@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Pirata+One&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=20260921_portre3">
+    <link rel="stylesheet" href="styles.css?v=20260921_audio1">
     <link rel="icon" href="data:,">
 
     <script>
@@ -402,9 +402,12 @@
     </div>
 
     <div id="universal-npc-modal" class="gamemode-modal" style="display: none; align-items: center; justify-content: center; z-index: 1000;" onclick="if(event.target===this) closeUniversalNPCModal(event)">
-        <div id="npc-portrait-panel" class="npc-portrait-closed">
+        <div id="npc-portrait-panel" class="npc-portrait-closed" style="position: relative;">
             <img id="npc-portrait-image" src="" alt="NPC" style="display: none;">
             <video id="npc-portrait-video" playsinline muted autoplay loop style="display: none;"></video>
+            <button id="npc-portrait-audio-btn" type="button" class="portrait-audio-btn" title="Hang némítása / bekapcsolása" onclick="toggleVideoAudio('npc-portrait-video', 'npc-portrait-audio-btn')">
+                <i class="fas fa-volume-mute"></i>
+            </button>
         </div>
         <div class="gamemode-modal-content" style="width: 90%; max-width: 500px; height: 80vh; padding: 0; display: flex; flex-direction: column; overflow: hidden; background: #fff;">
         
@@ -606,6 +609,6 @@
 </div>
 
     <script src="web_fordito.js?v=20260920_toborzo3"></script>
-    <script src="app.js?v=20260921_portre4"></script>
+    <script src="app.js?v=20260921_audio1"></script>
 </body>
 </html>

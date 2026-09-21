@@ -1354,11 +1354,13 @@ textarea:focus {
 /* === NPC PORTRÉ (SLIDE-OUT) STÍLUSOK === */
 /* ========================================= */
 
-#npc-portrait-panel {
+#npc-portrait-panel,
+#fedelzet-portrait-panel {
     height: 80vh;
     /* Igazodik a chat ablak magasságához (alapból) */
     background-color: transparent;
     overflow: hidden;
+    position: relative;
     /* Hogy a kép ne lógjon ki csukott állapotban */
     transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.6s ease;
     /* Finom animáció */
@@ -1373,7 +1375,11 @@ textarea:focus {
 
 /* Kép és Videó stílusa */
 #npc-portrait-image,
-#npc-portrait-video {
+#npc-portrait-video,
+#fedelzet-portrait-image,
+#fedelzet-portrait-video,
+#fedelzet-subpage-portrait-image,
+#fedelzet-subpage-portrait-video {
     height: 100%;
     width: auto;
     max-width: 100%;
@@ -1383,6 +1389,40 @@ textarea:focus {
     filter: drop-shadow(5px 5px 15px rgba(0, 0, 0, 0.5));
     /* Árnyék a kép mögé */
     border-radius: 6px;
+}
+
+/* Videó Hangkezelő Gomb a jobb alsó sarokban */
+.portrait-audio-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(13, 27, 42, 0.85);
+    border: 2px solid #d4af37;
+    color: #d4af37;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 50;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    font-size: 1.1rem;
+    padding: 0;
+    outline: none;
+}
+
+.portrait-audio-btn:hover {
+    background: rgba(212, 175, 55, 0.35);
+    color: #ffd700;
+    border-color: #ffd700;
+    transform: scale(1.12);
+}
+
+.portrait-audio-btn i {
+    pointer-events: none;
 }
 
 /* ÁLLAPOTOK */
@@ -1405,7 +1445,8 @@ textarea:focus {
 
 /* MOBILON NE NYÍLJON KI (Helyhiány miatt) */
 @media (max-width: 800px) {
-    #npc-portrait-panel {
+    #npc-portrait-panel,
+    #fedelzet-portrait-panel {
         display: none !important;
         /* Mobilon elrejtjük */
     }

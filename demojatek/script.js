@@ -1950,9 +1950,9 @@ function createFoamTexture() {
 
 const boatWakes = [];
 const foamTex = createFoamTexture();
-const wakeGeo = new THREE.PlaneGeometry(1.8, 1.5);
+const wakeGeo = new THREE.PlaneGeometry(2.1, 2.1);
 const wakeMatBase = new THREE.MeshBasicMaterial({
-  map: foamTex, color: 0xffffff, transparent: true, opacity: 0.65, depthWrite: false
+  map: foamTex, color: 0xffffff, transparent: true, opacity: 0.72, depthWrite: false
 });
 
 const WAKE_POOL_SIZE = 400;
@@ -1964,7 +1964,7 @@ let wakeMatIndex = 0;
 function getPooledWakeMaterial() {
   const mat = wakeMaterialPool[wakeMatIndex];
   wakeMatIndex = (wakeMatIndex + 1) % WAKE_POOL_SIZE;
-  mat.opacity = 0.50;
+  mat.opacity = 0.72;
   return mat;
 }
 
@@ -3413,40 +3413,52 @@ function frame(now) {
     }
   }
 
-  window._wakeFrameCount = (window._wakeFrameCount || 0) + 1;
-  if (Math.abs(mv) > 0.01 && dt > 0 && window._wakeFrameCount % 2 === 0) {
-    const wakeMatC = getPooledWakeMaterial();
-    const wakeC = new THREE.Mesh(wakeGeo, wakeMatC);
-    wakeC.rotation.x = -Math.PI / 2;
-    wakeC.rotation.z = boat.rotation.y;
-    const offsetC = new THREE.Vector3(0, 0, 3.0).applyQuaternion(boat.quaternion);
-    wakeC.position.copy(boat.position).add(offsetC);
-    wakeC.position.y = 0.15;
-    wakeC.userData.vel = new THREE.Vector3(0, 0, 0.35).applyQuaternion(boat.quaternion);
-    scene.add(wakeC);
-    boatWakes.push(wakeC);
+  if (Math.abs(mv) > 0.01 && dt > 0) {
+    // Bal oldali duplázott sávok (Left side double streams)
+    const wakeMatL1 = getPooledWakeMaterial();
+    const wakeL1 = new THREE.Mesh(wakeGeo, wakeMatL1);
+    wakeL1.rotation.x = -Math.PI / 2;
+    wakeL1.rotation.z = boat.rotation.y;
+    const offsetL1 = new THREE.Vector3(-0.35, 0, 3.0).applyQuaternion(boat.quaternion);
+    wakeL1.position.copy(boat.position).add(offsetL1);
+    wakeL1.position.y = 0.15;
+    wakeL1.userData.vel = new THREE.Vector3(-0.18, 0, 0.38).applyQuaternion(boat.quaternion);
+    scene.add(wakeL1);
+    boatWakes.push(wakeL1);
 
-    const wakeMatL = getPooledWakeMaterial();
-    const wakeL = new THREE.Mesh(wakeGeo, wakeMatL);
-    wakeL.rotation.x = -Math.PI / 2;
-    wakeL.rotation.z = boat.rotation.y;
-    const offsetL = new THREE.Vector3(-0.35, 0, 3.2).applyQuaternion(boat.quaternion);
-    wakeL.position.copy(boat.position).add(offsetL);
-    wakeL.position.y = 0.15;
-    wakeL.userData.vel = new THREE.Vector3(-0.18, 0, 0.38).applyQuaternion(boat.quaternion);
-    scene.add(wakeL);
-    boatWakes.push(wakeL);
+    const wakeMatL2 = getPooledWakeMaterial();
+    const wakeL2 = new THREE.Mesh(wakeGeo, wakeMatL2);
+    wakeL2.rotation.x = -Math.PI / 2;
+    wakeL2.rotation.z = boat.rotation.y;
+    const offsetL2 = new THREE.Vector3(-0.75, 0, 3.2).applyQuaternion(boat.quaternion);
+    wakeL2.position.copy(boat.position).add(offsetL2);
+    wakeL2.position.y = 0.15;
+    wakeL2.userData.vel = new THREE.Vector3(-0.32, 0, 0.42).applyQuaternion(boat.quaternion);
+    scene.add(wakeL2);
+    boatWakes.push(wakeL2);
 
-    const wakeMatR = getPooledWakeMaterial();
-    const wakeR = new THREE.Mesh(wakeGeo, wakeMatR);
-    wakeR.rotation.x = -Math.PI / 2;
-    wakeR.rotation.z = boat.rotation.y;
-    const offsetR = new THREE.Vector3(0.35, 0, 3.2).applyQuaternion(boat.quaternion);
-    wakeR.position.copy(boat.position).add(offsetR);
-    wakeR.position.y = 0.15;
-    wakeR.userData.vel = new THREE.Vector3(0.18, 0, 0.38).applyQuaternion(boat.quaternion);
-    scene.add(wakeR);
-    boatWakes.push(wakeR);
+    // Jobb oldali duplázott sávok (Right side double streams)
+    const wakeMatR1 = getPooledWakeMaterial();
+    const wakeR1 = new THREE.Mesh(wakeGeo, wakeMatR1);
+    wakeR1.rotation.x = -Math.PI / 2;
+    wakeR1.rotation.z = boat.rotation.y;
+    const offsetR1 = new THREE.Vector3(0.35, 0, 3.0).applyQuaternion(boat.quaternion);
+    wakeR1.position.copy(boat.position).add(offsetR1);
+    wakeR1.position.y = 0.15;
+    wakeR1.userData.vel = new THREE.Vector3(0.18, 0, 0.38).applyQuaternion(boat.quaternion);
+    scene.add(wakeR1);
+    boatWakes.push(wakeR1);
+
+    const wakeMatR2 = getPooledWakeMaterial();
+    const wakeR2 = new THREE.Mesh(wakeGeo, wakeMatR2);
+    wakeR2.rotation.x = -Math.PI / 2;
+    wakeR2.rotation.z = boat.rotation.y;
+    const offsetR2 = new THREE.Vector3(0.75, 0, 3.2).applyQuaternion(boat.quaternion);
+    wakeR2.position.copy(boat.position).add(offsetR2);
+    wakeR2.position.y = 0.15;
+    wakeR2.userData.vel = new THREE.Vector3(0.32, 0, 0.42).applyQuaternion(boat.quaternion);
+    scene.add(wakeR2);
+    boatWakes.push(wakeR2);
   }
 
   const timeScale = cutsceneDt * 60;
@@ -3455,9 +3467,9 @@ function frame(now) {
     if (w.userData.vel) {
       w.position.addScaledVector(w.userData.vel, cutsceneDt);
     }
-    w.scale.x += 0.005 * timeScale;
-    w.scale.y += 0.005 * timeScale;
-    w.material.opacity -= 0.016 * timeScale;
+    w.scale.x += 0.015 * timeScale;
+    w.scale.y += 0.015 * timeScale;
+    w.material.opacity -= 0.008 * timeScale;
 
     if (w.material.opacity <= 0) {
       scene.remove(w);

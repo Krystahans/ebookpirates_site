@@ -1715,7 +1715,7 @@ function loadMembraneModel() {
   const modelUrl = window.getAssetUrl('models/hartya_golden_membrane.glb');
   new GLTFLoader().load(modelUrl, function (gltf) {
     hartyaTemplate = gltf.scene;
-    hartyaTemplate.scale.set(1.5, 1.5, 1.5);
+    hartyaTemplate.scale.set(3.0, 3.0, 3.0);
     hartyaTemplate.traverse(c => {
       if (c.isMesh) {
         if (!c.material || (!c.material.map && !c.material.emissive)) {
@@ -1751,7 +1751,7 @@ function loadMembraneModel() {
     console.warn("hartya_golden_membrane.glb betöltése sikertelen, próbálkozás hartya.glb-vel:", err);
     new GLTFLoader().load(window.getAssetUrl('models/hartya.glb'), function (fallbackGltf) {
       hartyaTemplate = fallbackGltf.scene;
-      hartyaTemplate.scale.set(1.5, 1.5, 1.5);
+      hartyaTemplate.scale.set(3.0, 3.0, 3.0);
       window.initMembranePool();
     });
   });

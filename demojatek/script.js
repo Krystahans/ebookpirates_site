@@ -1757,7 +1757,6 @@ function loadMembraneModel() {
   });
 }
 loadMembraneModel();
-});
 
 // --- HÁRTYA SANITIZER ÉS BERAGADÁS-MEGSZÜNTETŐ RUTIN ---
 window.sanitizeAndAutoRecoverMembranes = function() {

@@ -1711,33 +1711,52 @@ function getPooledMembrane() {
   return newM;
 }
 
-new GLTFLoader().load(window.getAssetUrl('models/hartya.glb'), function (gltf) {
-  hartyaTemplate = gltf.scene;
-  hartyaTemplate.scale.set(1.5, 1.5, 1.5);
-  hartyaTemplate.traverse(c => {
-    if (c.isMesh) {
-      c.material = new THREE.MeshBasicMaterial({
-        color: 0xffcc22,
-        transparent: true,
-        opacity: 0.40,
-        depthWrite: false,
-        side: THREE.DoubleSide
-      });
+function loadMembraneModel() {
+  const modelUrl = window.getAssetUrl('models/hartya_golden_membrane.glb');
+  new GLTFLoader().load(modelUrl, function (gltf) {
+    hartyaTemplate = gltf.scene;
+    hartyaTemplate.scale.set(1.5, 1.5, 1.5);
+    hartyaTemplate.traverse(c => {
+      if (c.isMesh) {
+        if (!c.material || (!c.material.map && !c.material.emissive)) {
+          c.material = new THREE.MeshStandardMaterial({
+            color: 0xffd700,
+            emissive: 0xffaa00,
+            emissiveIntensity: 0.6,
+            roughness: 0.25,
+            metalness: 0.85,
+            transparent: true,
+            opacity: 0.85,
+            side: THREE.DoubleSide
+          });
+        } else {
+          c.material.side = THREE.DoubleSide;
+        }
+      }
+    });
+
+    window.initMembranePool();
+
+    const isLoadMode = window.location.search.includes('load=1');
+    if (isLoadMode) {
+      if (typeof window.loadFullGameState === 'function') {
+        window.loadFullGameState();
+      }
+    } else {
+      if (typeof window.spawnZeroPointMembrane === 'function') {
+        window.spawnZeroPointMembrane();
+      }
     }
+  }, undefined, function (err) {
+    console.warn("hartya_golden_membrane.glb betöltése sikertelen, próbálkozás hartya.glb-vel:", err);
+    new GLTFLoader().load(window.getAssetUrl('models/hartya.glb'), function (fallbackGltf) {
+      hartyaTemplate = fallbackGltf.scene;
+      hartyaTemplate.scale.set(1.5, 1.5, 1.5);
+      window.initMembranePool();
+    });
   });
-
-  window.initMembranePool();
-
-  const isLoadMode = window.location.search.includes('load=1');
-  if (isLoadMode) {
-    if (typeof window.loadFullGameState === 'function') {
-      window.loadFullGameState();
-    }
-  } else {
-    if (typeof window.spawnZeroPointMembrane === 'function') {
-      window.spawnZeroPointMembrane();
-    }
-  }
+}
+loadMembraneModel();
 });
 
 // --- HÁRTYA SANITIZER ÉS BERAGADÁS-MEGSZÜNTETŐ RUTIN ---

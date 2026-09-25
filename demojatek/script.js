@@ -1,3 +1,6 @@
+window.INFO_SCROLL_EN = "You landlubber! Didn't you come here to read?! Or is paying attention to me some kind of luxury?!\nIt's because of people like you that I keep this piece of junk on me.\nHere, take it, everything you need to know is written right down here.\n\nGoal of the Game:\n• You must collect 30 glowing Membranes floating on the water and bring them back to the port. The storm lantern marks the way back.\n• Your ship has 10 durability points. You lose one point each time you hit a rock. When this value drops to one, you will receive a warning. If the boat's durability drops to zero, the ship breaks and sinks; you will have to restart the game from the main menu, and all membranes collected up to that point will be lost.\n• During your collection run, quiz questions regarding the rules of the game will pop up from time to time. If you answer correctly, you scoop up the membrane; if you answer incorrectly, you do not.\n\nControls:\n• You steer the sailing boat using the W, A, S, D and arrow keys.\n• The camera can be rotated with the mouse. As long as you hold down the left mouse button, your ship will turn in the direction the camera is facing.\n• The main menu can be accessed via the Menu icon (top menu bar, the icon next to the skull).\n• You can advance through text bubbles by pressing Space.\n• The info scroll can be closed by clicking on the skull (bottom right corner).\n• In the Settings menu, you can adjust the sounds, music, fullscreen mode, and game language.\n• After picking up the third membrane, an airship takes off, which will be anchored at the mouth of the bay until then. From that point on, it follows you throughout the tutorial. If it catches up to you, it will ask you a question. If you answer correctly, you can move on; if you answer incorrectly, you lose the membranes currently on your ship (membranes already delivered to the port remain safe). If you had no membranes on your ship, the tutorial restarts from the port.\n\nThe World:\nThe Pirate Port is called Hebok. This is where you can find the Market, the Book Shrine, and the Tavern, where you can accept quests.\nYou can rent or buy a ship there, or you can even join the crew of other ships. Or join the pirates.\nThe more Books you have, the higher your rank will be.\n\nCurrencies:\nWe use Pirate Credits and Talent in the game.\n• You can earn Pirate Credits through adventures; plus, the system automatically credits you with one point every day upon logging in. You can also sell your items for Pirate Credits, except for Books.\n• You can obtain Talent by supporting our work via PayPal or Patreon, or if you are lucky enough to find a Let-crystal and sell it at the Shrine.\n• You can exchange Talent for Pirate Credits at the Bank, but not the other way around.\n\nMembrane\n• The raw material for Scrolls; it cannot be read on its own.\n\nScroll\n• Scrolls can be crafted from Membranes. You can read your Scrolls, Copies, and Books in the Library.\n• The Scrollmaster crafts one Scroll from 30 Membranes for 11 Pirate Credits.\n• You can buy and sell Scrolls at the Scrollmaster or on the Market.\n\nCopy\n• To craft a Copy, you need all the Scrolls of a book, but you can also receive Copies from other players or purchase them on the Market. If you are lucky.\n\nBook\nConsecration\n• In the Book Shrine, a Copy is consecrated into a Book upon paying Talent.\n• After Consecration, the Book becomes downloadable as an ebook, and the player to whom the Book is registered receives 10 Copies to do with as they please.\n• If any player illegally shares the downloaded ebook, the Book will lose its value in the game despite having been consecrated, meaning it goes into Book Prison, and the culprit's name will be put up on the Wall of Shame.";
+window.INFO_SCROLL_HU = 'Te patkány! Hát nem olvasni jöttél?! Vagy csak rám figyelni luxus?! \nA hozzád hasonlók miatt tartom ezt a szart magamnál. \nNesze, itt van minden leírva, amit tudnod kell.\n\nA játék célja:\n- 30 darab, vizen lebegő, világító Hártyát kell összeszedéned és eljuttatnod a kikötőbe. Oda az utat a viharlámpa mutatja. \n- A hajódnak 10 életereje van. Minden egyes sziklának ütközéskor elveszítesz ezekből egyet. Ha ez az érték eléri az egyet, figyelmeztetést kapsz. Ha a csónak életereje nullára csökken, akkor a hajó összetörik és elsüllyed, te pedig kezdheted a játékot elölről a főmenüből és minden addig szerzett hártyád elvész.  \n- A gyűjtögetés során időről időre kvízkédések ugranak fel a játék szabályaival kapcsolatban. Helyes válasz esetén felszeded a hártyát, hibás válasz esetén nem.\n\nAz irányításról:\n- Te irányítod a vitorlás csónakot w, a, s, d és az iránynyíl billentyűkkel. \n- Az egérrel a kamerát lehet forgatni. Amíg lenyomva tartod a bal egérgombot, addig a hajód arra fordul, amerre a kamera néz.\n- A főmenüt a Menü ikonnal tudod elérni (felső menüsor, a halálfej melletti ikon). \n- A szövegbuborékokat a space-el tudod léptetni. \n- Az info scrollt a halálfejre kattintva (jobb alsó sarok) tudod összezárni.\n- A Beállítások menüben a hangokat, zenét, teljes képernyőt és játék nyelvét beállítani.\n- A harmadik hártya felvétele után felszáll léghajó, ami addig az öböl bejáratában fog horgonyozni. Ezt követően a tutorial során végig követ. Ha utolér, akkor feltesz egy kérdést. Ha jó válaszolsz, tovéábbmehetsz, ha rosszul, a hajón levő hártyákat elveszíted (a kikötőben leadott hártyák megmaradnak). Ha nem volt hártyád a hajón, akkor a tutorial újraindul a kikötőből.\n\nA világról:\nA Kalózkikötőt Heboknak hívják. Itt találod a Piacot, a Könyvszentélyt és a Tavernát, ott vállalhatsz küldetéseket .\nOtt bérelhetsz vagy vehetsz hajót, de akár más hajók legénységéhez is  csatlakozhatsz. Vagy a kalózokhoz. \nMinél több Könyved van, annál nagyobb lesz a rangod. \n\nPénzek: \nA játékban Kalózkreditet és Tálentumot használunk.\n- Kalózkreditet kalandokkal tudsz szerezni, plusz a rendszer automatikusan jóváír neked minden nap a belépéskor egyet. Eladhatod a tárgyaidat is Kalózkreditért, kivéve a Könyveket.\n- Tálentumhoz úgy juthatsz, ha támogatod a munkánkat PayPal-en vagy Patreonon keresztül, vagy ha olyan mázlis vagy, hogy találsz egy letkristályt és eladod a Szentélyben. \n- A Bankban tudsz váltani Tálentumot Kalózkreditre, de visszafelé nem.\n\nHártya\n- A Tekercsek alapanyaga, önmagában nem olvasható.\n\nTekercs\n- Tekercset Hártyából lehet készíttetni. A Tekercseidet, a Másolatot és a Könyveidet a Könyvtárban tudod elolvasni.\n- A Tekercsmester 30 db Hártyából 11 Kalózkreditért készít neked egy Tekercset. \n- Tekercset eladni és venni a Tekercsmesternél vagy a Piacon lehet.\n\nMásolat\n- Másolat készítéséhez a Könyv összes Tekercsére szükséged van, de kaphatsz Másolatot más játékosoktól is, vagy megvásárolhatod őket a Piacon. Ha szerencséd van.\n\nKönyv\nFelszentelés\n- A Könyvszentélyben a Másolatot Tálentum befizetésével Könyvvé szentelik.\nA Szentelés után a Könyv ebook formában letölthetővé válik, és az a játékos, akinek a nevére íródik a Könyv, kap 10 db Másolatot, amivel szabadon rendelkezhet. \n- Ha a letöltött ebookot bármelyik játékos illegálisan megosztja, akkor hiába szenteltette fel a Könyvet, az elveszti az értékét a játékban, vagyis Könyvbörtönbe kerül, a bűnös neve pedig felkerül a Szégyenfalra.';
+
 window.onerror = function (message, source, lineno, colno, error) {
   const errDiv = document.createElement('div');
   errDiv.style.position = 'absolute'; errDiv.style.top = '10px'; errDiv.style.left = '10px';
@@ -28,19 +31,51 @@ window.eogMonologues = {};
 
 async function loadDialogues() {
   try {
-    const res = await fetch('dialogues.json?t=' + Date.now());
+    const lang = window.currentLanguage || localStorage.getItem('siteLang') || 'hu';
+    const filename = (lang === 'en') ? 'dialogues_en.json' : 'dialogues.json';
+    const res = await fetch(filename + '?t=' + Date.now());
     if (res.ok) {
       const data = await res.json();
       window.zozoWelcomeTexts = data.welcomeTexts || [];
       window.gameMonologues = data.gameMonologues || {};
       window.gamePopups = data.popups || {};
       window.eogMonologues = data.eogMonologues || {};
+      console.log('🌐 Párbeszédek sikeresen betöltve:', filename);
+
+      const crashSpan = document.querySelector('#crash-overlay span');
+      if (crashSpan) {
+        crashSpan.innerText = (lang === 'en') ? '💥 Reef collision!' : '💥 Zátonyra futottál!';
+      }
     }
   } catch (e) {
-    console.error('Hiba a dialogues.json betöltésekor:', e);
+    console.error('Hiba a dialogues betöltésekor:', e);
   }
 }
 loadDialogues();
+
+window.fitDialogueText = function (el, defaultMaxFs = 23, minFs = 16) {
+  if (!el) return;
+  const isEn = (window.currentLanguage || localStorage.getItem('siteLang') || localStorage.getItem('ebp_language')) === 'en';
+  let maxCap = (defaultMaxFs >= 28) ? 22 : 20;
+  let currentFs = isEn ? Math.min(defaultMaxFs, maxCap) : defaultMaxFs;
+  el.style.fontSize = currentFs + 'px';
+  el.style.lineHeight = '1.25';
+  
+  // Csak valódi túlcsordulás esetén csökkentünk, nem engedve 16px alá esni
+  const targetMaxH = 84;
+  let iterations = 0;
+  while (currentFs > minFs && iterations < 8) {
+    iterations++;
+    const isOverflowingY = el.scrollHeight > targetMaxH + 2;
+    const isOverflowingX = el.scrollWidth > el.clientWidth + 4;
+    if (isOverflowingY || isOverflowingX) {
+      currentFs -= 1;
+      el.style.fontSize = currentFs + 'px';
+    } else {
+      break;
+    }
+  }
+};
 
 window.getLoggedInUserData = function () {
   const isLocal = window.location.hostname === 'localhost' || 
@@ -138,6 +173,10 @@ async function loadTopBarModule() {
         const html = await res.text();
         container.innerHTML = html;
         setupTopBarEvents();
+        const curLang = window.currentLanguage || localStorage.getItem('siteLang') || 'hu';
+        if (typeof window.applyLanguageToUI === 'function') {
+          window.applyLanguageToUI(curLang);
+        }
       }
     } else {
       setupTopBarEvents();
@@ -162,7 +201,14 @@ function setupTopBarEvents() {
   const btnCloseInfo = document.getElementById('btn-close-info-scroll');
 
   if (btnInfo && infoOverlay) {
-    btnInfo.addEventListener('click', () => { infoOverlay.style.display = 'flex'; });
+    btnInfo.addEventListener('click', () => {
+      const lang = window.currentLanguage || localStorage.getItem('siteLang') || 'hu';
+      const content = document.getElementById('info-scroll-content');
+      if (content) {
+        content.innerText = (lang === 'en') ? window.INFO_SCROLL_EN : window.INFO_SCROLL_HU;
+      }
+      infoOverlay.style.display = 'flex';
+    });
   }
   if (btnCloseInfo && infoOverlay) {
     btnCloseInfo.addEventListener('click', () => { infoOverlay.style.display = 'none'; });
@@ -200,10 +246,27 @@ function setupTopBarEvents() {
   }
 
   document.querySelectorAll('.lang-item-btn, .lang-option-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const selectedLang = btn.getAttribute('data-lang');
       window.currentLanguage = selectedLang;
+      localStorage.setItem('siteLang', selectedLang);
       console.log('🌐 Kiválasztott nyelv:', selectedLang);
+      await loadDialogues();
+      if (typeof window.applyLanguageToUI === 'function') {
+        window.applyLanguageToUI(selectedLang);
+      }
+      const welcomeOverlay = document.getElementById('zozo-welcome-overlay');
+      if (welcomeOverlay && welcomeOverlay.style.display !== 'none') {
+        if (typeof window.selectZozoTextStep === 'function') {
+          window.selectZozoTextStep(window.zozoTextStep);
+        }
+      }
+      const monologContainer = document.getElementById('zozo-ingame-monolog-container');
+      if (monologContainer && monologContainer.style.display !== 'none') {
+        if (typeof window.renderCurrentMonolog === 'function') {
+          window.renderCurrentMonolog();
+        }
+      }
       if (dropdownSettings) dropdownSettings.style.display = 'none';
       const langOverlay = document.getElementById('language-map-overlay');
       if (langOverlay) langOverlay.style.display = 'none';
@@ -787,19 +850,19 @@ window.boat = boat;
 window.homeRotY = boat.rotation.y;
 
 const laserGroup = new THREE.Group();
-laserGroup.position.set(0, 0.1, 1.5);
+laserGroup.position.set(0, 0.3, 0);
 laserGroup.visible = window.location.search.includes('debug=1');
 boat.add(laserGroup);
 
 const whiskers = [
   { id: 'FORWARD', angle: 0, dist: 5.5 },
-  { id: 'FRONT_LEFT', angle: Math.PI / 4, dist: 4.2 },
-  { id: 'FRONT_RIGHT', angle: -Math.PI / 4, dist: 4.2 },
-  { id: 'SIDE_LEFT', angle: Math.PI / 2, dist: 1.0 },
-  { id: 'SIDE_RIGHT', angle: -Math.PI / 2, dist: 1.0 },
-  { id: 'BACK_LEFT', angle: 3 * Math.PI / 4, dist: 2.2 },
-  { id: 'BACK_RIGHT', angle: -3 * Math.PI / 4, dist: 2.2 },
-  { id: 'BACKWARD', angle: Math.PI, dist: 2.5 }
+  { id: 'FRONT_LEFT', angle: Math.PI / 4, dist: 4.5 },
+  { id: 'FRONT_RIGHT', angle: -Math.PI / 4, dist: 4.5 },
+  { id: 'SIDE_LEFT', angle: Math.PI / 2, dist: 2.8 },
+  { id: 'SIDE_RIGHT', angle: -Math.PI / 2, dist: 2.8 },
+  { id: 'BACK_LEFT', angle: 3 * Math.PI / 4, dist: 4.8 },
+  { id: 'BACK_RIGHT', angle: -3 * Math.PI / 4, dist: 4.8 },
+  { id: 'BACKWARD', angle: Math.PI, dist: 5.2 }
 ];
 
 const laserLines = [];
@@ -862,9 +925,17 @@ new GLTFLoader().load(window.getAssetUrl('models/FullTrack_Small.glb'), function
       }
 
       if (child.material) {
-        child.material.transparent = false;
-        child.material.alphaTest = 0.5;
-        child.material.side = THREE.DoubleSide;
+        if (Array.isArray(child.material)) {
+          child.material.forEach(mat => {
+            mat.transparent = false;
+            mat.alphaTest = 0.5;
+            mat.side = THREE.DoubleSide;
+          });
+        } else {
+          child.material.transparent = false;
+          child.material.alphaTest = 0.5;
+          child.material.side = THREE.DoubleSide;
+        }
 
         const isBlack = child.material.color && child.material.color.r < 0.1 && child.material.color.g < 0.1 && child.material.color.b < 0.1;
         if (isBlack || (child.name && child.name.toLowerCase().includes("airship"))) {
@@ -1668,8 +1739,9 @@ function createMembraneMesh(x, y, z) {
     group.add(coreMesh);
   }
 
-  const candleLight = new THREE.PointLight(0xffaa33, 3.5, 20);
-  candleLight.position.set(0, 0.8, 0);
+  // Szórt fény (diffuse light): felülről sugárzó, lágy esésű arany fényforrás
+  const candleLight = new THREE.PointLight(0xffd54f, 2.8, 28, 1.5);
+  candleLight.position.set(0, 1.2, 0);
   group.add(candleLight);
 
   group.userData = {
@@ -1718,19 +1790,16 @@ function loadMembraneModel() {
     hartyaTemplate.scale.set(3.0, 3.0, 3.0);
     hartyaTemplate.traverse(c => {
       if (c.isMesh) {
-        if (!c.material || (!c.material.map && !c.material.emissive)) {
-          c.material = new THREE.MeshStandardMaterial({
-            color: 0xffd700,
-            emissive: 0xffaa00,
-            emissiveIntensity: 0.6,
-            roughness: 0.25,
-            metalness: 0.85,
-            transparent: true,
-            opacity: 0.85,
-            side: THREE.DoubleSide
-          });
-        } else {
+        if (c.material) {
           c.material.side = THREE.DoubleSide;
+          // Ha nincs beállítva fényes textúra, meleg arany fényt adunk
+          if (c.material.color) {
+            c.material.color.setHex(0xffd700);
+          }
+          if (c.material.emissive) {
+            c.material.emissive.setHex(0xff9900);
+            c.material.emissiveIntensity = 0.5;
+          }
         }
       }
     });
@@ -1818,7 +1887,7 @@ window.spawnZeroPointMembrane = function () {
   firstMembrane.userData.collected = false;
   firstMembrane.userData.inUse = true;
   firstMembrane.visible = true;
-  if (firstMembrane.userData.light) firstMembrane.userData.light.intensity = 3.5;
+  if (firstMembrane.userData.light) firstMembrane.userData.light.intensity = 1.2;
 
   window.activeMembranes.push(firstMembrane);
   window.totalSpawnedCount = 1;
@@ -1936,7 +2005,7 @@ window.spawnHartyaWave = function (count, originType) {
     mMesh.userData.collected = false;
     mMesh.userData.inUse = true;
     mMesh.visible = true;
-    if (mMesh.userData.light) mMesh.userData.light.intensity = 3.5;
+    if (mMesh.userData.light) mMesh.userData.light.intensity = 1.2;
 
     window.activeMembranes.push(mMesh);
     window.totalSpawnedCount++;
@@ -2064,9 +2133,6 @@ window.renderCurrentMonolog = function () {
       if (nameplate) nameplate.style.display = 'block';
     }
 
-    const textEl = document.getElementById('ingame-dialogue-text');
-    if (textEl) textEl.innerText = textVal;
-
     const backBtn = document.getElementById('monolog-back-btn');
     if (backBtn) {
       if (window.monologState.currentBlockIndex > 0) {
@@ -2076,8 +2142,17 @@ window.renderCurrentMonolog = function () {
       }
     }
 
+    // ELŐBB megjelenítjük (display = 'flex'), hogy a böngésző valódi méreteket (clientWidth) tudjon mérni
     container.style.display = 'flex';
     window.isCutscenePlaying = true;
+
+    const textEl = document.getElementById('ingame-dialogue-text');
+    if (textEl) {
+      textEl.innerText = textVal;
+      if (typeof window.fitDialogueText === 'function') {
+        window.fitDialogueText(textEl, 20, 14);
+      }
+    }
   } else {
     window.closeInGameMonolog();
   }
@@ -2186,6 +2261,10 @@ window.selectZozoTextStep = function (stepVal) {
     const dialogText = document.getElementById('zozo-dialogue-text');
     if (dialogText) {
       dialogText.innerText = window.zozoWelcomeTexts[idx];
+      if (typeof window.fitDialogueText === 'function') {
+        const initialMax = (idx === 0) ? 28 : 24;
+        window.fitDialogueText(dialogText, initialMax, 13);
+      }
     }
 
     const backBtn = document.getElementById('welcome-back-btn');
@@ -2245,10 +2324,17 @@ window.showPopUp = function (msg, onCompleteCb) {
   const p = document.getElementById('ingame-popup-toast');
   const txt = document.getElementById('popup-toast-text');
   if (p) {
-    if (txt) txt.innerText = msg; else p.innerText = msg;
     p.classList.remove('controls-popup-mode');
     p.style.display = 'flex';
     p.style.pointerEvents = 'auto';
+
+    if (txt) {
+      txt.innerText = msg;
+      if (typeof window.fitDialogueText === 'function') window.fitDialogueText(txt, 19, 14);
+    } else {
+      p.innerText = msg;
+      if (typeof window.fitDialogueText === 'function') window.fitDialogueText(p, 19, 14);
+    }
 
     window.isTimedPopupActive = true;
     window.activePopupCallback = onCompleteCb || null;
@@ -2415,20 +2501,23 @@ function frame(now) {
   if (tbStored) tbStored.innerText = window.storedMembranes || 0;
 
 
-  if (window.isFishingMode && typeof boat !== 'undefined' && boat && boat.position) {
+  if (typeof boat !== 'undefined' && boat && boat.position) {
     const distToDock = Math.hypot(boat.position.x - 5, boat.position.z - (-94));
     
-    if (distToDock > 50) {
+    // Ha legalább 25 méterre eltávolodott a dokktól, feljegyezzük, hogy elhagyta a kikötőt
+    if (distToDock > 25) {
       window.hasLeftDockAtLeastOnce = true;
     }
 
-    const exitBtn = document.getElementById('base-exit-btn');
-    if (distToDock < 18) {
-      if (!window.isAtDock) window.isAtDock = true;
-      if (exitBtn) exitBtn.style.display = 'block';
-    } else {
-      window.isAtDock = false;
-      if (exitBtn) exitBtn.style.display = 'none';
+    if (window.isFishingMode) {
+      const exitBtn = document.getElementById('base-exit-btn');
+      if (distToDock < 18) {
+        if (!window.isAtDock) window.isAtDock = true;
+        if (exitBtn) exitBtn.style.display = 'block';
+      } else {
+        window.isAtDock = false;
+        if (exitBtn) exitBtn.style.display = 'none';
+      }
     }
   }
 
@@ -2527,7 +2616,7 @@ function frame(now) {
         if (dt > 0) {
           m.position.y = m.userData.baseY + Math.sin(t * 2.2 + i) * 0.12;
           if (m.userData.light) {
-            m.userData.light.intensity = 3.0 + Math.sin(t * 4.5 + i * 1.5) * 0.8;
+            m.userData.light.intensity = 2.5 + Math.sin(t * 3.0 + i) * 0.5;
           }
         }
 
@@ -2792,6 +2881,9 @@ function frame(now) {
       setTimeout(() => { window._justDelivered = false; }, 5000);
     } else if (distHome >= 18.0) {
       window.isAtDock = false;
+      if (distHome > 25.0) {
+        window.hasLeftDockAtLeastOnce = true;
+      }
     }
   }
 
@@ -3226,9 +3318,9 @@ function frame(now) {
       let shouldCheck = false;
 
       if (mv > 0.01) {
-        if (id === 'FORWARD' || id === 'FRONT_LEFT' || id === 'FRONT_RIGHT') shouldCheck = true;
+        if (id === 'FORWARD' || id === 'FRONT_LEFT' || id === 'FRONT_RIGHT' || id === 'SIDE_LEFT' || id === 'SIDE_RIGHT') shouldCheck = true;
       } else if (mv < -0.01) {
-        if (id === 'BACKWARD' || id === 'BACK_LEFT' || id === 'BACK_RIGHT') shouldCheck = true;
+        if (id === 'BACKWARD' || id === 'BACK_LEFT' || id === 'BACK_RIGHT' || id === 'SIDE_LEFT' || id === 'SIDE_RIGHT') shouldCheck = true;
       } else if (isDrifting) {
         shouldCheck = true;
       }
@@ -3242,7 +3334,7 @@ function frame(now) {
       _rayDir.applyAxisAngle(_upAxis, lItem.w.angle);
       _rayDir.applyQuaternion(boat.quaternion).normalize();
 
-      const maxDetectDist = lItem.w.dist + (mv > 0.01 ? mv * 1.5 : 0);
+      const maxDetectDist = lItem.w.dist + (Math.abs(mv) * 2.0);
 
       _sharedRaycaster.set(_center, _rayDir);
       const intersects = _sharedRaycaster.intersectObjects(borderMeshes, false);
@@ -3345,6 +3437,11 @@ function frame(now) {
           if (typeof window.playSoundEffect === 'function') window.playSoundEffect(window.bigCrashAudio || window.crashRockAudio);
           
           if (crashOverlay) {
+            const crashSpan = crashOverlay.querySelector('span');
+            if (crashSpan) {
+              const isEn = (typeof window.getGameLanguage === 'function') ? (window.getGameLanguage() === 'en') : ((window.currentLanguage || localStorage.getItem('siteLang') || localStorage.getItem('ebp_language')) === 'en');
+              crashSpan.innerText = isEn ? '💥 Reef collision!' : '💥 Zátonyra futottál!';
+            }
             crashOverlay.style.background = 'rgba(255, 0, 0, 0.7)';
             crashOverlay.style.display = 'flex';
             setTimeout(() => { crashOverlay.style.display = 'none'; }, 1000);
@@ -3384,6 +3481,11 @@ function frame(now) {
           
           // Enyhe piros villanás a sima ütközésnél
           if (crashOverlay) {
+            const crashSpan = crashOverlay.querySelector('span');
+            if (crashSpan) {
+              const isEn = (typeof window.getGameLanguage === 'function') ? (window.getGameLanguage() === 'en') : ((window.currentLanguage || localStorage.getItem('siteLang') || localStorage.getItem('ebp_language')) === 'en');
+              crashSpan.innerText = isEn ? '💥 Reef collision!' : '💥 Zátonyra futottál!';
+            }
             crashOverlay.style.background = 'rgba(255, 0, 0, 0.3)';
             crashOverlay.style.display = 'flex';
             setTimeout(() => { 
@@ -3547,12 +3649,29 @@ function frame(now) {
       const bRotY = (boat && boat.rotation) ? boat.rotation.y : 0;
       const totalH = bRotY + (orbH * Math.PI / 180);
       const vR = orbV * Math.PI / 180;
+      
+      const targetPos = new THREE.Vector3(bX, bY + LOOK_OFFSET_Y, bZ);
+      const dirX = Math.sin(totalH) * Math.cos(vR);
+      const dirY = Math.sin(vR);
+      const dirZ = Math.cos(totalH) * Math.cos(vR);
+      const camRayDir = new THREE.Vector3(dirX, dirY, dirZ).normalize();
+
+      let effectiveDist = orbDist;
+      if (borderMeshes && borderMeshes.length > 0) {
+        _sharedRaycaster.set(targetPos, camRayDir);
+        const camHits = _sharedRaycaster.intersectObjects(borderMeshes, false);
+        if (camHits.length > 0 && camHits[0].distance < orbDist) {
+          // Ha szikla vagy akadály van a kamera és a csónak között, előrehúzzuk a kamerát a szikla elé
+          effectiveDist = Math.max(2.2, camHits[0].distance - 0.7);
+        }
+      }
+
       cam.position.set(
-        bX + orbDist * Math.sin(totalH) * Math.cos(vR),
-        bY + orbDist * Math.sin(vR) + LOOK_OFFSET_Y,
-        bZ + orbDist * Math.cos(totalH) * Math.cos(vR)
+        bX + dirX * effectiveDist,
+        bY + dirY * effectiveDist + LOOK_OFFSET_Y,
+        bZ + dirZ * effectiveDist
       );
-      cam.lookAt(new THREE.Vector3(bX, bY + LOOK_OFFSET_Y, bZ));
+      cam.lookAt(targetPos);
     }
   }
 
@@ -4122,7 +4241,7 @@ window.loadFullGameState = function () {
         mMesh.userData.collected = false;
         mMesh.userData.inUse = true;
         mMesh.visible = true;
-        if (mMesh.userData.light) mMesh.userData.light.intensity = 3.5;
+        if (mMesh.userData.light) mMesh.userData.light.intensity = 1.2;
         window.activeMembranes.push(mMesh);
       });
     } else {
@@ -4752,7 +4871,7 @@ window.spawnFishingMembranes = function () {
         m.userData.collected = false;
         m.userData.inUse = true;
         m.visible = true;
-        if (m.userData.light) m.userData.light.intensity = 3.5;
+        if (m.userData.light) m.userData.light.intensity = 1.2;
         if (!window.activeMembranes.includes(m)) window.activeMembranes.push(m);
       }
     }
@@ -4834,3 +4953,130 @@ window.exitFishingGame = function (type) {
   setTimeout(doExitNavigation, 500);
 };
 
+
+// 🌐 TÖBBNYELVŰ UI ÉS GOMB FORDÍTÓ RENDSZER
+window.UI_TRANSLATIONS = {
+  hu: {
+    durabilityTitle: "Csónak Életerő (HP)",
+    durabilityIconTitle: "Csónak Életerő",
+    carriedTitle: "Szállított hártyák",
+    storedTitle: "Bázison tárolt hártyák",
+    infoTitle: "Info",
+    settingsTitle: "Beállítások",
+    soundTitle: "Hangok",
+    musicTitle: "Zene",
+    fullscreenTitle: "Teljes képernyő",
+    pauseTitle: "Szünet",
+    stopTitle: "STOP",
+    saveTitle: "Mentés",
+    exitTitle: "Kilépés",
+    baseExitBtn: "⚓ Halászat Befejezése & Mentés",
+    eogChoiceFish: "Tovább halászok",
+    eogChoiceHebok: "Irány Hebok!",
+    eogChoiceExit: "Kilépek",
+    eogBoatNameInput: "Adjon nevet a csónaknak...",
+    exitConfirmTitle: "Biztosan ki akarsz lépni?",
+    exitConfirmYes: "Igen, kilépek",
+    exitConfirmCancel: "Mégsem",
+    mobileModeTitle: "Váltás Hajóvezérlés és Kamera között"
+  },
+  en: {
+    durabilityTitle: "Boat Durability (HP)",
+    durabilityIconTitle: "Boat Durability",
+    carriedTitle: "Membranes on Board",
+    storedTitle: "Stashed Membranes",
+    infoTitle: "Info",
+    settingsTitle: "Settings",
+    soundTitle: "Sounds",
+    musicTitle: "Music",
+    fullscreenTitle: "Fullscreen",
+    pauseTitle: "Pause",
+    stopTitle: "STOP",
+    saveTitle: "Save",
+    exitTitle: "Exit",
+    baseExitBtn: "⚓ Finish Fishing & Save",
+    eogChoiceFish: "Keep Fishing",
+    eogChoiceHebok: "To Hebok!",
+    eogChoiceExit: "Exit",
+    eogBoatNameInput: "Name your boat...",
+    exitConfirmTitle: "Are you sure you want to exit?",
+    exitConfirmYes: "Yes, Exit",
+    exitConfirmCancel: "Cancel",
+    mobileModeTitle: "Toggle Boat Controls & Camera"
+  }
+};
+
+window.applyLanguageToUI = function (lang) {
+  const targetLang = lang || window.currentLanguage || 'hu';
+  const dict = window.UI_TRANSLATIONS[targetLang] || window.UI_TRANSLATIONS.hu;
+
+  const setAttr = (id, attr, val) => {
+    const el = document.getElementById(id);
+    if (el && val) el.setAttribute(attr, val);
+  };
+
+  const setText = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && val) el.innerText = val;
+  };
+
+  setAttr('tb-durability-box', 'title', dict.durabilityTitle);
+  const durImg = document.querySelector('#tb-durability-box img');
+  if (durImg) durImg.setAttribute('title', dict.durabilityIconTitle);
+
+  const carriedCount = document.getElementById('tb-carried-count');
+  const carriedBox = carriedCount ? carriedCount.closest('.counter-box') : document.querySelector('.counter-box[title*="Szállított"], .counter-box[title*="Carried"], .counter-box[title*="Board"]');
+  if (carriedBox) {
+    carriedBox.setAttribute('title', dict.carriedTitle);
+    const cImg = carriedBox.querySelector('img');
+    if (cImg) cImg.setAttribute('title', dict.carriedTitle);
+  }
+
+  const storedCount = document.getElementById('tb-stored-count');
+  const storedBox = storedCount ? storedCount.closest('.counter-box') : document.querySelector('.counter-box[title*="tárolt"], .counter-box[title*="Stored"], .counter-box[title*="Stashed"]');
+  if (storedBox) {
+    storedBox.setAttribute('title', dict.storedTitle);
+    const sImg = storedBox.querySelector('img');
+    if (sImg) sImg.setAttribute('title', dict.storedTitle);
+  }
+
+  setAttr('btn-tb-info', 'title', dict.infoTitle);
+  setAttr('btn-tb-settings', 'title', dict.settingsTitle);
+  setAttr('btn-tb-sound', 'title', dict.soundTitle);
+  setAttr('btn-tb-music', 'title', dict.musicTitle);
+  setAttr('btn-tb-fullscreen', 'title', dict.fullscreenTitle);
+  setAttr('btn-tb-pause', 'title', dict.pauseTitle);
+  setAttr('btn-tb-menu', 'title', dict.stopTitle);
+  setAttr('btn-tb-save', 'title', dict.saveTitle);
+  setAttr('btn-tb-exit', 'title', dict.exitTitle);
+
+  setText('base-exit-btn', dict.baseExitBtn);
+  setText('eog-btn-choice-fish', dict.eogChoiceFish);
+  setText('eog-btn-choice-hebok', dict.eogChoiceHebok);
+  setText('eog-btn-choice-exit', dict.eogChoiceExit);
+  setAttr('eog-boat-name-input', 'placeholder', dict.eogBoatNameInput);
+  setAttr('mobile-mode-btn', 'title', dict.mobileModeTitle);
+
+  // Re-run TopBar tooltip registration if available
+  if (typeof setupTopBarEvents === 'function') {
+    const tooltipEl = document.getElementById('topbar-custom-tooltip');
+    const tooltipTextEl = document.getElementById('topbar-custom-tooltip-text');
+    if (tooltipEl && tooltipTextEl) {
+      const tooltipTargets = document.querySelectorAll('#topbar [title], #topbar [data-custom-tooltip], #settings-dropdown [title], #settings-dropdown [data-custom-tooltip]');
+      tooltipTargets.forEach(el => {
+        let text = el.getAttribute('title') || el.getAttribute('data-custom-tooltip');
+        if (text) {
+          el.setAttribute('data-custom-tooltip', text);
+          el.removeAttribute('title');
+        }
+      });
+    }
+  }
+
+  const infoContent = document.getElementById('info-scroll-content');
+  if (infoContent) {
+    infoContent.innerText = (targetLang === 'en') ? window.INFO_SCROLL_EN : window.INFO_SCROLL_HU;
+  }
+
+  console.log('🌐 UI elemek sikeresen átállítva nyelvre:', targetLang);
+};
